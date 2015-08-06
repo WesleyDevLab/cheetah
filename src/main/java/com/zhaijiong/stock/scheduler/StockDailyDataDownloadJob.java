@@ -6,7 +6,7 @@ import com.zhaijiong.stock.Context;
 import com.zhaijiong.stock.Pair;
 import com.zhaijiong.stock.Stock;
 import com.zhaijiong.stock.Utils;
-import com.zhaijiong.stock.dao.StockDAO;
+import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.datasource.NetEaseDailyHistoryStockDataCollecter;
 import com.zhaijiong.stock.datasource.StockListFether;
 import org.quartz.Job;
@@ -44,8 +44,8 @@ public class StockDailyDataDownloadJob implements Job{
             for (Pair<String, String> stock : stockList) {
                 NetEaseDailyHistoryStockDataCollecter collecter = new NetEaseDailyHistoryStockDataCollecter();
                 List<Stock> stocks = collecter.collect(stock.getVal(), starttime, stoptime);
-                StockDAO stockDAO = new StockDAO(tablename, context);
-                stockDAO.save(stocks);
+                StockDB stockDB = new StockDB(tablename, context);
+                stockDB.save(stocks);
             }
             context.close();
         } catch (IOException e) {

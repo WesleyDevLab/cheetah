@@ -2,16 +2,20 @@ package com.zhaijiong.stock;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
-import com.google.common.io.Files;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,17 +38,10 @@ public class Utils {
         return sdf.format(date);
     }
 
-    public Set<String> getUserList(String filePath){
-        File userFile = new File(filePath);
-        Set<String> userSet = Sets.newHashSet();
-        try {
-            if(userFile.exists() && userFile.isFile()){
-                userSet.addAll(Files.readLines(userFile, Charset.forName("utf-8")));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return userSet;
+    public static Date bytes2Date(byte[] bytes,String pattern){
+        DateTimeFormatter format = DateTimeFormat.forPattern(pattern);
+        DateTime dateTime = DateTime.parse(Bytes.toString(bytes),format);
+        return dateTime.toDate();
     }
 
     public static String getTomorrow(){
@@ -58,6 +55,19 @@ public class Utils {
         dateTime = dateTime.plusDays(-1);
         return dateTime.toString("yyyyMMdd");
     }
+
+
+    public static byte[] getRowkey(Stock stock) {
+        return Bytes.add(stock.symbol.getBytes(),
+                Bytes.toBytes(Utils.formatDate(stock.date, "yyyyMMddhhmmss")));
+    }
+
+    public static byte[] getRowkeyWithMD5Prefix(Stock stock){
+        String s = Hashing.md5().hashString(stock.symbol, UTF8).toString().substring(0,4);
+        return Bytes.add(s.getBytes(),stock.symbol.getBytes());
+    }
+
+
 
     public static List<URL> findResources(String name) throws IOException {
         List<URL> urls = new ArrayList<URL>();

@@ -20,12 +20,12 @@ import static com.zhaijiong.stock.Constants.TABLE_CF_BASE;
 /**
  * Created by eryk on 15-7-25.
  */
-public class StockDAO {
+public class StockDB {
     private String tableName;
 
     Context context;
 
-    public StockDAO(String tableName,Context context){
+    public StockDB(String tableName, Context context){
         this.context = context;
         this.tableName = tableName;
     }
@@ -34,7 +34,7 @@ public class StockDAO {
         HTableInterface table = context.getTable(tableName);
         List<Put> puts = Lists.newLinkedList();
         for(Stock stock:stocks){
-            byte[] rowkey = getRowkey(stock);
+            byte[] rowkey = Utils.getRowkeyWithMD5Prefix(stock);
             Put put = new Put(rowkey);
             addColumn(stock, put);
             puts.add(put);
@@ -46,7 +46,7 @@ public class StockDAO {
 
     public void save(Stock stock) throws IOException {
         HTableInterface table = context.getTable(tableName);
-        Put put = new Put(getRowkey(stock));
+        Put put = new Put(Utils.getRowkeyWithMD5Prefix(stock));
         addColumn(stock, put);
         table.put(put);
         context.close();
@@ -106,7 +106,7 @@ public class StockDAO {
                 if(Bytes.toString(kv.getQualifier()).equals("amplitude")){
                     stock.amplitude = Bytes.toDouble(kv.getValue());
                 }
-                stock.date = bytes2Date(Bytes.tail(kv.getRow(),14));
+                stock.date = Utils.bytes2Date(Bytes.tail(kv.getRow(),14),"yyyyMMddhhmmss");
                 stock.symbol = symbol;
             }
             stocks.add(stock);
@@ -131,14 +131,4 @@ public class StockDAO {
         put.add(TABLE_CF_BASE,Bytes.toBytes("amplitude"),Bytes.toBytes(stock.amplitude));
     }
 
-    private byte[] getRowkey(Stock stock) {
-        return Bytes.add(stock.symbol.getBytes(),
-                Bytes.toBytes(Utils.formatDate(stock.date, "yyyyMMddhhmmss")));
-    }
-
-    private Date bytes2Date(byte[] bytes){
-        DateTimeFormatter format = DateTimeFormat.forPattern("yyyyMMddhhmmss");
-        DateTime dateTime = DateTime.parse(Bytes.toString(bytes),format);
-        return dateTime.toDate();
-    }
 }
