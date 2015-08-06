@@ -47,6 +47,18 @@ public class Utils {
         return userSet;
     }
 
+    public static String getTomorrow(){
+        DateTime dateTime = new DateTime();
+        dateTime = dateTime.plusDays(1);
+        return dateTime.toString("yyyyMMdd");
+    }
+
+    public static String getYesterday(){
+        DateTime dateTime = new DateTime();
+        dateTime = dateTime.plusDays(-1);
+        return dateTime.toString("yyyyMMdd");
+    }
+
     public static List<URL> findResources(String name) throws IOException {
         List<URL> urls = new ArrayList<URL>();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -189,6 +201,15 @@ public class Utils {
         }else{
             return  Long.parseLong(numStr);
         }
+    }
+
+    public static Class getClass(String className){
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

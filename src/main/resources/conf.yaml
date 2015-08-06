@@ -1,3 +1,13 @@
+
 hbase.zookeeper.quorum: zhaijiong.com:2181
 zookeeper.znode.parent: /hbase
 database.pool.size: 10
+
+jobs:
+  dailyDataDownload:
+      classname: com.zhaijiong.stock.scheduler.StockDailyDataDownloadJob
+      tablename: stocks_day
+      cron: "0 0 18 * * ? *"
+#  newsDataDownload:
+#      classname: com.zhaijiong.stock.scheduler.StockDailyDataDownloadJob
+#      tablename: stocks_day

@@ -36,6 +36,10 @@ public class Context {
         }
     }
 
+    public Map<String,Object> getMap(String key){
+        return (Map<String, Object>) conf.get(key);
+    }
+
     public HTableInterface getTable(String tableName){
         return pool.getTable(tableName);
     }

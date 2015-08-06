@@ -15,7 +15,7 @@ import java.util.List;
 public class MacdCalculatorTest {
     Core lib = new Core();
     String start = "19901219";
-    String stop = "20150804";
+    String stop = "20150807";
 
 
     private MInteger outBegIdx = new MInteger();
@@ -75,7 +75,7 @@ public class MacdCalculatorTest {
 //                -1.2720884750633508
 //    }
 
-    @Test
+//    @Test
     public void test_Macd(){
         start = "19901219";
         stop = "20150806";
@@ -100,7 +100,7 @@ public class MacdCalculatorTest {
         System.out.println("MACD=" + macdRtn);
     }
 
-//    @Test
+    @Test
     public void test_ma(){
         StockDataCollecter collecter= new NetEaseDailyHistoryStockDataCollecter();
         List<Stock> stocks = collecter.collect("601886",start,stop);

@@ -11,4 +11,10 @@ public class Constants {
     public static final byte[] TABLE_CF_BASE = "b".getBytes();
 
     public static final byte[] TABLE_CF_FEATURE = "f".getBytes();
+
+    public static final String SCHEDULER_JOBS = "jobs";
+
+    public static final String SCHEDULER_JOB_CLASSNAME = "classname";
+
+    public static final String SCHEDULER_JOB_CRON = "cron";
 }
