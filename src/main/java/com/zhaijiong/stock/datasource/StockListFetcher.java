@@ -19,8 +19,8 @@ import java.util.Map;
 /**
  * Created by eryk on 15-4-8.
  */
-public class StockListFether {
-    private static final Logger LOG = LoggerFactory.getLogger(StockListFether.class);
+public class StockListFetcher {
+    private static final Logger LOG = LoggerFactory.getLogger(StockListFetcher.class);
 
     private String tagsURL = "http://quote.eastmoney.com/center/BKList.html#notion_0_0?sortRule=0";
     private String stockURL = "http://quote.eastmoney.com/stocklist.html";
@@ -86,7 +86,7 @@ public class StockListFether {
     }
 
     public static void main(String[] args) throws IOException {
-        StockListFether fetcher = new StockListFether();
+        StockListFetcher fetcher = new StockListFetcher();
         List<Pair<String, String>> stockList = fetcher.getStockList();
         for(Pair<String,String> stock:stockList){
             System.out.println(stock);
