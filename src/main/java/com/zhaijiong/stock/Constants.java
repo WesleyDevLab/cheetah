@@ -12,15 +12,28 @@ public class Constants {
 
     public static final String MARKET_START_DATE = "19901219";
 
-    public static final byte[] TABLE_CF_BASE = "b".getBytes();
-
-    public static final byte[] TABLE_CF_FEATURE = "f".getBytes();
-
     public static final String SCHEDULER_JOBS = "jobs";
 
     public static final String SCHEDULER_JOB_CLASSNAME = "classname";
 
     public static final String SCHEDULER_JOB_CRON = "cron";
+
+    /**
+     * table definition
+     */
+    public static final String TABLE_STOCK_DAILY = "stocks_day";
+
+    public static final byte[] TABLE_CF_BASE = "b".getBytes();
+
+    public static final byte[] TABLE_CF_FEATURE = "f".getBytes();
+
+    public static final String TABLE_STOCK_INFO = "stocks_info";
+
+    public static final byte[] TABLE_CF_INFO = "i".getBytes();
+
+    public static final byte[] TABLE_STOCK_NEWS = "stocks_news".getBytes();
+
+    public static final byte[] TABLE_CF_NEWS = "n".getBytes();
 
     /**
      * stock column
@@ -38,4 +51,5 @@ public class Constants {
     public static final byte[] TOTAL_VALUE = "totalValue".getBytes(UTF8);
     public static final byte[] MARKET_VALUE = "marketValue".getBytes(UTF8);
     public static final byte[] AMPLITUDE = "amplitude".getBytes(UTF8);
+    public static final byte[] NAME = "name".getBytes(UTF8);
 }

@@ -64,8 +64,15 @@ public class Utils {
     }
 
     public static byte[] getRowkeyWithMD5Prefix(Stock stock){
-        String s = Hashing.md5().hashString(stock.symbol, UTF8).toString().substring(0,4);
-        return Bytes.add(s.getBytes(),stock.symbol.getBytes());
+        return Bytes.add(md5Prefix(stock.symbol,4),stock.symbol.getBytes());
+    }
+
+    public static byte[] getRowkeyWithMD5Prefix(String symbol){
+        return Bytes.add(md5Prefix(symbol,4),symbol.getBytes());
+    }
+
+    public static byte[] md5Prefix(String rowkey,int length){
+        return Bytes.head(Hashing.md5().hashString(rowkey,UTF8).toString().getBytes(),length);
     }
 
     /**

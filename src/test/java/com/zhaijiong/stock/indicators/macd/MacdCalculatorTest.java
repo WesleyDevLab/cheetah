@@ -28,7 +28,7 @@ public class MacdCalculatorTest {
 //        List<Stock> stocks = collecter.collect("601886");
 //        List<Double> closes = Lists.newLinkedList();
 //        for(Stock stock : stocks){
-//            System.out.println(Utils.formatDate(stock.getDate()) +":"+stock.getAdjClose() );
+//            System.out.println(Utils.formatDate(stock.getStockByDate()) +":"+stock.getAdjClose() );
 //            closes.add(stock.getAdjClose());
 //        }
 //        Collections.reverse(closes);
@@ -58,7 +58,7 @@ public class MacdCalculatorTest {
 //        List<Stock> stocks = collecter.collect("601616");
 //        List<Double> prices = Lists.newLinkedList();
 //        for(Stock stock : stocks){
-//            System.out.println(Utils.formatDate(stock.getDate()) +":"+stock.getAdjClose() );
+//            System.out.println(Utils.formatDate(stock.getStockByDate()) +":"+stock.getAdjClose() );
 ////            prices.add(new BigDecimal(stock.getAdjClose()));
 //            prices.add(stock.getAdjClose());
 //        }

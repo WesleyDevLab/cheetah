@@ -7,7 +7,8 @@ jobs:
   dailyDataDownload:
       classname: com.zhaijiong.stock.scheduler.StockDailyDataDownloadJob
       tablename: stocks_day
-      cron: "0 0 18 * * ? *"
-#  newsDataDownload:
-#      classname: com.zhaijiong.stock.scheduler.StockDailyDataDownloadJob
-#      tablename: stocks_day
+      cron: "0 0 1 * * ? *"
+  stockListDownload:
+      classname: com.zhaijiong.stock.scheduler.StockListDownloadJob
+      tablename: stocks_day
+      cron: "0 30 0 * * ? *"

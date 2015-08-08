@@ -78,6 +78,7 @@ public class StockListFetcher {
                 continue;
             }
             String[] stockArr = stock.text().split("\\(");
+            //key:name,value:symbol
             stockList.add(new Pair(stockArr[0], stockArr[1].replaceAll("\\)","")));
         }
         LOG.info("600:"+sh+",000:"+sz+",002:"+zxb+",300:"+cyb+",other:"+other);
