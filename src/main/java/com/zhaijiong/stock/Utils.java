@@ -20,6 +20,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.zhaijiong.stock.Constants.UTF8;
+
 /**
  * Created by eryk on 2015/7/4.
  */
@@ -29,7 +31,6 @@ public class Utils {
 
     public static String SIMLE_DATA_STYLE = "yyyy-MM-dd hh:mm:ss";
 
-    public static final Charset UTF8 = Charset.forName("UTF-8");
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("hh:MM:ss");
 
@@ -67,7 +68,24 @@ public class Utils {
         return Bytes.add(s.getBytes(),stock.symbol.getBytes());
     }
 
+    /**
+     * 从rowkey的bytes中获取symbol和date信息
+     * @param rowkey
+     * @return
+     */
+    public static String getStockSymbol(byte[] rowkey){
+        if(rowkey.length == 20){
+            return Bytes.toString(Bytes.head(rowkey,6));
+        }
+        if(rowkey.length == 24){ //key with 4 byte md5 prefix
+            return Bytes.toString(rowkey).substring(4,10);
+        }
+        return "";
+    }
 
+    public static Date getStockDate(byte[] rowkey){
+        return Utils.bytes2Date(Bytes.tail(rowkey,14),"yyyyMMddhhmmss");
+    }
 
     public static List<URL> findResources(String name) throws IOException {
         List<URL> urls = new ArrayList<URL>();
