@@ -34,7 +34,7 @@ public class StockDB {
     }
 
     /**
-     * rowkey : md5(symbol,4) + symbol + yyyyMMddhhmmss
+     * rowkey : md5(symbol,4) + symbol + yyyyMMdd
      * @param stocks
      * @throws IOException
      */
@@ -42,7 +42,7 @@ public class StockDB {
         HTableInterface table = context.getTable(Constants.TABLE_STOCK_DAILY);
         List<Put> puts = Lists.newLinkedList();
         for (Stock stock : stocks) {
-            byte[] rowkey = getRowkeyWithMd5PrefixAndDateSuffix(stock);
+            byte[] rowkey = Utils.getRowkeyWithMd5PrefixAndDaySuffix(stock);
             Put put = new Put(rowkey);
             addColumn(stock, put);
             puts.add(put);
@@ -71,13 +71,13 @@ public class StockDB {
     }
 
     /**
-     * rowkey : md5(symbol,4) + symbol + yyyyMMddhhmmss
+     * rowkey : md5(symbol,4) + symbol + yyyyMMdd
      * @param stock
      * @throws IOException
      */
     public void saveStock(Stock stock) throws IOException {
         HTableInterface table = context.getTable(TABLE_STOCK_DAILY);
-        Put put = new Put(getRowkeyWithMd5PrefixAndDateSuffix(stock));
+        Put put = new Put(Utils.getRowkeyWithMd5PrefixAndDaySuffix(stock));
         addColumn(stock, put);
         table.put(put);
         context.close();

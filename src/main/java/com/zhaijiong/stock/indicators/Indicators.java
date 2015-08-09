@@ -1,6 +1,5 @@
 package com.zhaijiong.stock.indicators;
 
-import com.google.common.collect.Lists;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MAType;
 import com.tictactec.ta.lib.MInteger;

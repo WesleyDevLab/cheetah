@@ -57,10 +57,10 @@ public class Utils {
     }
 
 
-    public static byte[] getRowkeyWithMd5PrefixAndDateSuffix(Stock stock) {
+    public static byte[] getRowkeyWithMd5PrefixAndDaySuffix(Stock stock) {
         byte[] md5 = md5Prefix(stock.symbol,4);
         byte[] symbol = Bytes.toBytes(stock.symbol);
-        byte[] date = Bytes.toBytes(Utils.formatDate(stock.date, "yyyyMMddhhmmss"));
+        byte[] date = Bytes.toBytes(Utils.formatDate(stock.date, "yyyyMMdd"));
         return Bytes.add(md5,symbol,date);
     }
 
