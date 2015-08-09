@@ -2,7 +2,7 @@ package com.zhaijiong.stock.datasource;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zhaijiong.stock.Pair;
+import com.zhaijiong.stock.common.Pair;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

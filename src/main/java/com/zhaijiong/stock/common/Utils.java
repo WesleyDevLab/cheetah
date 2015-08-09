@@ -1,9 +1,9 @@
-package com.zhaijiong.stock;
+package com.zhaijiong.stock.common;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
+import com.zhaijiong.stock.Stock;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -15,12 +15,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.zhaijiong.stock.Constants.UTF8;
+import static com.zhaijiong.stock.common.Constants.UTF8;
 
 /**
  * Created by eryk on 2015/7/4.

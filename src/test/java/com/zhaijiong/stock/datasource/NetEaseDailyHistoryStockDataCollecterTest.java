@@ -1,12 +1,9 @@
 package com.zhaijiong.stock.datasource;
 
-import com.zhaijiong.stock.Pair;
 import com.zhaijiong.stock.Stock;
 import org.junit.Test;
 
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class NetEaseDailyHistoryStockDataCollecterTest {
 

@@ -1,7 +1,7 @@
 package com.zhaijiong.stock.dao;
 
 import com.zhaijiong.stock.Context;
-import com.zhaijiong.stock.Pair;
+import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.Stock;
 import com.zhaijiong.stock.datasource.NetEaseDailyHistoryStockDataCollecter;
 import com.zhaijiong.stock.datasource.StockListFetcher;

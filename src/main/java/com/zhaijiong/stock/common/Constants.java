@@ -1,4 +1,4 @@
-package com.zhaijiong.stock;
+package com.zhaijiong.stock.common;
 
 import java.nio.charset.Charset;
 

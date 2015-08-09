@@ -2,7 +2,7 @@ package com.zhaijiong.stock.datasource;
 
 import com.google.common.collect.Lists;
 import com.zhaijiong.stock.Stock;
-import com.zhaijiong.stock.Utils;
+import com.zhaijiong.stock.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

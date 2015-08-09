@@ -1,6 +1,8 @@
 package com.zhaijiong.stock;
 
 import com.google.common.base.Strings;
+import com.zhaijiong.stock.common.Constants;
+import com.zhaijiong.stock.common.Utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.client.HTableInterface;

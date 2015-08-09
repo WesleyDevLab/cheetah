@@ -1,7 +1,7 @@
 package com.zhaijiong.stock.scheduler;
 
 import com.zhaijiong.stock.Context;
-import com.zhaijiong.stock.Pair;
+import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.datasource.StockListFetcher;
 import org.quartz.Job;

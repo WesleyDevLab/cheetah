@@ -3,7 +3,7 @@ package com.zhaijiong.stock.indicators.macd;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 import com.zhaijiong.stock.Stock;
-import com.zhaijiong.stock.Utils;
+import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.datasource.NetEaseDailyHistoryStockDataCollecter;
 import com.zhaijiong.stock.datasource.StockDataCollecter;
 import com.zhaijiong.stock.indicators.Indicators;

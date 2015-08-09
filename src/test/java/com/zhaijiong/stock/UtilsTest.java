@@ -1,9 +1,8 @@
 package com.zhaijiong.stock;
 
+import com.zhaijiong.stock.common.Utils;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class UtilsTest {
 
