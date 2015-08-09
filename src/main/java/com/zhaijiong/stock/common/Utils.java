@@ -57,9 +57,15 @@ public class Utils {
     }
 
 
-    public static byte[] getRowkey(Stock stock) {
-        return Bytes.add(stock.symbol.getBytes(),
-                Bytes.toBytes(Utils.formatDate(stock.date, "yyyyMMddhhmmss")));
+    public static byte[] getRowkeyWithMd5PrefixAndDateSuffix(Stock stock) {
+        byte[] md5 = md5Prefix(stock.symbol,4);
+        byte[] symbol = Bytes.toBytes(stock.symbol);
+        byte[] date = Bytes.toBytes(Utils.formatDate(stock.date, "yyyyMMddhhmmss"));
+        return Bytes.add(md5,symbol,date);
+    }
+
+    public static byte[] getRowkeyWithMd5PrefixAndDateSuffix(String symbol,String date){
+        return Bytes.add(getRowkeyWithMD5Prefix(symbol.getBytes()), date.getBytes());
     }
 
     public static byte[] getRowkeyWithMD5Prefix(Stock stock){
@@ -68,6 +74,10 @@ public class Utils {
 
     public static byte[] getRowkeyWithMD5Prefix(String symbol){
         return Bytes.add(md5Prefix(symbol,4),symbol.getBytes());
+    }
+
+    public static byte[] getRowkeyWithMD5Prefix(byte[] symbol){
+        return Bytes.add(md5Prefix(Bytes.toString(symbol),4),symbol);
     }
 
     public static byte[] md5Prefix(String rowkey,int length){

@@ -27,12 +27,11 @@ public class StockDBTest {
         context.close();
     }
 
-//    @Test
-    public void testSet() throws Exception {
+    @Test
+    public void testSetAll() throws Exception {
 
         String start = "19901219";
-        String stop = "20150804";
-        String symbol = "601886";
+        String stop = "20150809";
 
         StockListFetcher stockListFetcher = new StockListFetcher();
         List<Pair<String, String>> stockList = stockListFetcher.getStockList();
@@ -41,19 +40,32 @@ public class StockDBTest {
             List<Stock> stocks = collecter.collect(stock.getVal(), start, stop);
 
             StockDB stockDB = new StockDB(context);
-            stockDB.saveStockHistory(stocks);
+            stockDB.saveStockDailyData(stocks);
         }
     }
 
-//    @Test
+    @Test
+    public void testSaveSingleStock() throws IOException {
+        String start = "19901219";
+        String stop = "20150809";
+        String symbol = "601886";
+
+        NetEaseDailyHistoryStockDataCollecter collecter = new NetEaseDailyHistoryStockDataCollecter();
+        List<Stock> stocks = collecter.collect(symbol, start, stop);
+
+        StockDB stockDB = new StockDB(context);
+        stockDB.saveStockDailyData(stocks);
+    }
+
+    @Test
     public void testGet() throws IOException {
-        String start = "20150806";
-        String stop = "20150807";
-        String symbol = "600000";
+        String start = "19901219";
+        String stop = "20150809";
+        String symbol = "601886";
 
         StockDB stockDB = new StockDB(context);
         List<Stock> stocks = stockDB.getStockHistory(symbol, start, stop);
-        for(Stock stock:stocks){
+        for (Stock stock : stocks) {
             System.out.println(stock);
         }
     }

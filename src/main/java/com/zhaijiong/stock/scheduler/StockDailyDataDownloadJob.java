@@ -45,7 +45,7 @@ public class StockDailyDataDownloadJob implements Job{
                 NetEaseDailyHistoryStockDataCollecter collecter = new NetEaseDailyHistoryStockDataCollecter();
                 List<Stock> stocks = collecter.collect(stock.getVal(), starttime, stoptime);
                 StockDB stockDB = new StockDB(context);
-                stockDB.saveStockHistory(stocks);
+                stockDB.saveStockDailyData(stocks);
             }
             context.close();
         } catch (IOException e) {

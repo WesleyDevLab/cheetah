@@ -16,6 +16,7 @@ import java.util.*;
 
 import static com.zhaijiong.stock.common.Constants.*;
 import static com.zhaijiong.stock.common.Constants.TABLE_CF_BASE;
+import static com.zhaijiong.stock.common.Utils.getRowkeyWithMd5PrefixAndDateSuffix;
 import static com.zhaijiong.stock.common.Utils.getRowkeyWithMD5Prefix;
 import static org.apache.hadoop.hbase.util.Bytes.toBytes;
 import static org.apache.hadoop.hbase.util.Bytes.toDouble;
@@ -32,11 +33,16 @@ public class StockDB {
         this.context = context;
     }
 
-    public void saveStockHistory(List<Stock> stocks) throws IOException {
+    /**
+     * rowkey : md5(symbol,4) + symbol + yyyyMMddhhmmss
+     * @param stocks
+     * @throws IOException
+     */
+    public void saveStockDailyData(List<Stock> stocks) throws IOException {
         HTableInterface table = context.getTable(Constants.TABLE_STOCK_DAILY);
         List<Put> puts = Lists.newLinkedList();
         for (Stock stock : stocks) {
-            byte[] rowkey = getRowkeyWithMD5Prefix(stock);
+            byte[] rowkey = getRowkeyWithMd5PrefixAndDateSuffix(stock);
             Put put = new Put(rowkey);
             addColumn(stock, put);
             puts.add(put);
@@ -45,6 +51,12 @@ public class StockDB {
         context.closeTable(table);
     }
 
+    /**
+     * 存储stock列表,key为symbol，value为股票名称
+     * rowkey : md5(symbol,4) + symbol
+     * @param stockList
+     * @throws IOException
+     */
     public void saveStockList(List<Pair<String, String>> stockList) throws IOException {
         HTableInterface table = context.getTable(Constants.TABLE_STOCK_INFO);
         List<Put> puts = Lists.newLinkedList();
@@ -58,9 +70,14 @@ public class StockDB {
         context.closeTable(table);
     }
 
+    /**
+     * rowkey : md5(symbol,4) + symbol + yyyyMMddhhmmss
+     * @param stock
+     * @throws IOException
+     */
     public void saveStock(Stock stock) throws IOException {
         HTableInterface table = context.getTable(TABLE_STOCK_DAILY);
-        Put put = new Put(getRowkeyWithMD5Prefix(stock));
+        Put put = new Put(getRowkeyWithMd5PrefixAndDateSuffix(stock));
         addColumn(stock, put);
         table.put(put);
         context.close();
@@ -70,12 +87,12 @@ public class StockDB {
         List<Stock> stocks = Lists.newLinkedList();
         HTableInterface table = context.getTable(TABLE_STOCK_DAILY);
         Scan scan = new Scan();
-        scan.setStartRow(Bytes.add(symbol.getBytes(), startDate.getBytes()));
-        scan.setStopRow(Bytes.add(symbol.getBytes(), stopDate.getBytes()));
+        scan.setStartRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol,startDate));
+        scan.setStopRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol,stopDate));
         scan.setCaching(200);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("startRow:" + Bytes.toString(Bytes.add(symbol.getBytes(), startDate.getBytes())));
-            LOG.debug("stopRow:" + Bytes.toString(Bytes.add(symbol.getBytes(), stopDate.getBytes())));
+            LOG.debug("startRow:" + getRowkeyWithMd5PrefixAndDateSuffix(symbol,startDate));
+            LOG.debug("stopRow:" + getRowkeyWithMd5PrefixAndDateSuffix(symbol,stopDate));
         }
         ResultScanner scanner = table.getScanner(scan);
         for (Result result : scanner) {
@@ -143,8 +160,8 @@ public class StockDB {
         List<Point> points = Lists.newLinkedList();
         HTableInterface table = context.getTable(TABLE_STOCK_DAILY);
         Scan scan = new Scan();
-        scan.setStartRow(Bytes.add(symbol.getBytes(), startDate.getBytes()));
-        scan.setStopRow(Bytes.add(symbol.getBytes(), stopDate.getBytes()));
+        scan.setStartRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, startDate));
+        scan.setStopRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, stopDate));
         scan.addColumn(TABLE_CF_BASE, toBytes(metric));
         ResultScanner scanner = table.getScanner(scan);
         for (Result result : scanner) {
