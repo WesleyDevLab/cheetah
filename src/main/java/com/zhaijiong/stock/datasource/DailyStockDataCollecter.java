@@ -1,7 +1,10 @@
 package com.zhaijiong.stock.datasource;
 
 import com.google.common.collect.Lists;
+import com.zhaijiong.stock.KType;
 import com.zhaijiong.stock.Stock;
+import com.zhaijiong.stock.Symbol;
+import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +19,22 @@ import java.util.Scanner;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-4.
  */
-public class NetEaseDailyHistoryStockDataCollecter implements StockDataCollecter {
-    private static final Logger LOG = LoggerFactory.getLogger(NetEaseDailyHistoryStockDataCollecter.class);
+public class DailyStockDataCollecter implements Collecter {
+    private static final Logger LOG = LoggerFactory.getLogger(DailyStockDataCollecter.class);
 
-    public final String historyDataUrl = "http://quotes.money.163.com/service/chddata.html?code=%s&start=%s&end=%s&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;TURNOVER;VOTURNOVER;VATURNOVER;TCAP;MCAP";
+    public final String dailyDataUrl = "http://quotes.money.163.com/service/chddata.html?code=%s&start=%s&end=%s&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;TURNOVER;VOTURNOVER;VATURNOVER;TCAP;MCAP";
+
+    private String startDate;
+    private String stopDate;
+
+    public DailyStockDataCollecter(String startDate,String stopDate){
+        this.startDate = startDate;
+        this.stopDate = stopDate;
+    }
 
     @Override
-    public List<Stock> collect(String symbol, String start, String stop) {
-        String url = String.format(historyDataUrl, Utils.netEaseSymbol(symbol), start, stop);
+    public List<Stock> collect(String symbol) {
+        String url = String.format(dailyDataUrl, Symbol.getSymbol(symbol,dailyDataUrl), startDate, stopDate);
         LOG.info("collect:"+url);
         List<Stock> stocks = Lists.newLinkedList();
         try {
@@ -43,7 +54,7 @@ public class NetEaseDailyHistoryStockDataCollecter implements StockDataCollecter
                     try {
                         Stock stock = new Stock();
 
-                        stock.date = Utils.parseDate(line[0]);
+                        stock.date = Utils.parseDate(line[0],Constants.NETEASE_DATE_STYLE);
                         stock.symbol = line[1].replace("'", "");
                         stock.name = line[2];
                         stock.close = Utils.parseDouble(line[3]);
@@ -72,4 +83,5 @@ public class NetEaseDailyHistoryStockDataCollecter implements StockDataCollecter
         }
         return stocks;
     }
+
 }

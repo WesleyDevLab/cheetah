@@ -19,6 +19,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.zhaijiong.stock.common.Constants.ROWKEY_DATA_FORMAT;
 import static com.zhaijiong.stock.common.Constants.UTF8;
 
 /**
@@ -26,41 +27,52 @@ import static com.zhaijiong.stock.common.Constants.UTF8;
  */
 public class Utils {
 
-    public static String YAHOO_DATA_STYLE = "yyyy-MM-dd";
-
-    public static String SIMLE_DATA_STYLE = "yyyy-MM-dd hh:mm:ss";
-
-
-    public static SimpleDateFormat sdf = new SimpleDateFormat("hh:MM:ss");
-
-    public static String now(){
-        Date date = new Date();
-        return sdf.format(date);
-    }
-
     public static Date bytes2Date(byte[] bytes,String pattern){
         DateTimeFormatter format = DateTimeFormat.forPattern(pattern);
         DateTime dateTime = DateTime.parse(Bytes.toString(bytes),format);
         return dateTime.toDate();
     }
 
+    public static String getNow(){
+        DateTime dateTime = new DateTime();
+        return dateTime.toString(ROWKEY_DATA_FORMAT);
+    }
+
+    public static String getNow(String pattern){
+        DateTime dateTime = new DateTime();
+        return dateTime.toString(pattern);
+    }
+
+    //TODO 时间取整
     public static String getTomorrow(){
         DateTime dateTime = new DateTime();
         dateTime = dateTime.plusDays(1);
-        return dateTime.toString("yyyyMMdd");
+        return dateTime.toString(ROWKEY_DATA_FORMAT);
     }
 
+    public static String getTomorrow(String pattern){
+        DateTime dateTime = new DateTime();
+        dateTime = dateTime.plusDays(1);
+        return dateTime.toString(pattern);
+    }
+
+    //TODO 时间取整
     public static String getYesterday(){
         DateTime dateTime = new DateTime();
         dateTime = dateTime.plusDays(-1);
-        return dateTime.toString("yyyyMMdd");
+        return dateTime.toString(ROWKEY_DATA_FORMAT);
     }
 
+    public static String getYesterday(String pattern){
+        DateTime dateTime = new DateTime();
+        dateTime = dateTime.plusDays(-1);
+        return dateTime.toString(pattern);
+    }
 
     public static byte[] getRowkeyWithMd5PrefixAndDaySuffix(Stock stock) {
         byte[] md5 = md5Prefix(stock.symbol,4);
         byte[] symbol = Bytes.toBytes(stock.symbol);
-        byte[] date = Bytes.toBytes(Utils.formatDate(stock.date, "yyyyMMdd"));
+        byte[] date = Bytes.toBytes(Utils.formatDate(stock.date, ROWKEY_DATA_FORMAT));
         return Bytes.add(md5,symbol,date);
     }
 
@@ -90,17 +102,14 @@ public class Utils {
      * @return
      */
     public static String getStockSymbol(byte[] rowkey){
-        if(rowkey.length == 20){
-            return Bytes.toString(Bytes.head(rowkey,6));
-        }
-        if(rowkey.length == 24){ //key with 4 byte md5 prefix
+        if(rowkey.length == 22){ //key with 4 byte md5 prefix
             return Bytes.toString(rowkey).substring(4,10);
         }
         return "";
     }
 
     public static Date getStockDate(byte[] rowkey){
-        return Utils.bytes2Date(Bytes.tail(rowkey,14),"yyyyMMddhhmmss");
+        return Utils.bytes2Date(Bytes.tail(rowkey,12),ROWKEY_DATA_FORMAT);
     }
 
     public static List<URL> findResources(String name) throws IOException {
@@ -115,6 +124,8 @@ public class Utils {
     public static Integer getInt(Object o) {
         if (o == null)
             return 0;
+        else if (o instanceof String)
+            return Integer.parseInt((String) o);
         else if (o instanceof Long)
             return ((Long) o).intValue();
         else if (o instanceof Integer)
@@ -129,6 +140,8 @@ public class Utils {
     public static Long getLong(Object o) {
         if (o == null)
             return 0l;
+        else if (o instanceof String)
+            return Long.parseLong((String)o);
         else if (o instanceof Long)
             return (Long) o;
         else if (o instanceof Integer)
@@ -140,9 +153,11 @@ public class Utils {
                     + " + to long integer");
     }
 
-    static Double getDouble(Object o) {
+    public static Double getDouble(Object o) {
         if (o == null)
             return 0.0;
+        else if (o instanceof String)
+            return Double.parseDouble((String)o);
         else if (o instanceof Long)
             return ((Long) o).doubleValue();
         else if (o instanceof Integer)
@@ -206,8 +221,8 @@ public class Utils {
         return toStr(conf.get(key));
     }
 
-    public static Date parseDate(String date){
-        return DateTimeFormat.forPattern(YAHOO_DATA_STYLE).parseDateTime(date).toDate();
+    public static Date parseDate(String date,String format){
+        return DateTimeFormat.forPattern(format).parseDateTime(date).toDate();
     }
 
 
@@ -256,34 +271,11 @@ public class Utils {
         return null;
     }
 
-    /**
-     * 雅虎股票接口需要将股票代码后面加上.ss或者.sz
-     * @param symbol
-     * @return
-     */
-    public static String yahooSymbol(String symbol){
-        if(Strings.isNullOrEmpty(symbol) && symbol.length() != 6){
-            return "";
+    public static boolean isNotNullorZero(Double val){
+        if(val!=null || val>0){
+            return true;
+        }else{
+            return false;
         }
-        if(symbol.startsWith("0") || symbol.startsWith("3")){
-            return symbol + ".sz";
-        }
-        if(symbol.startsWith("6")){
-            return symbol + ".ss";
-        }
-        return "";
-    }
-
-    public static String netEaseSymbol(String symbol){
-        if(Strings.isNullOrEmpty(symbol) && symbol.length() != 6){
-            return "";
-        }
-        if(symbol.startsWith("6")){
-            return "0" + symbol;
-        }
-        if(symbol.startsWith("0") || symbol.startsWith("3")){
-            return "1" + symbol;
-        }
-        return "";
     }
 }

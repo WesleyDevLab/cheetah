@@ -5,9 +5,10 @@ database.pool.size: 10
 jobs:
   dailyDataDownload:
       classname: com.zhaijiong.stock.scheduler.StockDailyDataDownloadJob
-      tablename: stocks_day
       cron: "0 0 1 * * ? *"
   stockListDownload:
       classname: com.zhaijiong.stock.scheduler.StockListDownloadJob
-      tablename: stocks_day
       cron: "0 30 0 * * ? *"
+  stockAvgPriceSave:
+      classname: com.zhaijiong.stock.scheduler.StockAvgPriceSaveJob
+      cron: "0 12 18 * * ? *"

@@ -7,7 +7,7 @@ import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.Stock;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
-import com.zhaijiong.stock.datasource.NetEaseDailyHistoryStockDataCollecter;
+import com.zhaijiong.stock.datasource.DailyStockDataCollecter;
 import com.zhaijiong.stock.datasource.StockListFetcher;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -26,10 +26,8 @@ public class StockDailyDataDownloadJob implements Job{
     @Override
     public void execute(JobExecutionContext jobContext) throws JobExecutionException {
         try {
-            String tablename = jobContext.getJobDetail().getJobDataMap().getString("tablename");
             String starttime = jobContext.getJobDetail().getJobDataMap().getString("starttime");
             String stoptime = jobContext.getJobDetail().getJobDataMap().getString("stoptime");
-            Preconditions.checkNotNull(tablename,"tablename must be set");
             if(Strings.isNullOrEmpty(starttime)){
                 starttime = Utils.getYesterday();
             }
@@ -37,13 +35,12 @@ public class StockDailyDataDownloadJob implements Job{
                 starttime = Utils.getYesterday();
                 stoptime = Utils.getTomorrow();
             }
-
             Context context = new Context();
             StockListFetcher stockListFetcher = new StockListFetcher();
             List<Pair<String, String>> stockList = stockListFetcher.getStockList();
             for (Pair<String, String> stock : stockList) {
-                NetEaseDailyHistoryStockDataCollecter collecter = new NetEaseDailyHistoryStockDataCollecter();
-                List<Stock> stocks = collecter.collect(stock.getVal(), starttime, stoptime);
+                DailyStockDataCollecter collecter = new DailyStockDataCollecter(starttime, stoptime);
+                List<Stock> stocks = collecter.collect(stock.getVal());
                 StockDB stockDB = new StockDB(context);
                 stockDB.saveStockDailyData(stocks);
             }

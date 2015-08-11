@@ -10,6 +10,14 @@ public class Constants {
 
     public static final String DATABASE_POOL_SIZE = "database.pool.size";
 
+    public static String NETEASE_DATE_STYLE = "yyyy-MM-dd";
+
+    public static String IFENG_DATE_STYLE = "yyyy-MM-dd";
+
+    public static String BISNESS_DATA_FORMAT = "yyyyMMdd";
+
+    public static final String ROWKEY_DATA_FORMAT = "yyyyMMddHHmm";
+
     public static final String MARKET_START_DATE = "19901219";
 
     public static final String SCHEDULER_JOBS = "jobs";
@@ -21,11 +29,21 @@ public class Constants {
     /**
      * table definition
      */
-    public static final String TABLE_STOCK_DAILY = "stocks_day";
+    public static final String TABLE_STOCK_5_MINUTES = "stocks_data_5mins";
 
-    public static final byte[] TABLE_CF_BASE = "b".getBytes();
+    public static final String TABLE_STOCK_15_MINUTES = "stocks_data_15mins";
 
-    public static final byte[] TABLE_CF_FEATURE = "f".getBytes();
+    public static final String TABLE_STOCK_30_MINUTES = "stocks_data_30mins";
+
+    public static final String TABLE_STOCK_60_MINUTES = "stocks_data_60mins";
+
+    public static final String TABLE_STOCK_DAILY = "stocks_data_daily";
+
+    public static final String TABLE_STOCK_WEEK = "stocks_data_week";
+
+    public static final String TABLE_STOCK_MONTH = "stocks_data_month";
+
+    public static final byte[] TABLE_CF_DATA = "d".getBytes();
 
     public static final String TABLE_STOCK_INFO = "stocks_info";
 
@@ -35,21 +53,24 @@ public class Constants {
 
     public static final byte[] TABLE_CF_NEWS = "n".getBytes();
 
+
     /**
      * stock column
      */
-    public static final byte[] CLOSE = "close".getBytes(UTF8);
-    public static final byte[] HIGH = "high".getBytes(UTF8);
-    public static final byte[] LOW = "low".getBytes(UTF8);
-    public static final byte[] OPEN = "open".getBytes(UTF8);
-    public static final byte[] LAST_CLOSE = "lastClose".getBytes(UTF8);
-    public static final byte[] CHANGE_AMOUNT = "changeAmount".getBytes(UTF8);
-    public static final byte[] CHANGE = "change".getBytes(UTF8);
-    public static final byte[] TURNOVER_RATE = "turnoverRate".getBytes(UTF8);
-    public static final byte[] VOLUME = "volume".getBytes(UTF8);
-    public static final byte[] AMOUNT = "amount".getBytes(UTF8);
-    public static final byte[] TOTAL_VALUE = "totalValue".getBytes(UTF8);
-    public static final byte[] MARKET_VALUE = "marketValue".getBytes(UTF8);
-    public static final byte[] AMPLITUDE = "amplitude".getBytes(UTF8);
-    public static final byte[] NAME = "name".getBytes(UTF8);
+    public static final byte[] CLOSE = "close".getBytes();
+    public static final byte[] HIGH = "high".getBytes();
+    public static final byte[] LOW = "low".getBytes();
+    public static final byte[] OPEN = "open".getBytes();
+    public static final byte[] LAST_CLOSE = "lastClose".getBytes();
+    public static final byte[] CHANGE_AMOUNT = "changeAmount".getBytes();
+    public static final byte[] CHANGE = "change".getBytes();
+    public static final byte[] TURNOVER_RATE = "turnoverRate".getBytes();
+    public static final byte[] VOLUME = "volume".getBytes();
+    public static final byte[] AMOUNT = "amount".getBytes();
+    public static final byte[] TOTAL_VALUE = "totalValue".getBytes();
+    public static final byte[] MARKET_VALUE = "marketValue".getBytes();
+    public static final byte[] AMPLITUDE = "amplitude".getBytes();
+    public static final byte[] NAME = "name".getBytes();
+
+    public static final byte[] AVG_COST = "avgCost".getBytes();
 }

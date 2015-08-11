@@ -134,11 +134,4 @@ public class Indicators {
         return output;
     }
 
-    public double[] avgPrice(double[] opens,double[] highs,double[] lows,double[] closes){
-        double[] output = new double[opens.length];
-        MInteger outBegIdx = new MInteger();
-        MInteger outNBElement = new MInteger();
-        core.avgPrice(0,opens.length-1,opens,highs,lows,closes,outBegIdx,outNBElement,output);
-        return output;
-    }
 }

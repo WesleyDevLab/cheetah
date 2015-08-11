@@ -5,8 +5,6 @@ import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Constants;
 import org.apache.hadoop.hbase.util.Bytes;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,17 +27,19 @@ public class StockSlice {
 
     public Map<String, List<Double>> points;
 
-    public static StockSlice getSlice(List<Stock> stocks, String start, String stop) {
-        return new StockSlice(stocks, start, stop, Type.DAY);
+    public static StockSlice getSlice(String symbol,List<Stock> stocks, String start, String stop) {
+        return new StockSlice(symbol,stocks, start, stop, Type.DAY);
     }
 
-    private StockSlice(List<Stock> stocks, String start, String stop, Type type) {
+    private StockSlice(String symbol,List<Stock> stocks, String start, String stop, Type type) {
+        this.symbol = symbol;
         this.startDate = start;
         this.stopDate = stop;
         this.stocks = stocks;
         this.type = type;
         points = Maps.newHashMapWithExpectedSize(stocks.size());
         setClosePrice();
+        setVolumes();
     }
 
     public void setClosePrice() {
@@ -53,8 +53,19 @@ public class StockSlice {
         points.put(Bytes.toString(Constants.CLOSE), closes);
     }
 
+    public void setVolumes(){
+        List<Double> volumes = points.get(Bytes.toString(Constants.VOLUME));
+        if(volumes==null){
+            volumes = Lists.newLinkedList();
+        }
+        for (Stock stock : stocks) {
+            volumes.add(stock.volume);
+        }
+        points.put(Bytes.toString(Constants.VOLUME), volumes);
+    }
+
     public double[] getValues(String property) {
-        List<Double> values = points.get(Bytes.toString(Constants.CLOSE));
+        List<Double> values = points.get(property);
         if (values == null) {
             values = Lists.newArrayList();
         }

@@ -4,8 +4,8 @@ import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 import com.zhaijiong.stock.Stock;
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.datasource.NetEaseDailyHistoryStockDataCollecter;
-import com.zhaijiong.stock.datasource.StockDataCollecter;
+import com.zhaijiong.stock.datasource.Collecter;
+import com.zhaijiong.stock.datasource.DailyStockDataCollecter;
 import com.zhaijiong.stock.indicators.Indicators;
 import com.zhaijiong.stock.indicators.TALIBWraper;
 import org.junit.Test;
@@ -75,12 +75,12 @@ public class MacdCalculatorTest {
 //                -1.2720884750633508
 //    }
 
-//    @Test
+    @Test
     public void test_Macd(){
         start = "19901219";
         stop = "20150806";
-        StockDataCollecter collecter= new NetEaseDailyHistoryStockDataCollecter();
-        List<Stock> stocks = collecter.collect("601886",start,stop);
+        Collecter collecter= new DailyStockDataCollecter(start,stop);
+        List<Stock> stocks = collecter.collect("601886");
         double[] prices = new double[stocks.size()];
         int size = stocks.size();
         for(int i =0;i<size;i++){
@@ -102,8 +102,8 @@ public class MacdCalculatorTest {
 
     @Test
     public void test_ma(){
-        StockDataCollecter collecter= new NetEaseDailyHistoryStockDataCollecter();
-        List<Stock> stocks = collecter.collect("601886",start,stop);
+        Collecter collecter= new DailyStockDataCollecter(start,stop);
+        List<Stock> stocks = collecter.collect("601886");
         double[] prices = new double[stocks.size()];
         int size = stocks.size();
         System.out.println(size);
@@ -131,10 +131,10 @@ public class MacdCalculatorTest {
 
     }
 
-//    @Test
+    @Test
     public void test_boll() {
-        StockDataCollecter collecter = new NetEaseDailyHistoryStockDataCollecter();
-        List<Stock> stocks = collecter.collect("601886", start, stop);
+        Collecter collecter = new DailyStockDataCollecter(start, stop);
+        List<Stock> stocks = collecter.collect("601886");
         double[] prices = new double[stocks.size()];
         int size = stocks.size();
         System.out.println(size);
@@ -142,10 +142,14 @@ public class MacdCalculatorTest {
             Stock stock = stocks.get(i);
             prices[size - 1 - i] = stock.close;
         }
+        System.out.println("prices:"+prices.length);
         Indicators indicators = new Indicators();
+
         double[][] bbands = indicators.bbands(prices);
-//        for(double[] val:bbands){
-//            System.out.println(val[0]+":" +);
-//        }
+        System.out.println("boll length:"+bbands.length);
+        System.out.println("boll[0]:"+bbands[0].length);
+        System.out.println(bbands[0][bbands.length-1]);
+        System.out.println(bbands[1][bbands.length-1]);
+        System.out.println(bbands[2][bbands.length-1]);
     }
 }

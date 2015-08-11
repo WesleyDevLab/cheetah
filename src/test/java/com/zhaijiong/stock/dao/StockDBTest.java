@@ -3,7 +3,8 @@ package com.zhaijiong.stock.dao;
 import com.zhaijiong.stock.Context;
 import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.Stock;
-import com.zhaijiong.stock.datasource.NetEaseDailyHistoryStockDataCollecter;
+import com.zhaijiong.stock.datasource.DailyStockDataCollecter;
+import com.zhaijiong.stock.datasource.MinuteStockDataCollecter;
 import com.zhaijiong.stock.datasource.StockListFetcher;
 import org.junit.After;
 import org.junit.Before;
@@ -36,8 +37,8 @@ public class StockDBTest {
         StockListFetcher stockListFetcher = new StockListFetcher();
         List<Pair<String, String>> stockList = stockListFetcher.getStockList();
         for (Pair<String, String> stock : stockList) {
-            NetEaseDailyHistoryStockDataCollecter collecter = new NetEaseDailyHistoryStockDataCollecter();
-            List<Stock> stocks = collecter.collect(stock.getVal(), start, stop);
+            DailyStockDataCollecter collecter = new DailyStockDataCollecter(start, stop);
+            List<Stock> stocks = collecter.collect(stock.getVal());
 
             StockDB stockDB = new StockDB(context);
             stockDB.saveStockDailyData(stocks);
@@ -47,14 +48,24 @@ public class StockDBTest {
     @Test
     public void testSaveSingleStock() throws IOException {
         String start = "19901219";
-        String stop = "20150809";
+        String stop = "201508011";
         String symbol = "601886";
 
-        NetEaseDailyHistoryStockDataCollecter collecter = new NetEaseDailyHistoryStockDataCollecter();
-        List<Stock> stocks = collecter.collect(symbol, start, stop);
+        DailyStockDataCollecter collecter = new DailyStockDataCollecter(start, stop);
+        List<Stock> stocks = collecter.collect(symbol);
 
         StockDB stockDB = new StockDB(context);
         stockDB.saveStockDailyData(stocks);
+    }
+
+    @Test
+    public void testSaveSingleStockMinData(){
+        String start = "19901219";
+        String stop = "20150809";
+        MinuteStockDataCollecter collecter =new MinuteStockDataCollecter(start,stop,"5");
+        List<Stock> stocks = collecter.collect("601886");
+        StockDB stockDB = new StockDB(context);
+        stockDB.saveStock5MinData(stocks);
     }
 
     @Test
@@ -64,7 +75,7 @@ public class StockDBTest {
         String symbol = "601886";
 
         StockDB stockDB = new StockDB(context);
-        List<Stock> stocks = stockDB.getStockHistory(symbol, start, stop);
+        List<Stock> stocks = stockDB.getStockDataDaily(symbol, start, stop);
         for (Stock stock : stocks) {
             System.out.println(stock);
         }

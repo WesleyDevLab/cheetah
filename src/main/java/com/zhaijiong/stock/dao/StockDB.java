@@ -15,9 +15,10 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.zhaijiong.stock.common.Constants.*;
-import static com.zhaijiong.stock.common.Constants.TABLE_CF_BASE;
+import static com.zhaijiong.stock.common.Constants.TABLE_CF_DATA;
 import static com.zhaijiong.stock.common.Utils.getRowkeyWithMd5PrefixAndDateSuffix;
 import static com.zhaijiong.stock.common.Utils.getRowkeyWithMD5Prefix;
+import static com.zhaijiong.stock.common.Utils.isNotNullorZero;
 import static org.apache.hadoop.hbase.util.Bytes.toBytes;
 import static org.apache.hadoop.hbase.util.Bytes.toDouble;
 
@@ -28,73 +29,154 @@ public class StockDB {
     private static final Logger LOG = LoggerFactory.getLogger(StockDB.class);
 
     Context context;
+    HBase hbase;
 
-    public StockDB(Context context){
+    public StockDB(Context context) {
         this.context = context;
+        this.hbase = new HBase(context);
     }
 
-    /**
-     * rowkey : md5(symbol,4) + symbol + yyyyMMdd
-     * @param stocks
-     * @throws IOException
-     */
-    public void saveStockDailyData(List<Stock> stocks) throws IOException {
-        HTableInterface table = context.getTable(Constants.TABLE_STOCK_DAILY);
-        List<Put> puts = Lists.newLinkedList();
-        for (Stock stock : stocks) {
-            byte[] rowkey = Utils.getRowkeyWithMd5PrefixAndDaySuffix(stock);
-            Put put = new Put(rowkey);
-            addColumn(stock, put);
-            puts.add(put);
-        }
-        table.put(puts);
-        context.closeTable(table);
-    }
 
     /**
      * 存储stock列表,key为symbol，value为股票名称
      * rowkey : md5(symbol,4) + symbol
+     *
      * @param stockList
      * @throws IOException
      */
     public void saveStockList(List<Pair<String, String>> stockList) throws IOException {
-        HTableInterface table = context.getTable(Constants.TABLE_STOCK_INFO);
         List<Put> puts = Lists.newLinkedList();
         for (Pair<String, String> pair : stockList) {
             Put put = new Put(getRowkeyWithMD5Prefix(pair.getVal()));
-            put.add(Constants.TABLE_CF_INFO,Constants.NAME,Bytes.toBytes(pair.getKey()));
+            put.add(Constants.TABLE_CF_INFO, Constants.NAME, Bytes.toBytes(pair.getKey()));
             puts.add(put);
         }
-        table.put(puts);
-        LOG.info("total stock count:"+stockList.size());
-        context.closeTable(table);
+        hbase.put(TABLE_STOCK_INFO,puts);
+        LOG.info("total stock count:" + stockList.size());
+    }
+
+    public void saveStockAvgCost(String symbol,String date,double price){
+        List<Put> puts = Lists.newLinkedList();
+        Put put = new Put(getRowkeyWithMd5PrefixAndDateSuffix(symbol,date));
+        put.add(TABLE_CF_DATA,AVG_COST,Bytes.toBytes(price));
+        puts.add(put);
+        hbase.put(TABLE_STOCK_DAILY,puts);
+    }
+
+    public void saveStockDate(String tableName, List<Stock> stocks) {
+        List<Put> puts = getPuts(stocks);
+        hbase.put(tableName, puts);
     }
 
     /**
-     * rowkey : md5(symbol,4) + symbol + yyyyMMdd
-     * @param stock
-     * @throws IOException
+     * save 5 min stock data
+     *
+     * @param stocks
      */
-    public void saveStock(Stock stock) throws IOException {
-        HTableInterface table = context.getTable(TABLE_STOCK_DAILY);
-        Put put = new Put(Utils.getRowkeyWithMd5PrefixAndDaySuffix(stock));
-        addColumn(stock, put);
-        table.put(put);
-        context.close();
+    public void saveStock5MinData(List<Stock> stocks) {
+        saveStockDate(TABLE_STOCK_5_MINUTES, stocks);
     }
 
-    public List<Stock> getStockHistory(String symbol, String startDate, String stopDate) throws IOException {
+    /**
+     * save 15 min stock data
+     *
+     * @param stocks
+     */
+    public void saveStock15MinData(List<Stock> stocks) {
+        saveStockDate(TABLE_STOCK_15_MINUTES, stocks);
+    }
+
+    /**
+     * save 30 min stock data
+     *
+     * @param stocks
+     */
+    public void saveStock30MinData(List<Stock> stocks) {
+        saveStockDate(TABLE_STOCK_30_MINUTES, stocks);
+    }
+
+    /**
+     * save 60 min stock data
+     *
+     * @param stocks
+     */
+    public void saveStock60MinData(List<Stock> stocks) {
+        saveStockDate(TABLE_STOCK_60_MINUTES, stocks);
+    }
+
+    /**
+     * rowkey : md5(symbol,4) + symbol + yyyyMMddHHmm
+     *
+     * @param stocks
+     * @throws IOException
+     */
+    public void saveStockDailyData(List<Stock> stocks) throws IOException {
+        saveStockDate(TABLE_STOCK_DAILY, stocks);
+    }
+
+    public void saveStockWeekData(List<Stock> stocks) throws IOException {
+        saveStockDate(TABLE_STOCK_WEEK, stocks);
+    }
+
+    public void saveStockMonthData(List<Stock> stocks) throws IOException {
+        saveStockDate(TABLE_STOCK_MONTH, stocks);
+    }
+
+    public List<Stock> getStockData5Min(String symbol, String startDate, String stopDate) {
+        return getStockData(TABLE_STOCK_5_MINUTES, symbol, startDate, stopDate);
+    }
+
+    public List<Stock> getStockData15Min(String symbol, String startDate, String stopDate) {
+        return getStockData(TABLE_STOCK_15_MINUTES, symbol, startDate, stopDate);
+    }
+
+    public List<Stock> getStockData30Min(String symbol, String startDate, String stopDate) {
+        return getStockData(TABLE_STOCK_30_MINUTES, symbol, startDate, stopDate);
+    }
+
+    public List<Stock> getStockData60Min(String symbol, String startDate, String stopDate) {
+        return getStockData(TABLE_STOCK_60_MINUTES, symbol, startDate, stopDate);
+    }
+
+    public List<Stock> getStockDataDaily(String symbol, String startDate, String stopDate) {
+        return getStockData(TABLE_STOCK_DAILY, symbol, startDate, stopDate);
+    }
+
+    public List<Stock> getStockDataWeek(String symbol, String startDate, String stopDate) {
+        return getStockData(TABLE_STOCK_WEEK, symbol, startDate, stopDate);
+    }
+
+    public List<Stock> getStockDataMonth(String symbol, String startDate, String stopDate) {
+        return getStockData(TABLE_STOCK_MONTH, symbol, startDate, stopDate);
+    }
+
+    public List<Stock> getStockData(String tableName, String symbol, String startDate, String stopDate) {
         List<Stock> stocks = Lists.newLinkedList();
-        HTableInterface table = context.getTable(TABLE_STOCK_DAILY);
+        HTableInterface table = context.getTable(tableName);
         Scan scan = new Scan();
-        scan.setStartRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol,startDate));
-        scan.setStopRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol,stopDate));
-        scan.setCaching(200);
+        scan.setStartRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, startDate));
+        scan.setStopRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, stopDate));
+        scan.setCaching(2000);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("startRow:" + getRowkeyWithMd5PrefixAndDateSuffix(symbol,startDate));
-            LOG.debug("stopRow:" + getRowkeyWithMd5PrefixAndDateSuffix(symbol,stopDate));
+            LOG.debug("startRow:" + getRowkeyWithMd5PrefixAndDateSuffix(symbol, startDate));
+            LOG.debug("stopRow:" + getRowkeyWithMd5PrefixAndDateSuffix(symbol, stopDate));
         }
-        ResultScanner scanner = table.getScanner(scan);
+        try {
+            ResultScanner scanner = table.getScanner(scan);
+            fillStockList(stocks, scanner);
+            scanner.close();
+        } catch (IOException e) {
+            LOG.error(String.format("fail to get %s stock history data from %s,start:%s - stop:%s",
+                    symbol,
+                    tableName,
+                    startDate,
+                    stopDate));
+        }
+        context.closeTable(table);
+        return stocks;
+    }
+
+    private void fillStockList(List<Stock> stocks, ResultScanner scanner) {
         for (Result result : scanner) {
             Stock stock = new Stock();
             List<KeyValue> list = result.list();
@@ -143,8 +225,31 @@ public class StockDB {
             }
             stocks.add(stock);
         }
-        context.closeTable(table);
-        return stocks;
+    }
+
+    public StockSlice getStockSliceDaily(String symbol, String startDate, String stopDate) throws IOException {
+        List<Stock> stockHistory = getStockDataDaily(symbol, startDate, stopDate);
+        return StockSlice.getSlice(symbol, stockHistory, startDate, stopDate);
+    }
+
+    public StockSlice getStockSlice5Min(String symbol, String startDate, String stopDate) throws IOException {
+        List<Stock> stockHistory = getStockData5Min(symbol, startDate, stopDate);
+        return StockSlice.getSlice(symbol, stockHistory, startDate, stopDate);
+    }
+
+    public StockSlice getStockSlice15Min(String symbol, String startDate, String stopDate) throws IOException {
+        List<Stock> stockHistory = getStockData15Min(symbol, startDate, stopDate);
+        return StockSlice.getSlice(symbol, stockHistory, startDate, stopDate);
+    }
+
+    public StockSlice getStockSlice30Min(String symbol, String startDate, String stopDate) throws IOException {
+        List<Stock> stockHistory = getStockData30Min(symbol, startDate, stopDate);
+        return StockSlice.getSlice(symbol, stockHistory, startDate, stopDate);
+    }
+
+    public StockSlice getStockSlice60Min(String symbol, String startDate, String stopDate) throws IOException {
+        List<Stock> stockHistory = getStockData60Min(symbol, startDate, stopDate);
+        return StockSlice.getSlice(symbol, stockHistory, startDate, stopDate);
     }
 
     /**
@@ -162,10 +267,10 @@ public class StockDB {
         Scan scan = new Scan();
         scan.setStartRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, startDate));
         scan.setStopRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, stopDate));
-        scan.addColumn(TABLE_CF_BASE, toBytes(metric));
+        scan.addColumn(TABLE_CF_DATA, toBytes(metric));
         ResultScanner scanner = table.getScanner(scan);
         for (Result result : scanner) {
-            KeyValue keyValue = result.getColumnLatest(TABLE_CF_BASE, toBytes(metric));
+            KeyValue keyValue = result.getColumnLatest(TABLE_CF_DATA, toBytes(metric));
             byte[] key = keyValue.getKey();
             Date date = Utils.getStockDate(key);
             double val = toDouble(keyValue.getValue());
@@ -174,20 +279,57 @@ public class StockDB {
         return points;
     }
 
+    private List<Put> getPuts(List<Stock> stocks) {
+        List<Put> puts = Lists.newLinkedList();
+        for (Stock stock : stocks) {
+            byte[] rowkey = Utils.getRowkeyWithMd5PrefixAndDaySuffix(stock);
+            Put put = new Put(rowkey);
+            addColumn(stock, put);
+            puts.add(put);
+        }
+        return puts;
+    }
+
     private void addColumn(Stock stock, Put put) {
-        put.add(TABLE_CF_BASE, CLOSE, toBytes(stock.close));
-        put.add(TABLE_CF_BASE, HIGH, toBytes(stock.high));
-        put.add(TABLE_CF_BASE, LOW, toBytes(stock.low));
-        put.add(TABLE_CF_BASE, OPEN, toBytes(stock.open));
-        put.add(TABLE_CF_BASE, LAST_CLOSE, toBytes(stock.lastClose));
-        put.add(TABLE_CF_BASE, CHANGE_AMOUNT, toBytes(stock.changeAmount));
-        put.add(TABLE_CF_BASE, CHANGE, toBytes(stock.change));
-        put.add(TABLE_CF_BASE, TURNOVER_RATE, toBytes(stock.turnoverRate));
-        put.add(TABLE_CF_BASE, VOLUME, toBytes(stock.volume));
-        put.add(TABLE_CF_BASE, AMOUNT, toBytes(stock.amount));
-        put.add(TABLE_CF_BASE, TOTAL_VALUE, toBytes(stock.totalValue));
-        put.add(TABLE_CF_BASE, MARKET_VALUE, toBytes(stock.marketValue));
-        put.add(TABLE_CF_BASE, AMPLITUDE, toBytes(stock.amplitude));
+        if (isNotNullorZero(stock.close)) {
+            put.add(TABLE_CF_DATA, CLOSE, toBytes(stock.close));
+        }
+        if (isNotNullorZero(stock.high)) {
+            put.add(TABLE_CF_DATA, HIGH, toBytes(stock.high));
+        }
+        if (isNotNullorZero(stock.low)) {
+            put.add(TABLE_CF_DATA, LOW, toBytes(stock.low));
+        }
+        if (isNotNullorZero(stock.open)) {
+            put.add(TABLE_CF_DATA, OPEN, toBytes(stock.open));
+        }
+        if (isNotNullorZero(stock.lastClose)) {
+            put.add(TABLE_CF_DATA, LAST_CLOSE, toBytes(stock.lastClose));
+        }
+        if (isNotNullorZero(stock.changeAmount)) {
+            put.add(TABLE_CF_DATA, CHANGE_AMOUNT, toBytes(stock.changeAmount));
+        }
+        if (isNotNullorZero(stock.change)) {
+            put.add(TABLE_CF_DATA, CHANGE, toBytes(stock.change));
+        }
+        if (isNotNullorZero(stock.turnoverRate)) {
+            put.add(TABLE_CF_DATA, TURNOVER_RATE, toBytes(stock.turnoverRate));
+        }
+        if (isNotNullorZero(stock.volume)) {
+            put.add(TABLE_CF_DATA, VOLUME, toBytes(stock.volume));
+        }
+        if (isNotNullorZero(stock.amount)) {
+            put.add(TABLE_CF_DATA, AMOUNT, toBytes(stock.amount));
+        }
+        if (isNotNullorZero(stock.totalValue)) {
+            put.add(TABLE_CF_DATA, TOTAL_VALUE, toBytes(stock.totalValue));
+        }
+        if (isNotNullorZero(stock.marketValue)) {
+            put.add(TABLE_CF_DATA, MARKET_VALUE, toBytes(stock.marketValue));
+        }
+        if (isNotNullorZero(stock.amplitude)) {
+            put.add(TABLE_CF_DATA, AMPLITUDE, toBytes(stock.amplitude));
+        }
     }
 
 }
