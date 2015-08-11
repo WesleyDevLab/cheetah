@@ -77,10 +77,13 @@ public class MacdCalculatorTest {
 
     @Test
     public void test_Macd(){
-        start = "19901219";
-        stop = "20150806";
+        start = "20150312";
+        stop = "20150812";
         Collecter collecter= new DailyStockDataCollecter(start,stop);
         List<Stock> stocks = collecter.collect("601886");
+        for(Stock stock:stocks){
+            System.out.println(stock);
+        }
         double[] prices = new double[stocks.size()];
         int size = stocks.size();
         for(int i =0;i<size;i++){

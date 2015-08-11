@@ -34,13 +34,12 @@ public class IndicatorsTest {
     @Test
     public void testSma() throws Exception {
         String startDate = "20150201";
-        String stopDate = "20150811";
+        String stopDate = "20150812";
         String symbol = "601886";
 
 //        StockSlice stockSlice = stockDB.getStockSliceDaily(symbol, startDate, stopDate);
-        StockSlice stockSlice = stockDB.getStockSlice5Min(symbol, startDate, stopDate);
+        StockSlice stockSlice = stockDB.getStockSliceDaily(symbol, startDate, stopDate);
         double[] closes = stockSlice.getValues("close");
-        indicators.sma(closes,5);
 
         double[] ma5 = indicators.sma(closes,5 );
         double[] ma10 = indicators.sma(closes,10);
@@ -60,7 +59,7 @@ public class IndicatorsTest {
     @Test
     public void testVolumeMA() throws IOException {
         String startDate = "20150201";
-        String stopDate = "20150808";
+        String stopDate = "20150812";
         String symbol = "601886";
 
         StockSlice stockSlice = stockDB.getStockSliceDaily(symbol, startDate, stopDate);
@@ -85,15 +84,18 @@ public class IndicatorsTest {
     @Test
     public void testMacd() throws Exception {
         String startDate = "20150201";
-        String stopDate = "20150808";
+        String stopDate = "20150812";
         String symbol = "601886";
         StockSlice stockSlice = stockDB.getStockSliceDaily(symbol,startDate,stopDate);
+        List<Stock> stocks = stockSlice.getStocks();
+//        for(Stock stock:stocks){
+//            System.out.println(stock);
+//        }
         double[] closes = stockSlice.getValues("close");
-        System.out.println("closes:"+closes.length);
+        for(double close:closes){
+            System.out.println(close);
+        }
         double[][] macd = indicators.macd(closes);
-        System.out.println("macd.length:"+macd.length);
-        System.out.println("macd[0].length:"+macd[0].length);
-
         double dif = macd[0][closes.length - 1];
         double dea = macd[1][closes.length - 1];
         double macdRtn = (dif - dea) * 2;

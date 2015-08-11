@@ -50,19 +50,22 @@ public class Indicators {
         RetCode retCode = RetCode.InternalError;
         begin.value = -1;
         length.value = -1;
+        MAType optInFastMAType = MAType.Ema;
+        MAType optInSlowMAType = MAType.Ema;
+        MAType optInSignalMAType = MAType.Ema;
 
-        retCode = core.macd(0, prices.length - 1, prices, optInFastPeriod, optInSlowPeriod, optInSignalPeriod, begin,
-                length, tempoutput1, tempoutput2, tempoutput3);
-
-        for (int i = 0; i < prices.length - optInSlowPeriod; i++) {
+        retCode = core.macdExt(0, prices.length - 1, prices, optInFastPeriod, optInFastMAType, optInSlowPeriod,
+                optInSlowMAType, optInSignalPeriod, optInSignalMAType, begin, length, tempoutput1, tempoutput2,
+                tempoutput3);
+        for (int i = 0; i < begin.value; i++) {
             result1[i] = 0;
             result2[i] = 0;
             result3[i] = 0;
         }
-        for (int i = prices.length - optInSlowPeriod; 0 < i && i < (prices.length); i++) {
-            result1[i] = tempoutput1[i - (prices.length - optInSlowPeriod)];
-            result2[i] = tempoutput2[i - (prices.length - optInSlowPeriod)];
-            result3[i] = tempoutput3[i - (prices.length - optInSlowPeriod)];
+        for (int i = begin.value; 0 < i && i < (prices.length); i++) {
+            result1[i] = tempoutput1[i - begin.value];
+            result2[i] = tempoutput2[i - begin.value];
+            result3[i] = tempoutput3[i - begin.value];
         }
 
         for (int i = 0; i < prices.length; i++) {

@@ -42,6 +42,10 @@ public class StockSlice {
         setVolumes();
     }
 
+    public List<Stock> getStocks(){
+        return stocks;
+    }
+
     public void setClosePrice() {
         List<Double> closes = points.get(Bytes.toString(Constants.CLOSE));
         if(closes==null){
