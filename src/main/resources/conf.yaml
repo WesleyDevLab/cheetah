@@ -10,5 +10,5 @@ jobs:
       classname: com.zhaijiong.stock.scheduler.StockListDownloadJob
       cron: "0 30 0 * * ? *"
   stockAvgPriceSave:
-      classname: com.zhaijiong.stock.scheduler.StockAvgPriceSaveJob
-      cron: "0 12 18 * * ? *"
+      classname: com.zhaijiong.stock.scheduler.StockAvgCostSaveJob
+      cron: "0 45 9-15 * * ? *"
