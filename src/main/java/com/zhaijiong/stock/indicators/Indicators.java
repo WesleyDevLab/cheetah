@@ -124,17 +124,26 @@ public class Indicators {
         return bbands(prices,20, 2.0, 2.0);
     }
 
-    public double[] obv(double[] prices, double[] volume) {
+    // 6,12,24
+    public double[] rsi(double[] prices, int period) {
+
         double[] output = new double[prices.length];
+        double[] tempOutPut = new double[prices.length];
+
         MInteger begin = new MInteger();
         MInteger length = new MInteger();
         RetCode retCode = RetCode.InternalError;
         begin.value = -1;
         length.value = -1;
 
-        retCode = core.obv(0, prices.length - 1, prices, volume, begin, length, output);
+        retCode = core.rsi(0, prices.length - 1, prices, period, begin, length, tempOutPut);
 
+        for (int i = 0; i < period; i++) {
+            output[i] = 0;
+        }
+        for (int i = period; 0 < i && i < (prices.length); i++) {
+            output[i] = tempOutPut[i - period];
+        }
         return output;
     }
-
 }

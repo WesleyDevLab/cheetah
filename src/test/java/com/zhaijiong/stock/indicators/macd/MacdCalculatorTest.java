@@ -140,17 +140,23 @@ public class MacdCalculatorTest {
         List<Stock> stocks = collecter.collect("601886");
         double[] prices = new double[stocks.size()];
         int size = stocks.size();
-        System.out.println(size);
         for (int i = 0; i < size; i++) {
             Stock stock = stocks.get(i);
             prices[size - 1 - i] = stock.close;
         }
         System.out.println("prices:"+prices.length);
+
+        for(double price:prices){
+            System.out.println(price);
+        }
+
         Indicators indicators = new Indicators();
 
-        double[][] bbands = indicators.bbands(prices);
+//        double[][] bbands = indicators.bbands(prices);
+        TALIBWraper wraper = new TALIBWraper();
+        double[][] bbands = wraper.getBbands(prices, 20, 2, 2);
         System.out.println("boll length:"+bbands.length);
-        System.out.println("boll[0]:"+bbands[0].length);
+        System.out.println("boll[0]:"+bbands[0][0]);
         System.out.println(bbands[0][bbands.length-1]);
         System.out.println(bbands[1][bbands.length-1]);
         System.out.println(bbands[2][bbands.length-1]);
