@@ -1,6 +1,10 @@
 package com.zhaijiong.stock;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * author: xuqi.xq
@@ -8,6 +12,14 @@ import com.google.common.base.Strings;
  * date: 15-8-10.
  */
 public class Symbol {
+
+    public String code;
+
+    public String site;
+
+    public StockMarketType stockMarketType;
+
+    public BoardType boardType;
 
     public static String getSymbol(String code,String url){
         if(url.contains("sina.com")){
@@ -67,5 +79,13 @@ public class Symbol {
             return "1" + symbol;
         }
         return "";
+    }
+
+    public static StockMarketType getStockMarketType(String symbol){
+        return StockMarketType.getType(symbol);
+    }
+
+    public static BoardType getBoardType(String symbol){
+        return BoardType.getType(symbol);
     }
 }

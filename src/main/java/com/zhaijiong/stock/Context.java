@@ -25,8 +25,16 @@ public class Context {
     private Configuration hbaseConf;
     private HTablePool pool;
 
-    public Context() throws IOException {
-        this.conf = Utils.readYamlConf("conf.yaml", true);
+    public Context() {
+        this("conf.yaml");
+    }
+
+    public Context(String conf){
+        try {
+            this.conf = Utils.readYamlConf(conf, true);
+        } catch (IOException e) {
+            LOG.error("fail to load config yaml",e);
+        }
         pool = new HTablePool(getHBaseConf(),getInt(Constants.DATABASE_POOL_SIZE,1));
     }
 
@@ -54,9 +62,7 @@ public class Context {
         }
     }
 
-    public Context(String conf) throws IOException {
-        this.conf = Utils.readYamlConf(conf, true);
-    }
+
 
     public void put(String key, Object value) {
         conf.put(key,value);
