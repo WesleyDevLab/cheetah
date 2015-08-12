@@ -59,7 +59,7 @@ public class MinuteStockDataCollecter implements Collecter {
     @Override
     public List<Stock> collect(String symbol) {
         String url = String.format(minuteDataURL, Symbol.getSymbol(symbol,minuteDataURL), type);
-//        LOG.info("collect:" + url);
+        LOG.info("collect:" + url);
         List<Stock> stocks = Lists.newLinkedList();
         try {
             URL sinaFin = new URL(url);
