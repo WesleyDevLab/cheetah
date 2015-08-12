@@ -1,6 +1,9 @@
 package com.zhaijiong.stock.dao;
 
+import com.google.common.base.Stopwatch;
+import com.zhaijiong.stock.BoardType;
 import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.StockMarketType;
 import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.Stock;
 import com.zhaijiong.stock.datasource.DailyStockDataCollecter;
@@ -12,6 +15,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class StockDBTest {
     String table = "stocks_day";
@@ -86,7 +90,21 @@ public class StockDBTest {
         StockDB stockDB = new StockDB(context);
         StockListFetcher stockListFetcher = new StockListFetcher();
         List<Pair<String, String>> stockList = stockListFetcher.getStockList();
-        stockDB.saveStockList(stockList);
+        stockDB.saveStockSymbols(stockList);
         context.close();
+    }
+
+    @Test
+    public void testGetStockList(){
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        StockDB stockDB = new StockDB(context);
+//        List<String> stockList = stockDB.getStockSymbols();
+//        List<String> stockList = stockDB.getStockSymbols(StockMarketType.SZ);
+        List<String> stockList = stockDB.getStockSymbols(BoardType.GEM);
+        System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        for(String symbol:stockList){
+            System.out.println(symbol);
+        }
+        System.out.println(stockList.size());
     }
 }
