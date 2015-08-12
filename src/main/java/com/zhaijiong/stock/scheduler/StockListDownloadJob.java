@@ -18,20 +18,19 @@ import java.util.List;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-8.
  */
-public class StockListDownloadJob implements Job {
+public class StockListDownloadJob extends JobBase {
     private static final Logger LOG = LoggerFactory.getLogger(StockListDownloadJob.class);
 
     @Override
     public void execute(JobExecutionContext jobContext) throws JobExecutionException {
         StockListFetcher fetcher = new StockListFetcher();
         try {
-            Context context = new Context();
-            StockDB stockDB = new StockDB(context);
             List<Pair<String, String>> stockList = fetcher.getStockList();
-            stockDB.saveStockList(stockList);
-            context.close();
+            stockDB.saveStockSymbols(stockList);
         } catch (IOException e) {
             LOG.error("failed to download stock list");
+        }finally {
+            context.close();
         }
     }
 }
