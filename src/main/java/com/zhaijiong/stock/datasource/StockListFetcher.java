@@ -26,6 +26,9 @@ public class StockListFetcher {
     private String stockURL = "http://quote.eastmoney.com/stocklist.html";
     Map<String, List<String>> tags = Maps.newHashMap();
 
+    private final int RETRY_TIMES = 3;
+    private final int SLEEP_INTERVAL_MS = 3000;
+
     //获取概念版块、行业版块、地域版块分类
     Map<String, List<String>> getStockCategory() throws IOException {
         Connection connect = Jsoup.connect(tagsURL);
@@ -53,7 +56,7 @@ public class StockListFetcher {
     }
 
     //获取沪深股票（名称：代码）
-    public List<Pair<String,String>> getStockList() throws IOException {
+    public List<Pair<String,String>> getStockList() {
         int zxb = 0;
         int sh = 0;
         int sz = 0;
@@ -61,29 +64,39 @@ public class StockListFetcher {
         int other = 0;
 
         List<Pair<String,String>> stockList = Lists.newArrayList();
-        Document doc = Jsoup.connect(stockURL).get();
-        Elements stocks = doc.select("div[id=quotesearch] li a");
-        for(Element stock :stocks){
-            String url = stock.attr("href");
-            if(url.contains("sh600")){
-                ++sh;
-            }else if(url.contains("sz000")){
-                ++sz;
-            }else if(url.contains("sz002")){
-                ++zxb;
-            }else if(url.contains("sz300")){
-                ++cyb;
-            }else {
-                ++other;
-                continue;
+        int retryTimes = 0;
+        while (retryTimes < RETRY_TIMES){
+            try {
+                Document doc = Jsoup.connect(stockURL).get();
+                Elements stocks = doc.select("div[id=quotesearch] li a");
+                for(Element stock :stocks){
+                    String url = stock.attr("href");
+                    if(url.contains("sh600")){
+                        ++sh;
+                    }else if(url.contains("sz000")){
+                        ++sz;
+                    }else if(url.contains("sz002")){
+                        ++zxb;
+                    }else if(url.contains("sz300")){
+                        ++cyb;
+                    }else {
+                        ++other;
+                        continue;
+                    }
+                    String[] stockArr = stock.text().split("\\(");
+                    //key:name,value:symbol
+                    stockList.add(new Pair(stockArr[0], stockArr[1].replaceAll("\\)","")));
+                }
+                LOG.info("600:"+sh+",000:"+sz+",002:"+zxb+",300:"+cyb+",other:"+other);
+                LOG.info("total:"+(sh+sz+zxb+cyb));
+                return stockList;
+            } catch (IOException e) {
+                LOG.error("fail to get stock list",e);
+                retryTimes++;
             }
-            String[] stockArr = stock.text().split("\\(");
-            //key:name,value:symbol
-            stockList.add(new Pair(stockArr[0], stockArr[1].replaceAll("\\)","")));
         }
-        LOG.info("600:"+sh+",000:"+sz+",002:"+zxb+",300:"+cyb+",other:"+other);
-        LOG.info("total:"+(sh+sz+zxb+cyb));
-        return stockList;
+
+        return Lists.newLinkedList();
     }
 
     public static void main(String[] args) throws IOException {
