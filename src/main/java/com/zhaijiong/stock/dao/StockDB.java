@@ -1,5 +1,7 @@
 package com.zhaijiong.stock.dao;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.zhaijiong.stock.*;
 import com.zhaijiong.stock.common.Constants;
@@ -7,12 +9,16 @@ import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.common.Utils;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
+import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.zhaijiong.stock.common.Constants.*;
 import static com.zhaijiong.stock.common.Constants.TABLE_CF_DATA;
@@ -36,7 +42,6 @@ public class StockDB {
         this.hbase = new HBase(context);
     }
 
-
     /**
      * 存储stock列表,key为symbol，value为股票名称
      * rowkey : md5(symbol,4) + symbol
@@ -44,7 +49,7 @@ public class StockDB {
      * @param stockList
      * @throws IOException
      */
-    public void saveStockList(List<Pair<String, String>> stockList) throws IOException {
+    public void saveStockSymbols(List<Pair<String, String>> stockList) throws IOException {
         List<Put> puts = Lists.newLinkedList();
         for (Pair<String, String> pair : stockList) {
             Put put = new Put(getRowkeyWithMD5Prefix(pair.getVal()));
@@ -53,6 +58,40 @@ public class StockDB {
         }
         hbase.put(TABLE_STOCK_INFO,puts);
         LOG.info("total stock count:" + stockList.size());
+    }
+
+    public List<String> getStockSymbols(){
+        Scan scan = new Scan();
+        scan.setFilter(new KeyOnlyFilter());
+        scan.setCaching(5000);
+        List<Result> resultList = hbase.scan(TABLE_STOCK_INFO, scan);
+        List<String> symbols = Lists.newLinkedList();
+        for(Result result :resultList){
+            symbols.add(Bytes.toString(Bytes.tail(result.getRow(),6)));
+        }
+        return symbols;
+    }
+
+    public List<String> getStockSymbols(final StockMarketType type){
+        List<String> symbols = getStockSymbols();
+        Collection<String> filter = Collections2.filter(symbols, new Predicate<String>() {
+            @Override
+            public boolean apply(String input) {
+                return type.isMatchType(input);
+            }
+        });
+        return Lists.newArrayList(filter);
+    }
+
+    public List<String> getStockSymbols(final BoardType type){
+        List<String> symbols = getStockSymbols();
+        Collection<String> filter = Collections2.filter(symbols, new Predicate<String>() {
+            @Override
+            public boolean apply(String input) {
+                return type.isMatchType(input);
+            }
+        });
+        return Lists.newArrayList(filter);
     }
 
     public void saveStockAvgCost(String symbol,String date,double price){

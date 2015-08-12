@@ -52,9 +52,10 @@ public class HBase {
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
+            context.closeTable(table);
             LOG.error("failed to get,table="+tableName+",get="+get);
         }
-        return null;
+        return new Result();
     }
 
     public Result[] get(String tableName,List<Get> gets){
@@ -64,9 +65,10 @@ public class HBase {
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
+            context.closeTable(table);
             LOG.error("failed to get,table="+tableName+",get="+gets.size());
         }
-        return null;
+        return new Result[0];
     }
 
     public List<Result> scan(String tableName,Scan scan){
@@ -80,8 +82,9 @@ public class HBase {
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
+            context.closeTable(table);
             LOG.error("failed to scan,table="+tableName+",scan="+scan);
         }
-        return null;
+        return results;
     }
 }
