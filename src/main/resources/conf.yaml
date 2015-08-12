@@ -8,7 +8,7 @@ jobs:
       cron: "0 0 1 * * ? *"
   stockListDownload:
       classname: com.zhaijiong.stock.scheduler.StockListDownloadJob
-      cron: "0 30 0 * * ? *"
+      cron: "0 0 16 * * ? *"
   stockAvgPriceSave:
       classname: com.zhaijiong.stock.scheduler.StockAvgCostSaveJob
       cron: "0 45 9-15 * * ? *"

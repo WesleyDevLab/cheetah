@@ -3,6 +3,7 @@ package com.zhaijiong.stock.scheduler;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.Stock;
 import com.zhaijiong.stock.common.Utils;
@@ -12,9 +13,13 @@ import com.zhaijiong.stock.datasource.StockListFetcher;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+
+import static com.zhaijiong.stock.common.Constants.BISNESS_DATA_FORMAT;
 
 /**
  * author: xuqi.xq
@@ -29,11 +34,11 @@ public class StockDailyDataDownloadJob implements Job{
             String starttime = jobContext.getJobDetail().getJobDataMap().getString("starttime");
             String stoptime = jobContext.getJobDetail().getJobDataMap().getString("stoptime");
             if(Strings.isNullOrEmpty(starttime)){
-                starttime = Utils.getYesterday();
+                starttime = Utils.getYesterday(BISNESS_DATA_FORMAT);
             }
             if(Strings.isNullOrEmpty(stoptime)){
-                starttime = Utils.getYesterday();
-                stoptime = Utils.getTomorrow();
+                starttime = Utils.getYesterday(BISNESS_DATA_FORMAT);
+                stoptime = Utils.getTomorrow(BISNESS_DATA_FORMAT);
             }
             Context context = new Context();
             StockListFetcher stockListFetcher = new StockListFetcher();

@@ -47,8 +47,8 @@ public class StockDBTest {
 
     @Test
     public void testSaveSingleStock() throws IOException {
-        String start = "19901219";
-        String stop = "201508013";
+        String start = "20150811";
+        String stop = "20150813";
         String symbol = "601886";
 
         DailyStockDataCollecter collecter = new DailyStockDataCollecter(start, stop);

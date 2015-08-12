@@ -63,6 +63,11 @@ public class StockDB {
         hbase.put(TABLE_STOCK_DAILY,puts);
     }
 
+    /**
+     * save all kind of stock data include:5min,15min,30min,60min,daily,week,month
+     * @param tableName
+     * @param stocks
+     */
     public void saveStockDate(String tableName, List<Stock> stocks) {
         List<Put> puts = getPuts(stocks);
         hbase.put(tableName, puts);
