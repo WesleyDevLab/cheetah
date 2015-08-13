@@ -1,10 +1,8 @@
-package com.zhaijiong.stock;
+package com.zhaijiong.stock.model;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-
-import java.util.List;
-import java.util.Map;
+import com.zhaijiong.stock.model.BoardType;
+import com.zhaijiong.stock.model.StockMarketType;
 
 /**
  * author: xuqi.xq

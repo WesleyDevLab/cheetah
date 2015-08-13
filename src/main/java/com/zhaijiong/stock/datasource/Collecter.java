@@ -1,7 +1,6 @@
 package com.zhaijiong.stock.datasource;
 
-import com.zhaijiong.stock.KType;
-import com.zhaijiong.stock.Stock;
+import com.zhaijiong.stock.model.Stock;
 
 import java.util.List;
 

@@ -3,6 +3,7 @@ package com.zhaijiong.stock;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Constants;
+import com.zhaijiong.stock.model.Stock;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.List;

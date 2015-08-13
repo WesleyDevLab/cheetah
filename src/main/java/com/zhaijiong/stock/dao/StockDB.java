@@ -7,18 +7,18 @@ import com.zhaijiong.stock.*;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.model.BoardType;
+import com.zhaijiong.stock.model.Stock;
+import com.zhaijiong.stock.model.StockMarketType;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
-import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.zhaijiong.stock.common.Constants.*;
 import static com.zhaijiong.stock.common.Constants.TABLE_CF_DATA;

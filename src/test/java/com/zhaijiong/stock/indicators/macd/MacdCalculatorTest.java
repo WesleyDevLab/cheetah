@@ -2,7 +2,7 @@ package com.zhaijiong.stock.indicators.macd;
 
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
-import com.zhaijiong.stock.Stock;
+import com.zhaijiong.stock.model.Stock;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.datasource.Collecter;
 import com.zhaijiong.stock.datasource.DailyStockDataCollecter;

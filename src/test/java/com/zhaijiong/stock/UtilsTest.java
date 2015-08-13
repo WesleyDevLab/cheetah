@@ -1,6 +1,7 @@
 package com.zhaijiong.stock;
 
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.model.Stock;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Test;
 

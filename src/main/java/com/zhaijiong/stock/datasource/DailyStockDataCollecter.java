@@ -1,9 +1,8 @@
 package com.zhaijiong.stock.datasource;
 
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.KType;
-import com.zhaijiong.stock.Stock;
-import com.zhaijiong.stock.Symbol;
+import com.zhaijiong.stock.model.Stock;
+import com.zhaijiong.stock.model.Symbol;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
 import org.slf4j.Logger;

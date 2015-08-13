@@ -1,4 +1,4 @@
-package com.zhaijiong.stock;
+package com.zhaijiong.stock.model;
 
 import java.util.Date;
 

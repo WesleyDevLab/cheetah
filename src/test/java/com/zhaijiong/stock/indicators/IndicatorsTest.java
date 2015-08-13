@@ -1,11 +1,7 @@
 package com.zhaijiong.stock.indicators;
 
-import com.tictactec.ta.lib.Core;
-import com.tictactec.ta.lib.MAType;
-import com.tictactec.ta.lib.MInteger;
-import com.tictactec.ta.lib.RetCode;
 import com.zhaijiong.stock.Context;
-import com.zhaijiong.stock.Stock;
+import com.zhaijiong.stock.model.Stock;
 import com.zhaijiong.stock.StockSlice;
 import com.zhaijiong.stock.dao.StockDB;
 import org.junit.After;
@@ -14,8 +10,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class IndicatorsTest {
     Indicators indicators;

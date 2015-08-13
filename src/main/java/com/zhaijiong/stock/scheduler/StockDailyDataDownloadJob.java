@@ -1,11 +1,9 @@
 package com.zhaijiong.stock.scheduler;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.zhaijiong.stock.Context;
-import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Pair;
-import com.zhaijiong.stock.Stock;
+import com.zhaijiong.stock.model.Stock;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.datasource.DailyStockDataCollecter;
@@ -13,8 +11,6 @@ import com.zhaijiong.stock.datasource.StockListFetcher;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;

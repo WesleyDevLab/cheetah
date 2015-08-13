@@ -1,13 +1,12 @@
 package com.zhaijiong.stock.datasource;
 
 import com.google.common.collect.Maps;
-import com.zhaijiong.stock.Symbol;
+import com.zhaijiong.stock.model.Symbol;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 /**

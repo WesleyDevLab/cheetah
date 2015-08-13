@@ -3,7 +3,7 @@ package com.zhaijiong.stock.common;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.hash.Hashing;
-import com.zhaijiong.stock.Stock;
+import com.zhaijiong.stock.model.Stock;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.zhaijiong.stock.common.Constants.ROWKEY_DATA_FORMAT;

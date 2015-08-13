@@ -2,7 +2,6 @@ package com.zhaijiong.stock.datasource;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zhaijiong.stock.Stock;
 
 import java.io.IOException;
 import java.net.URL;

@@ -1,7 +1,7 @@
 package com.zhaijiong.stock.datasource;
 
 import com.zhaijiong.stock.Context;
-import com.zhaijiong.stock.Stock;
+import com.zhaijiong.stock.model.Stock;
 import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.indicators.Indicators;
@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class MinuteStockDataCollecterTest {
 

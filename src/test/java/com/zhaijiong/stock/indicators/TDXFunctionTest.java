@@ -1,13 +1,11 @@
 package com.zhaijiong.stock.indicators;
 
-import com.zhaijiong.stock.Stock;
+import com.zhaijiong.stock.model.Stock;
 import com.zhaijiong.stock.datasource.Collecter;
 import com.zhaijiong.stock.datasource.DailyStockDataCollecter;
 import org.junit.Test;
 
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class TDXFunctionTest {
     TDXFunction function = new TDXFunction();

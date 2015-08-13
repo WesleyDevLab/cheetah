@@ -1,11 +1,10 @@
 package com.zhaijiong.stock.dao;
 
 import com.google.common.base.Stopwatch;
-import com.zhaijiong.stock.BoardType;
+import com.zhaijiong.stock.model.BoardType;
 import com.zhaijiong.stock.Context;
-import com.zhaijiong.stock.StockMarketType;
 import com.zhaijiong.stock.common.Pair;
-import com.zhaijiong.stock.Stock;
+import com.zhaijiong.stock.model.Stock;
 import com.zhaijiong.stock.datasource.DailyStockDataCollecter;
 import com.zhaijiong.stock.datasource.MinuteStockDataCollecter;
 import com.zhaijiong.stock.datasource.StockListFetcher;
