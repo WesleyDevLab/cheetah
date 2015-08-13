@@ -16,6 +16,7 @@ import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,6 +157,9 @@ public class StockDB {
      * @throws java.io.IOException
      */
     public void saveStockDailyData(List<Stock> stocks) throws IOException {
+        for(int i=0;i<stocks.size();i++){
+            stocks.get(i).date = Utils.getDailyClosingTime(stocks.get(i).date);
+        }
         saveStockDate(TABLE_STOCK_DAILY, stocks);
     }
 

@@ -68,6 +68,27 @@ public class Utils {
         return dateTime.toString(pattern);
     }
 
+    public static Date parseDate(String date,String format){
+        return DateTimeFormat.forPattern(format).parseDateTime(date).toDate();
+    }
+
+
+    public static String formatDate(Date date){
+        DateTime dateTime = new DateTime(date);
+        return dateTime.toString("yyyy/MM/dd HH:mm:ss");
+    }
+
+    public static Date getDailyClosingTime(Date date){
+        DateTime dateTime = new DateTime(date);
+        dateTime = dateTime.plusHours(15);
+        return dateTime.toDate();
+    }
+
+    public static String formatDate(Date date,String format){
+        DateTime dateTime = new DateTime(date);
+        return dateTime.toString(format);
+    }
+
     public static byte[] getRowkeyWithMd5PrefixAndDaySuffix(Stock stock) {
         byte[] md5 = md5Prefix(stock.symbol,4);
         byte[] symbol = Bytes.toBytes(stock.symbol);
@@ -218,21 +239,6 @@ public class Utils {
         Preconditions.checkNotNull(conf);
         Preconditions.checkNotNull(key);
         return toStr(conf.get(key));
-    }
-
-    public static Date parseDate(String date,String format){
-        return DateTimeFormat.forPattern(format).parseDateTime(date).toDate();
-    }
-
-
-    public static String formatDate(Date date){
-        DateTime dateTime = new DateTime(date);
-        return dateTime.toString("yyyy/MM/dd hh:mm:ss");
-    }
-
-    public static String formatDate(Date date,String format){
-        DateTime dateTime = new DateTime(date);
-        return dateTime.toString(format);
     }
 
     public static double parseDouble(String numStr){
