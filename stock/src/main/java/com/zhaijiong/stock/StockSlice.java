@@ -58,6 +58,10 @@ public class StockSlice {
         points.put(Bytes.toString(Constants.CLOSE), closes);
     }
 
+    public double[] getClose(){
+        return getValues(Bytes.toString(Constants.CLOSE));
+    }
+
     public void setVolumes(){
         List<Double> volumes = points.get(Bytes.toString(Constants.VOLUME));
         if(volumes==null){
@@ -67,6 +71,10 @@ public class StockSlice {
             volumes.add(stock.volume);
         }
         points.put(Bytes.toString(Constants.VOLUME), volumes);
+    }
+
+    public double[] getVolumes(){
+        return getValues(Bytes.toString(Constants.VOLUME));
     }
 
     public double[] getValues(String property) {
