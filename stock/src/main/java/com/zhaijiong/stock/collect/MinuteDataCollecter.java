@@ -7,6 +7,7 @@ import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.Symbol;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ public class MinuteDataCollecter implements Collecter<String, Map<String,String>
     }
 
     @Override
-    //key:yyyyMMddHHmm,val={day:"2015-08-13 13:55:00",open:"16.300",high:"16.320",low:"16.270",close:"16.290",volume:"390800"}
+    //key:md5symbolyyyyMMddHHmm,val={day:"2015-08-13 13:55:00",open:"16.300",high:"16.320",low:"16.270",close:"16.290",volume:"390800"}
     public Map<String, Map<String,String>> collect(String symbol) {
         String url = getPath(symbol);
         Map<String,Map<String,String>> stocks = Maps.newTreeMap();
@@ -59,7 +60,7 @@ public class MinuteDataCollecter implements Collecter<String, Map<String,String>
             Map<String, String> map = gson.fromJson(matcher.group(), Map.class);
             Date date = Utils.parseDate(map.get("day"), "yyyy-MM-dd HH:mm:ss");
             if (date.getTime() >= startDateLong) {
-                stocks.put(Utils.formatDate(date, "yyyyMMddHHmm"), map);
+                stocks.put(Bytes.toString(Utils.getRowkeyWithMd5PrefixAndDateSuffix(symbol,Utils.formatDate(date, "yyyyMMddHHmm"))), map);
             }
         }
 
