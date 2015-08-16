@@ -11,5 +11,11 @@
 
     <artifactId>stock</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>1.4.6</version>
+        </dependency>
+    </dependencies>
 </project>

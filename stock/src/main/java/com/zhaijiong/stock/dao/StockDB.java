@@ -148,7 +148,7 @@ public class StockDB {
      * @param stocks
      * @throws java.io.IOException
      */
-    public void saveStockDailyData(List<StockData> stocks) throws IOException {
+    public void saveStockDailyData(List<StockData> stocks){
         saveStockDate(TABLE_STOCK_DAILY, stocks);
     }
 
