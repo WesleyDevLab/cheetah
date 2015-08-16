@@ -1,9 +1,9 @@
-package com.zhaijiong.stock.datasource;
+package com.zhaijiong.stock.tools;
 
 import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.model.Stock;
+import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.Symbol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,24 +18,23 @@ import java.util.Scanner;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-4.
  */
-public class DailyStockDataCollecter implements Collecter {
-    private static final Logger LOG = LoggerFactory.getLogger(DailyStockDataCollecter.class);
+public class HistoryDailyDataInit {
+    private static final Logger LOG = LoggerFactory.getLogger(HistoryDailyDataInit.class);
 
     public final String dailyDataUrl = "http://quotes.money.163.com/service/chddata.html?code=%s&start=%s&end=%s&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;TURNOVER;VOTURNOVER;VATURNOVER;TCAP;MCAP";
 
     private String startDate;
     private String stopDate;
 
-    public DailyStockDataCollecter(String startDate,String stopDate){
+    public HistoryDailyDataInit(String startDate, String stopDate){
         this.startDate = startDate;
         this.stopDate = stopDate;
     }
 
-    @Override
-    public List<Stock> collect(String symbol) {
+    public List<StockData> collect(String symbol) {
         String url = String.format(dailyDataUrl, Symbol.getSymbol(symbol,dailyDataUrl), startDate, stopDate);
         LOG.info("collect:"+url);
-        List<Stock> stocks = Lists.newLinkedList();
+        List<StockData> stocks = Lists.newLinkedList();
         try {
             URL netEaseFin = new URL(url);
             URLConnection data = netEaseFin.openConnection();
@@ -51,7 +50,7 @@ public class DailyStockDataCollecter implements Collecter {
                 String[] line = record.split(",");
                 if (line.length == 15 && !record.contains("None")) {
                     try {
-                        Stock stock = new Stock();
+                        StockData stock = new StockData();
 
                         stock.date = Utils.parseDate(line[0],Constants.NETEASE_DATE_STYLE);
                         stock.symbol = line[1].replace("'", "");
