@@ -2,17 +2,18 @@ package com.zhaijiong.stock.scheduler;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.zhaijiong.stock.common.Pair;
+import com.zhaijiong.stock.collect.MinuteDataCollecter;
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.datasource.MinuteStockDataCollecter;
-import com.zhaijiong.stock.datasource.StockListFetcher;
-import com.zhaijiong.stock.model.Stock;
+import com.zhaijiong.stock.convert.MinuteDataConverter;
+import com.zhaijiong.stock.tools.StockMap;
+import org.apache.hadoop.hbase.client.Put;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import java.util.List;
+import java.util.Map;
 
-import static com.zhaijiong.stock.common.Constants.BISNESS_DATA_FORMAT;
+import static com.zhaijiong.stock.common.Constants.*;
 
 /**
  * author: xuqi.xq
@@ -36,19 +37,20 @@ public class StockMinuteDataDownloadJob extends JobBase {
             stoptime = Utils.getTomorrow(BISNESS_DATA_FORMAT);
         }
 
-        StockListFetcher stockListFetcher = new StockListFetcher();
-        List<Pair<String, String>> stockList = stockListFetcher.getStockList();
-        for (Pair<String, String> stock : stockList) {
-            MinuteStockDataCollecter collecter = new MinuteStockDataCollecter(starttime, stoptime, type);
-            List<Stock> stocks = collecter.collect(stock.getVal());
+        List<String> stockList = StockMap.getList();
+        for (String symbol : stockList) {
+            MinuteDataCollecter collecter = new MinuteDataCollecter(starttime, stoptime, type);
+            Map<String, Map<String, String>> data = collecter.collect(symbol);
+            MinuteDataConverter converter = new MinuteDataConverter();
+            List<Put> stocks = converter.toPut(data);
             if ("5".equals(type)) {
-                stockDB.saveStock5MinData(stocks);
+                stockDB.save(TABLE_STOCK_5_MINUTES,stocks);
             } else if ("15".equals(type)) {
-                stockDB.saveStock15MinData(stocks);
+                stockDB.save(TABLE_STOCK_15_MINUTES,stocks);
             } else if ("30".equals(type)) {
-                stockDB.saveStock30MinData(stocks);
+                stockDB.save(TABLE_STOCK_30_MINUTES,stocks);
             } else if ("60".equals(type)) {
-                stockDB.saveStock60MinData(stocks);
+                stockDB.save(TABLE_STOCK_60_MINUTES,stocks);
             }
         }
         context.close();

@@ -1,5 +1,6 @@
 package com.zhaijiong.stock.tools;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.hadoop.hbase.util.Sleeper;
 import org.jsoup.Jsoup;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,6 +70,10 @@ public class StockMap {
             }
         }
         return Maps.newLinkedHashMap();
+    }
+
+    public static List<String> getList(){
+        return Lists.newArrayList(getMap().keySet());
     }
 
     public static void main(String[] args) throws IOException {
