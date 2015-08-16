@@ -24,11 +24,14 @@ public class Symbol {
         if(url.contains("163.com")){
             return netEaseSymbol(code);
         }
-        if(url.contains("eastmoney.com")){
+        if(url.contains("quote.eastmoney.com")){
             return sinaSymbol(code);
         }
         if(url.contains("ifeng.com")){
             return sinaSymbol(code);
+        }
+        if(url.contains("nuff.eastmoney.com")){
+            return eastMoneyRealTimeSymbol(code);
         }
         return "";
     }
@@ -60,6 +63,19 @@ public class Symbol {
         }
         if(symbol.startsWith("6")){
             return "sh" + symbol;
+        }
+        return "";
+    }
+
+    public static String eastMoneyRealTimeSymbol(String symbol){
+        if(Strings.isNullOrEmpty(symbol) && symbol.length() != 6){
+            return "";
+        }
+        if(symbol.startsWith("6")){
+            return symbol + "1";
+        }
+        if(symbol.startsWith("0") || symbol.startsWith("3")){
+            return symbol + "2";
         }
         return "";
     }

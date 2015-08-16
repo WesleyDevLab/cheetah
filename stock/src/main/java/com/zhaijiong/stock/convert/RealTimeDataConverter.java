@@ -6,20 +6,16 @@ import com.zhaijiong.stock.collect.RealtimeDataCollecter;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.HBase;
 import com.zhaijiong.stock.dao.StockDB;
-import com.zhaijiong.stock.model.BoardType;
 import com.zhaijiong.stock.model.StockData;
-import com.zhaijiong.stock.model.StockMarketType;
-import com.zhaijiong.stock.model.StockRealTimeData;
-import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static com.zhaijiong.stock.common.Constants.*;
+import static com.zhaijiong.stock.common.Constants.TABLE_CF_DATA;
+import static com.zhaijiong.stock.common.Constants.TABLE_STOCK_DAILY;
 
 /**
  * author: xuqi.xq

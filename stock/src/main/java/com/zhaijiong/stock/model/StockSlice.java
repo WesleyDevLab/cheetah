@@ -1,9 +1,8 @@
-package com.zhaijiong.stock;
+package com.zhaijiong.stock.model;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Constants;
-import com.zhaijiong.stock.model.Stock;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.List;
@@ -18,32 +17,28 @@ public class StockSlice {
     public String symbol;
     public String startDate;
     public String stopDate;
-    public Type type;
+    public PeriodType type;
 
-    public List<Stock> stocks;
+    public List<StockData> stocks;
 
-    public enum Type {
-        MINUTE, HOUR, DAY, WEEK, MONTH, YEAR
-    }
 
     public Map<String, List<Double>> points;
 
-    public static StockSlice getSlice(String symbol,List<Stock> stocks, String start, String stop) {
-        return new StockSlice(symbol,stocks, start, stop, Type.DAY);
+    public static StockSlice getSlice(String symbol,List<StockData> stocks, String start, String stop) {
+        return new StockSlice(symbol,stocks, start, stop);
     }
 
-    private StockSlice(String symbol,List<Stock> stocks, String start, String stop, Type type) {
+    private StockSlice(String symbol,List<StockData> stocks, String start, String stop) {
         this.symbol = symbol;
         this.startDate = start;
         this.stopDate = stop;
         this.stocks = stocks;
-        this.type = type;
         points = Maps.newHashMapWithExpectedSize(stocks.size());
         setClosePrice();
         setVolumes();
     }
 
-    public List<Stock> getStocks(){
+    public List<StockData> getStocks(){
         return stocks;
     }
 
@@ -52,8 +47,8 @@ public class StockSlice {
         if(closes==null){
             closes = Lists.newLinkedList();
         }
-        for (Stock stock : stocks) {
-            closes.add(stock.close);
+        for (StockData stock : stocks) {
+            closes.add((Double)stock.get("close"));
         }
         points.put(Bytes.toString(Constants.CLOSE), closes);
     }
@@ -67,8 +62,8 @@ public class StockSlice {
         if(volumes==null){
             volumes = Lists.newLinkedList();
         }
-        for (Stock stock : stocks) {
-            volumes.add(stock.volume);
+        for (StockData stock : stocks) {
+            volumes.add((Double)stock.get("volume"));
         }
         points.put(Bytes.toString(Constants.VOLUME), volumes);
     }

@@ -29,7 +29,7 @@ public class StockMap {
         int sz = 0;
         int cyb = 0;
         int other = 0;
-
+        //key:code,val:name
         Map<String,String> stockMap = Maps.newTreeMap();
         int retryTimes = 0;
         while (retryTimes < RETRY_TIMES){

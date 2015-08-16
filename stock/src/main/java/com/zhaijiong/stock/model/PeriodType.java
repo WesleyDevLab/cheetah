@@ -5,7 +5,7 @@ package com.zhaijiong.stock.model;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-9.
  */
-public enum KType {
+public enum PeriodType {
     FIVE_MIN("5"),
     FIFTEEN_MIN("15"),
     THIRTY_MIN("30"),
@@ -17,7 +17,7 @@ public enum KType {
 
     private String type;
 
-    private KType(String type){
+    private PeriodType(String type){
         this.type = type;
     }
 

@@ -3,7 +3,7 @@ package com.zhaijiong.stock.common;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.hash.Hashing;
-import com.zhaijiong.stock.model.Stock;
+import com.zhaijiong.stock.model.StockData;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -28,6 +28,7 @@ public class Utils {
 
     public static Date bytes2Date(byte[] bytes,String pattern){
         DateTimeFormatter format = DateTimeFormat.forPattern(pattern);
+        System.out.println("date:"+Bytes.toString(bytes));
         DateTime dateTime = DateTime.parse(Bytes.toString(bytes),format);
         return dateTime.toDate();
     }
@@ -89,7 +90,7 @@ public class Utils {
         return dateTime.toString(format);
     }
 
-    public static byte[] getRowkeyWithMd5PrefixAndDaySuffix(Stock stock) {
+    public static byte[] getRowkeyWithMd5PrefixAndDaySuffix(StockData stock) {
         byte[] md5 = md5Prefix(stock.symbol,4);
         byte[] symbol = Bytes.toBytes(stock.symbol);
         byte[] date = Bytes.toBytes(Utils.formatDate(stock.date, ROWKEY_DATA_FORMAT));
@@ -100,7 +101,7 @@ public class Utils {
         return Bytes.add(getRowkeyWithMD5Prefix(symbol.getBytes()), date.getBytes());
     }
 
-    public static byte[] getRowkeyWithMD5Prefix(Stock stock){
+    public static byte[] getRowkeyWithMD5Prefix(StockData stock){
         return Bytes.add(md5Prefix(stock.symbol,4),stock.symbol.getBytes());
     }
 
