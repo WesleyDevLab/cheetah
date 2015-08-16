@@ -1,7 +1,7 @@
 package com.zhaijiong.stock.scheduler;
 
 import com.zhaijiong.stock.common.Pair;
-import com.zhaijiong.stock.datasource.StockListFetcher;
+import com.zhaijiong.stock.tools.StockMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * author: xuqi.xq
@@ -20,10 +21,9 @@ public class StockListDownloadJob extends JobBase {
 
     @Override
     public void execute(JobExecutionContext jobContext) throws JobExecutionException {
-        StockListFetcher fetcher = new StockListFetcher();
         try {
-            List<Pair<String, String>> stockList = fetcher.getStockList();
-            stockDB.saveStockSymbols(stockList);
+            Map<String, String> stockMap = StockMap.getMap();
+            stockDB.saveStockSymbols(stockMap);
         } catch (IOException e) {
             LOG.error("failed to download stock list");
         }finally {
