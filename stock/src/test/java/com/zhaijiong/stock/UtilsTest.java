@@ -1,7 +1,7 @@
 package com.zhaijiong.stock;
 
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.model.Stock;
+import com.zhaijiong.stock.model.StockData;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ public class UtilsTest {
 
     @Test
     public void testGetRowkeyWithMD5Prefix(){
-        Stock stock = new Stock();
+        StockData stock = new StockData();
         stock.symbol ="002444";
         byte[] rowkey = Utils.getRowkeyWithMD5Prefix(stock);
         System.out.println(Bytes.toString(rowkey));

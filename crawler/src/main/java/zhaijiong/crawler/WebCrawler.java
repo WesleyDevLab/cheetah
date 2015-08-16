@@ -10,7 +10,6 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import zhaijiong.Constants;
 import zhaijiong.fetcher.Fetcher;
-import zhaijiong.index.IndexJob;
 import zhaijiong.tool.Utils;
 import zhaijiong.tool.XMLConfigFileReader;
 
@@ -72,9 +71,9 @@ public class WebCrawler implements Runnable{
     }
 
     private void indexPage(final String fetchURL){
-        IndexJob job = new IndexJob(fetchURL);
-        job.setTemplate(template);
-        finishedTask.submit(job);
+//        IndexJob job = new IndexJob(fetchURL);
+//        job.setTemplate(template);
+//        finishedTask.submit(job);
     }
 
     public void close() {
