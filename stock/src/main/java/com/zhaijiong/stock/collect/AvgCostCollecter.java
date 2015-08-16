@@ -15,6 +15,7 @@ import java.util.Map;
 /**
  * 获取股票每天的平均成本
  */
+@Deprecated
 public class AvgCostCollecter implements Collecter<String,Double>{
     private static final Logger LOG= LoggerFactory.getLogger(AvgCostCollecter.class);
 
