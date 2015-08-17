@@ -28,7 +28,6 @@ public class Utils {
 
     public static Date bytes2Date(byte[] bytes,String pattern){
         DateTimeFormatter format = DateTimeFormat.forPattern(pattern);
-        System.out.println("date:"+Bytes.toString(bytes));
         DateTime dateTime = DateTime.parse(Bytes.toString(bytes),format);
         return dateTime.toDate();
     }

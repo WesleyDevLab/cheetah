@@ -85,6 +85,19 @@ public class StockDBTest {
     }
 
     @Test
+    public void testGetMinuteData() throws IOException {
+        String start = "20150811";
+        String stop = "20150818";
+        String symbol = "600376";
+
+        StockDB stockDB = new StockDB(context);
+        List<StockData> stocks = stockDB.getStockData15Min(symbol, start, stop);
+        for (StockData stock : stocks) {
+            System.out.println(stock.date + stock.toString());
+        }
+    }
+
+    @Test
     public void testSaveStockList() throws IOException {
         StockDB stockDB = new StockDB(context);
 //        StockListFetcher stockListFetcher = new StockListFetcher();
