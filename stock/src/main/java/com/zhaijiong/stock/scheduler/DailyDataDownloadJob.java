@@ -12,6 +12,8 @@ import org.apache.hadoop.hbase.client.Put;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +27,7 @@ import static com.zhaijiong.stock.common.Constants.*;
  * date: 15-8-6.
  */
 public class DailyDataDownloadJob implements Job{
+    private static final Logger LOG = LoggerFactory.getLogger(DailyDataDownloadJob.class);
 
     @Override
     public void execute(JobExecutionContext jobContext) throws JobExecutionException {
@@ -36,7 +39,11 @@ public class DailyDataDownloadJob implements Job{
                 Map<String, List<String>> data = collecter.collect(stock.getKey());
                 RealTimeDataConverter converter = new RealTimeDataConverter();
                 List<Put> puts = converter.toPut(data);
-                stockDB.save(TABLE_STOCK_DAILY,puts);
+                if(puts!=null){
+                    stockDB.save(TABLE_STOCK_DAILY,puts);
+                }else{
+                    LOG.error("fail to get realtime data with " + stock.getKey());
+                }
             }
             context.close();
     }

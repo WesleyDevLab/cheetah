@@ -3,19 +3,16 @@ zookeeper.znode.parent: /hbase
 database.pool.size: 10
 
 jobs:
-  dailyDataDownload:
-      classname: com.zhaijiong.stock.scheduler.StockDailyDataDownloadJob
-      cron: "0 0 2 * * ? *"
   stockListDownload:
       classname: com.zhaijiong.stock.scheduler.StockListDownloadJob
-      cron: "0 0 16 * * ? *"
-  stockAvgPriceSave:
-      classname: com.zhaijiong.stock.scheduler.StockAvgCostSaveJob
-      cron: "0 45 9-15 * * ? *"
+      cron: "0 0 9 ? * 2-6 *"
+  dailyDataDownload:
+      classname: com.zhaijiong.stock.scheduler.DailyDataDownloadJob
+      cron: "0 15/15 9-15 ? * 2-6 *"
   stock15MinuteDataDownload:
       classname: com.zhaijiong.stock.scheduler.StockMinuteDataDownloadJob
       type: "15"
-      cron: "0 1/15 9-15 * * ? *"
+      cron: "0 15/15 9-15 ? * 2-6 *"
   DailyIndicatorsCompute:
       classname: com.zhaijiong.stock.scheduler.IndicatorsComputeJob
-      cron: "0 0 3 * * ? *"
+      cron: "0 0 3 ? * 2-6 *"

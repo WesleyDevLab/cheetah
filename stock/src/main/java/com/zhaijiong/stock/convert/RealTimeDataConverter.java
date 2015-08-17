@@ -9,6 +9,8 @@ import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -23,6 +25,8 @@ import static com.zhaijiong.stock.common.Constants.TABLE_STOCK_DAILY;
  * date: 15-8-16.
  */
 public class RealTimeDataConverter implements Converter<Map<String, List<String>>> {
+    private static final Logger LOG = LoggerFactory.getLogger(RealTimeDataConverter.class);
+
 
     private List<String> columnNames = Lists.newArrayList(
             "marketType",           //0     市场类型,沪市:1,深市:2
@@ -75,23 +79,30 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
             "",                     //47    未知
             "",                     //48    未知
             "date"                  //49    时间
-            );
+    );
+
     @Override
     public List<Put> toPut(Map<String, List<String>> map) {
         List<String> columns = map.get("Value");
         if (columns.size() != 50) {
             return null;
         }
-        Date date = Utils.parseDate(columns.get(49),"yyyy-MM-dd HH:mm:ss");
+        Date date = Utils.parseDate(columns.get(49), "yyyy-MM-dd HH:mm:ss");
         //时间设置到15:00:00以方便后期获取日线级别数据,即每天一条记录
-        String dateStr = Utils.formatDate(date,"yyyyMMdd")+"1500";
-        byte[] rowkey = Utils.getRowkeyWithMd5PrefixAndDateSuffix(columns.get(1),dateStr);
+        String dateStr = Utils.formatDate(date, "yyyyMMdd") + "1500";
+        byte[] rowkey = Utils.getRowkeyWithMd5PrefixAndDateSuffix(columns.get(1), dateStr);
         Put put = new Put(rowkey);
-        for(int i=3;i<columns.size()-1;i++){
-            if(columnNames.get(i).equals("amount")){
-                put.add(TABLE_CF_DATA, Bytes.toBytes(columnNames.get(i)), Bytes.toBytes(Double.parseDouble(columns.get(i).replace("亿", ""))));
-            }else if(!columnNames.get(i).equals("")){
-                put.add(TABLE_CF_DATA, Bytes.toBytes(columnNames.get(i)), Bytes.toBytes(Double.parseDouble(columns.get(i))));
+        for (int i = 3; i < columns.size() - 1; i++) {
+
+            if (columnNames.get(i).equals("amount")) {
+                put.add(TABLE_CF_DATA, Bytes.toBytes(columnNames.get(i)),
+                        Bytes.toBytes(Double.parseDouble(columns.get(i).replaceAll("[亿|千万|百万|十万|万]",""))));
+            } else if (!columnNames.get(i).equals("")) {
+                if (Utils.isDouble(columns.get(i))) {
+                    put.add(TABLE_CF_DATA, Bytes.toBytes(columnNames.get(i)), Bytes.toBytes(Double.parseDouble(columns.get(i))));
+                } else {
+//                    LOG.error(String.format("rowkey=%s,%s=%s", Bytes.toString(rowkey), columnNames.get(i), columns.get(i)));
+                }
             }
         }
         return Lists.newArrayList(put);
@@ -109,12 +120,12 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
 //        }
         Context context = new Context();
         HBase hbase = new HBase(context);
-        hbase.put(TABLE_STOCK_DAILY,puts);
+        hbase.put(TABLE_STOCK_DAILY, puts);
 
         StockDB stockDB = new StockDB(context);
         List<StockData> stockDataDaily = stockDB.getStockDataDaily("601886", "20150801", "20150817");
         System.out.println(stockDataDaily.size());
-        for(StockData stockData:stockDataDaily){
+        for (StockData stockData : stockDataDaily) {
             System.out.println(stockData);
         }
     }

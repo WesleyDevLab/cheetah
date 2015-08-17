@@ -73,15 +73,15 @@ public class StockDBTest {
 
     @Test
     public void testGet() throws IOException {
-        String start = "19901219";
-        String stop = "20150809";
-        String symbol = "601886";
+        String start = "20150811";
+        String stop = "20150818";
+        String symbol = "600376";
 
         StockDB stockDB = new StockDB(context);
-//        List<StockDailyData> stocks = stockDB.getStockDataDaily(symbol, start, stop);
-//        for (StockDailyData stock : stocks) {
-//            System.out.println(stock);
-//        }
+        List<StockData> stocks = stockDB.getStockDataDaily(symbol, start, stop);
+        for (StockData stock : stocks) {
+            System.out.println(stock);
+        }
     }
 
     @Test
