@@ -80,10 +80,9 @@ public class HBase {
                 results.add(result);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("failed to scan,table="+tableName+",scan="+scan,e);
         }finally {
             context.closeTable(table);
-            LOG.error("failed to scan,table="+tableName+",scan="+scan);
         }
         return results;
     }

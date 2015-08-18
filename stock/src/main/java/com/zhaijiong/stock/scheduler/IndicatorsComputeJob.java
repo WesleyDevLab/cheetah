@@ -36,6 +36,9 @@ public class IndicatorsComputeJob extends JobBase {
                 Stopwatch stopwatch = Stopwatch.createStarted();
 
                 StockSlice stockSliceDaily = stockDB.getStockSliceDaily(symbol, starttime, stoptime);
+                if(stockSliceDaily.getStocks().size()==0){
+                    LOG.warn(String.format("can't get %s stock data",symbol));
+                }
                 String date = Utils.formatDate(stockSliceDaily.getStocks().get(stockSliceDaily.getStocks().size()-1).date,ROWKEY_DATA_FORMAT);
 
                 List<Put> puts = Lists.newLinkedList();

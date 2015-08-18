@@ -112,7 +112,7 @@ public class StockDBTest {
         StockDB stockDB = new StockDB(context);
 //        List<String> stockList = stockDB.getStockSymbols();
 //        List<String> stockList = stockDB.getStockSymbols(StockMarketType.SZ);
-        List<String> stockList = stockDB.getStockSymbols(BoardType.GEM);
+        List<String> stockList = stockDB.getStockSymbols();
         System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
         for(String symbol:stockList){
             System.out.println(symbol);
