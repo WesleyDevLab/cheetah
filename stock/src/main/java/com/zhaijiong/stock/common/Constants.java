@@ -49,9 +49,9 @@ public class Constants {
 
     public static final byte[] TABLE_CF_INFO = "i".getBytes();
 
-    public static final byte[] TABLE_STOCK_NEWS = "stocks_news".getBytes();
+    public static final String TABLE_ARTICLE = "stocks_article";
 
-    public static final byte[] TABLE_CF_NEWS = "n".getBytes();
+    public static final byte[] TABLE_CF_ARTICLE = "a".getBytes();
 
 
     /**

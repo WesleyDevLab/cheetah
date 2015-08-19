@@ -16,3 +16,6 @@ jobs:
   DailyIndicatorsCompute:
       classname: com.zhaijiong.stock.scheduler.IndicatorsComputeJob
       cron: "0 0 3 ? * 2-6 *"
+  FinanceDataDownload:
+      classname: com.zhaijiong.stock.scheduler.FinanceDataDownloadJob
+      cron: "0 0 0 1 * ? *"

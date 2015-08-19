@@ -1,9 +1,14 @@
 package com.zhaijiong.stock;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.model.ArticleType;
 import com.zhaijiong.stock.model.StockData;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Test;
+
+import java.util.List;
 
 public class UtilsTest {
 
@@ -23,5 +28,16 @@ public class UtilsTest {
         stock.symbol ="002444";
         byte[] rowkey = Utils.getRowkeyWithMD5Prefix(stock);
         System.out.println(Bytes.toString(rowkey));
+    }
+
+    @Test
+    public void testJoin(){
+        List<String> test = Lists.newArrayList("a","b");
+        System.out.println(Joiner.on(",").join(test));
+    }
+
+    @Test
+    public void testEnum(){
+        System.out.println(Bytes.toInt(ArticleType.FINANCIAL_STATEMENTS.getType()));
     }
 }

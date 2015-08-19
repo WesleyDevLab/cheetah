@@ -1,18 +1,23 @@
 package com.zhaijiong.stock.dao;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.collect.FinanceDataCollecter;
 import com.zhaijiong.stock.collect.MinuteDataCollecter;
 import com.zhaijiong.stock.common.Constants;
+import com.zhaijiong.stock.convert.FinanceDataConverter;
 import com.zhaijiong.stock.model.BoardType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.tools.HistoryDailyDataInit;
+import org.apache.hadoop.hbase.client.Put;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class StockDBTest {
@@ -86,8 +91,8 @@ public class StockDBTest {
 
     @Test
     public void testGetMinuteData() throws IOException {
-        String start = "20150811";
-        String stop = "20150818";
+        String start = "20150818";
+        String stop = "20150820";
         String symbol = "600376";
 
         StockDB stockDB = new StockDB(context);
@@ -118,5 +123,21 @@ public class StockDBTest {
             System.out.println(symbol);
         }
         System.out.println(stockList.size());
+    }
+
+    @Test
+    public void testSaveFinanceData(){
+        Context context = new Context();
+        StockDB stockDB = new StockDB(context);
+//        List<String> stockSymbols = stockDB.getStockSymbols();
+        List<String> stockSymbols = Lists.newArrayList("600376");
+        FinanceDataCollecter collecter= new FinanceDataCollecter();
+        for(String symbol:stockSymbols){
+            Map<String, Map<String, String>> reports = collecter.collect(symbol);
+            System.out.println("report:"+reports.size());
+            FinanceDataConverter converter = new FinanceDataConverter(symbol);
+            List<Put> puts = converter.toPut(reports);
+            stockDB.save(Constants.TABLE_ARTICLE,puts);
+        }
     }
 }
