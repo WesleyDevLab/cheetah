@@ -1,12 +1,9 @@
 package com.zhaijiong.stock.scheduler;
 
-import com.google.common.base.Strings;
-import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.collect.RealtimeDataCollecter;
-import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.convert.RealTimeDataConverter;
 import com.zhaijiong.stock.dao.StockDB;
-import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.tools.StockMap;
 import org.apache.hadoop.hbase.client.Put;
 import org.quartz.Job;
@@ -15,7 +12,6 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 

@@ -1,11 +1,13 @@
 package com.zhaijiong.stock.scheduler;
 
-import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.dao.StockDB;
+import com.zhaijiong.stock.tools.StockMap;
 import org.quartz.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,6 +27,10 @@ public abstract class JobBase implements Job {
 
     public JobBase(){
         executorService = Executors.newFixedThreadPool(context.getInt(DATABASE_POOL_SIZE,1));
+    }
+
+    public List<String> getSymbolList(){
+        return StockMap.getList();
     }
 
     public void close(){

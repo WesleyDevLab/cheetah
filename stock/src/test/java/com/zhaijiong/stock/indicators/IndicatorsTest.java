@@ -1,7 +1,7 @@
 package com.zhaijiong.stock.indicators;
 
 import com.google.common.base.Stopwatch;
-import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;

@@ -1,7 +1,7 @@
 package com.zhaijiong.stock.dao;
 
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.common.Context;
 import org.apache.hadoop.hbase.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,7 @@
 package com.zhaijiong.stock;
 
 import com.zhaijiong.stock.common.Constants;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Utils;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;

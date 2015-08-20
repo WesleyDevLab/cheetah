@@ -1,6 +1,6 @@
 package com.zhaijiong.stock.datasource;
 
-import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.collect.MinuteDataCollecter;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.indicators.Indicators;

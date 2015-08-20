@@ -1,7 +1,7 @@
 package com.zhaijiong.stock.convert;
 
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.collect.RealtimeDataCollecter;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.HBase;

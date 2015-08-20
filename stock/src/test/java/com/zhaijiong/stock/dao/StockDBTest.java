@@ -2,12 +2,11 @@ package com.zhaijiong.stock.dao;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.collect.FinanceDataCollecter;
 import com.zhaijiong.stock.collect.MinuteDataCollecter;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.convert.FinanceDataConverter;
-import com.zhaijiong.stock.model.BoardType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.tools.HistoryDailyDataInit;
 import org.apache.hadoop.hbase.client.Put;
@@ -78,9 +77,9 @@ public class StockDBTest {
 
     @Test
     public void testGet() throws IOException {
-        String start = "20150811";
-        String stop = "20150818";
-        String symbol = "600376";
+        String start = "20150820";
+        String stop = "20150821";
+        String symbol = "000995";
 
         StockDB stockDB = new StockDB(context);
         List<StockData> stocks = stockDB.getStockDataDaily(symbol, start, stop);

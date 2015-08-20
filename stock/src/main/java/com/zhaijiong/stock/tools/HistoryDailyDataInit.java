@@ -1,7 +1,7 @@
 package com.zhaijiong.stock.tools;
 
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.Context;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
