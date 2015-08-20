@@ -30,7 +30,7 @@ public class IndicatorsComputeJob extends JobBase {
         String stoptime = Utils.getTomorrow(ROWKEY_DATA_FORMAT);
 
         Indicators indicators = new Indicators();
-        List<String> stockSymbols = stockDB.getStockSymbols();
+        List<String> stockSymbols = getSymbolList();
         for(String symbol:stockSymbols){
             try {
                 Stopwatch stopwatch = Stopwatch.createStarted();

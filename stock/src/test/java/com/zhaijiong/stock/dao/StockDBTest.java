@@ -115,12 +115,12 @@ public class StockDBTest {
         StockDB stockDB = new StockDB(context);
 //        List<String> stockList = stockDB.getStockSymbols();
 //        List<String> stockList = stockDB.getStockSymbols(StockMarketType.SZ);
-        List<String> stockList = stockDB.getStockSymbols();
+        List<String> stockList = stockDB.getTradingStockSymbols();
         System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
         for(String symbol:stockList){
             System.out.println(symbol);
         }
-        System.out.println(stockList.size());
+        System.out.println("size="+stockList.size());
     }
 
     @Test

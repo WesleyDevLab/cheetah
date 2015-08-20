@@ -37,7 +37,7 @@ public class StockMinuteDataDownloadJob extends JobBase {
             stoptime = Utils.getTomorrow(BISNESS_DATA_FORMAT);
         }
 
-        List<String> stockList = StockMap.getList();
+        List<String> stockList = getSymbolList();
         for (String symbol : stockList) {
             MinuteDataCollecter collecter = new MinuteDataCollecter(starttime, stoptime, type);
             Map<String, Map<String, String>> data = collecter.collect(symbol);

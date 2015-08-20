@@ -75,6 +75,20 @@ public class StockDB {
         return symbols;
     }
 
+    public List<String> getTradingStockSymbols(){
+        Scan scan = new Scan();
+        scan.setCaching(5000);
+        scan.addColumn(TABLE_CF_INFO,Bytes.toBytes("status"));
+        List<Result> resultList = hbase.scan(TABLE_STOCK_INFO, scan);
+        List<String> symbols = Lists.newLinkedList();
+        for(Result result :resultList){
+            if("trading".equals(Bytes.toString(result.getValue(TABLE_CF_INFO,Bytes.toBytes("status"))))){
+                symbols.add(Bytes.toString(Bytes.tail(result.getRow(),6)));
+            }
+        }
+        return symbols;
+    }
+
     public List<String> getStockSymbols(final StockMarketType type){
         List<String> symbols = getStockSymbols();
         Collection<String> filter = Collections2.filter(symbols, new Predicate<String>() {

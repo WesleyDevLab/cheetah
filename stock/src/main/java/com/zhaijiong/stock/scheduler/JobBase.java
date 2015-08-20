@@ -30,7 +30,7 @@ public abstract class JobBase implements Job {
     }
 
     public List<String> getSymbolList(){
-        return StockMap.getList();
+        return stockDB.getTradingStockSymbols();
     }
 
     public void close(){

@@ -19,7 +19,7 @@ public class FinanceDataDownloadJob extends JobBase {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        List<String> stockSymbols = stockDB.getStockSymbols();
+        List<String> stockSymbols = getSymbolList();
         FinanceDataCollecter collecter= new FinanceDataCollecter();
         for(String symbol:stockSymbols){
             Map<String, Map<String, String>> reports = collecter.collect(symbol);

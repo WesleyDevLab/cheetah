@@ -22,23 +22,21 @@ import static com.zhaijiong.stock.common.Constants.*;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-6.
  */
-public class DailyDataDownloadJob implements Job{
+public class DailyDataDownloadJob extends JobBase{
     private static final Logger LOG = LoggerFactory.getLogger(DailyDataDownloadJob.class);
 
     @Override
     public void execute(JobExecutionContext jobContext) throws JobExecutionException {
-            Context context = new Context();
-            StockDB stockDB = new StockDB(context);
-            Map<String, String> stockMap = new StockMap().getMap();
-            for (Map.Entry<String, String> stock : stockMap.entrySet()) {
+            List<String> symbols = getSymbolList();
+            for (String symbol : symbols) {
                 RealtimeDataCollecter collecter = new RealtimeDataCollecter();
-                Map<String, List<String>> data = collecter.collect(stock.getKey());
+                Map<String, List<String>> data = collecter.collect(symbol);
                 RealTimeDataConverter converter = new RealTimeDataConverter();
                 List<Put> puts = converter.toPut(data);
                 if(puts!=null){
                     stockDB.save(TABLE_STOCK_DAILY,puts);
                 }else{
-                    LOG.error("fail to get realtime data with " + stock.getKey());
+                    LOG.error("fail to get realtime data with " + symbol);
                 }
             }
             context.close();
