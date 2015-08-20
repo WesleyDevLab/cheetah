@@ -1,5 +1,7 @@
 package com.zhaijiong.stock.download;
 
+import java.io.InputStream;
+
 /**
  * author: xuqi.xq
  * mail: xuqi.xq@alibaba-inc.com
@@ -7,6 +9,8 @@ package com.zhaijiong.stock.download;
  */
 public interface DataDownload {
 
-    public String download(String url);
+    public String downloadStr(String url);
+
+    public InputStream downloadStream(String url);
 
 }

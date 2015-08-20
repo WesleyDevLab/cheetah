@@ -21,7 +21,7 @@ public class MoneyFlowDataCollecter implements Collecter<String,String>{
     @Override
     public Map<String, String> collect(String symbol) {
         Map<String, String> map = Maps.newLinkedHashMap();
-        String data = Downloader.download(getPath(symbol));
+        String data = Downloader.downloadStr(getPath(symbol));
         Pattern pattern = Pattern.compile("(\\{.*})");
         Matcher matcher = pattern.matcher(data);
         if(matcher.find()){

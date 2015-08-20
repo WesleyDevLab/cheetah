@@ -1,8 +1,11 @@
 package com.zhaijiong.stock.tools;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.apache.hadoop.hbase.util.Sleeper;
+import com.zhaijiong.stock.download.Downloader;
+import com.zhaijiong.stock.model.Symbol;
+import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,8 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by eryk on 15-4-8.
@@ -21,6 +29,8 @@ public class StockMap {
     private static final Logger LOG = LoggerFactory.getLogger(StockMap.class);
 
     private static String stockURL = "http://quote.eastmoney.com/stocklist.html";
+
+    private static String stockDetailURL = "http://hqchart.eastmoney.com/hq20/js/%s.js?%s";
 
     private static int RETRY_TIMES = 3;
     private static int SLEEP_INTERVAL_MS = 3000;
@@ -72,18 +82,36 @@ public class StockMap {
         return Maps.newLinkedHashMap();
     }
 
+    public static String getStockStatus(String symbol) throws IOException {
+        Random random = new Random();
+        String url = String.format(stockDetailURL, symbol, random.nextInt(999999));
+        String content = Downloader.downloadStr(url);
+        if(Strings.isNullOrEmpty(content)){
+            return "delisted"; //退市
+        }else{
+            Pattern pattern = Pattern.compile("data:\"(.*)\",update");
+            Matcher matcher = pattern.matcher(content);
+            if(matcher.find() && !matcher.group(1).contains("-")){
+                return "suspended";  //停牌
+            }
+        }
+        return "trading";  //交易中
+    }
+
     public static List<String> getList(){
         return Lists.newArrayList(getMap().keySet());
     }
 
     public static void main(String[] args) throws IOException {
-        Map<String,String> stockMap = StockMap.getMap();
-        for(Map.Entry<String, String> stock:stockMap.entrySet()){
-            System.out.println(stock.getKey()+":"+stock.getValue());
-        }
-        System.out.println("stock:"+stockMap.size());
+//        Map<String,String> stockMap = StockMap.getMap();
+//        for(Map.Entry<String, String> stock:stockMap.entrySet()){
+//            System.out.println(stock.getKey()+":"+stock.getValue());
+//        }
+//        System.out.println("stock:"+stockMap.size());
 
-
+        System.out.println(StockMap.getStockStatus("000003"));
+        System.out.println(StockMap.getStockStatus("002106"));
+        System.out.println(StockMap.getStockStatus("600376"));
     }
 
 }

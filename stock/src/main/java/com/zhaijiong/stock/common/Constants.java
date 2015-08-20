@@ -71,6 +71,7 @@ public class Constants {
     public static final byte[] MARKET_VALUE = "marketValue".getBytes();
     public static final byte[] AMPLITUDE = "amplitude".getBytes();
     public static final byte[] NAME = "name".getBytes();
+    public static final byte[] STATUS = "status".getBytes();
 
     public static final byte[] AVG_COST = "avgCost".getBytes();
 }

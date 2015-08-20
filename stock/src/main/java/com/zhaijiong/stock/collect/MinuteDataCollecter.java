@@ -50,7 +50,7 @@ public class MinuteDataCollecter implements Collecter<String, Map<String,String>
     public Map<String, Map<String,String>> collect(String symbol) {
         String url = getPath(symbol);
         Map<String,Map<String,String>> stocks = Maps.newTreeMap();
-        String data = Downloader.download(url);
+        String data = Downloader.downloadStr(url);
 
         Pattern pattern = Pattern.compile("\\{([\\w|\"|,|:|\\s|.|-]*)\\}");
         Matcher matcher = pattern.matcher(data.trim());

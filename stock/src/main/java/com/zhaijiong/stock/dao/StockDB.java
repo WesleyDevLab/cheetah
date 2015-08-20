@@ -7,6 +7,7 @@ import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.model.*;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.tools.StockMap;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
@@ -55,6 +56,7 @@ public class StockDB {
         for (Map.Entry<String, String> pair : stockMap.entrySet()) {
             Put put = new Put(getRowkeyWithMD5Prefix(pair.getKey()));
             put.add(Constants.TABLE_CF_INFO, Constants.NAME, Bytes.toBytes(pair.getValue()));
+            put.add(Constants.TABLE_CF_INFO, Constants.STATUS, Bytes.toBytes(StockMap.getStockStatus(pair.getKey())));
             puts.add(put);
         }
         hbase.put(TABLE_STOCK_INFO,puts);

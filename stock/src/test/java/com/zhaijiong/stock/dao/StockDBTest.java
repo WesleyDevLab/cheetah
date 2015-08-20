@@ -9,6 +9,7 @@ import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.convert.FinanceDataConverter;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.tools.HistoryDailyDataInit;
+import com.zhaijiong.stock.tools.StockMap;
 import org.apache.hadoop.hbase.client.Put;
 import org.junit.After;
 import org.junit.Before;
@@ -104,10 +105,8 @@ public class StockDBTest {
     @Test
     public void testSaveStockList() throws IOException {
         StockDB stockDB = new StockDB(context);
-//        StockListFetcher stockListFetcher = new StockListFetcher();
-//        List<Pair<String, String>> stockList = stockListFetcher.getStockList();
-//        stockDB.saveStockSymbols(stockList);
-//        context.close();
+        stockDB.saveStockSymbols(StockMap.getMap());
+        context.close();
     }
 
     @Test

@@ -24,7 +24,7 @@ public class RealtimeDataCollecter implements Collecter<String, List<String>> {
 
     @Override
     public Map<String, List<String>> collect(String symbol) {
-        String data = Downloader.download(getPath(symbol));
+        String data = Downloader.downloadStr(getPath(symbol));
         if (Strings.isNullOrEmpty(data)) {
             LOG.error("fail to get real time data from " + getPath(symbol));
         }
