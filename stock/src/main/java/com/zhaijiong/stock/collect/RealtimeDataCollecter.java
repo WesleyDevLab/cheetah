@@ -1,6 +1,7 @@
 package com.zhaijiong.stock.collect;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.Symbol;
@@ -23,10 +24,11 @@ public class RealtimeDataCollecter implements Collecter<String, List<String>> {
     private String realTimeDateURL = "http://nuff.eastmoney.com/EM_Finance2015TradeInterface/JS.ashx?id=%s&_=%s";
 
     @Override
-    public Map<String, List<String>> collect(String symbol) {
+        public Map<String, List<String>> collect(String symbol) {
         String data = Downloader.downloadStr(getPath(symbol));
         if (Strings.isNullOrEmpty(data)) {
             LOG.error("fail to get real time data from " + getPath(symbol));
+            return Maps.newHashMap();
         }
         data = data.substring(9, data.length() - 1);
         Gson gson = new Gson();

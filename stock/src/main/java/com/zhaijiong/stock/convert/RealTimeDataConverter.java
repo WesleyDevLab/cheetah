@@ -83,6 +83,9 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
 
     @Override
     public List<Put> toPut(Map<String, List<String>> map) {
+        if(map.size()==0){
+            return null;
+        }
         List<String> columns = map.get("Value");
         if (columns.size() != 50) {
             return null;

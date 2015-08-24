@@ -64,33 +64,19 @@ public class IndicatorsComputeJob extends JobBase {
                 put.add(TABLE_CF_DATA,"boll_mid".getBytes(), Bytes.toBytes(bbands[1][closes.length - 1]));
                 put.add(TABLE_CF_DATA,"boll_lower".getBytes(), Bytes.toBytes(bbands[2][closes.length - 1]));
 
-                double[] volume_5 = indicators.sma(volumes, 5);
-                double[] volume_10 = indicators.sma(volumes, 10);
-                double[] volume_20 = indicators.sma(volumes, 20);
-                double[] volume_30 = indicators.sma(volumes, 30);
-                double[] volume_60 = indicators.sma(volumes, 60);
-                double[] volume_120 = indicators.sma(volumes, 120);
-                //单位：股
-                put.add(TABLE_CF_DATA,"volume_5".getBytes(), Bytes.toBytes(volume_5[volumes.length-1]));
-                put.add(TABLE_CF_DATA,"volume_10".getBytes(), Bytes.toBytes(volume_10[volumes.length-1]));
-                put.add(TABLE_CF_DATA,"volume_20".getBytes(), Bytes.toBytes(volume_20[volumes.length-1]));
-                put.add(TABLE_CF_DATA,"volume_30".getBytes(), Bytes.toBytes(volume_30[volumes.length-1]));
-                put.add(TABLE_CF_DATA,"volume_60".getBytes(), Bytes.toBytes(volume_60[volumes.length-1]));
-                put.add(TABLE_CF_DATA,"volume_120".getBytes(), Bytes.toBytes(volume_120[volumes.length-1]));
+                setPutWithValue(indicators,5 ,volumes,"volume_5", put);
+                setPutWithValue(indicators,10 ,volumes,"volume_10", put);
+                setPutWithValue(indicators,20 ,volumes,"volume_20", put);
+                setPutWithValue(indicators,30 ,volumes,"volume_30", put);
+                setPutWithValue(indicators,60 ,volumes,"volume_60", put);
+                setPutWithValue(indicators,120 ,volumes,"volume_120", put);
 
-                double[] closes_5 = indicators.sma(closes, 5);
-                double[] closes_10 = indicators.sma(closes, 10);
-                double[] closes_20 = indicators.sma(closes, 20);
-                double[] closes_30 = indicators.sma(closes, 30);
-                double[] closes_60 = indicators.sma(closes, 60);
-                double[] closes_120 = indicators.sma(closes, 120);
-
-                put.add(TABLE_CF_DATA,"close_5".getBytes(), Bytes.toBytes(closes_5[volumes.length-1]));
-                put.add(TABLE_CF_DATA,"close_10".getBytes(), Bytes.toBytes(closes_10[volumes.length-1]));
-                put.add(TABLE_CF_DATA,"close_20".getBytes(), Bytes.toBytes(closes_20[volumes.length-1]));
-                put.add(TABLE_CF_DATA,"close_30".getBytes(), Bytes.toBytes(closes_30[volumes.length-1]));
-                put.add(TABLE_CF_DATA,"close_60".getBytes(), Bytes.toBytes(closes_60[volumes.length-1]));
-                put.add(TABLE_CF_DATA,"close_120".getBytes(), Bytes.toBytes(closes_120[volumes.length-1]));
+                setPutWithValue(indicators,5 ,closes,"close_5", put);
+                setPutWithValue(indicators,10 ,closes,"close_10", put);
+                setPutWithValue(indicators,20 ,closes,"close_20", put);
+                setPutWithValue(indicators,30 ,closes,"close_30", put);
+                setPutWithValue(indicators,60 ,closes,"close_60", put);
+                setPutWithValue(indicators,120 ,closes,"close_120", put);
 
                 puts.add(put);
 
@@ -101,6 +87,13 @@ public class IndicatorsComputeJob extends JobBase {
                 e.printStackTrace();
             }
 
+        }
+    }
+
+    private void setPutWithValue(Indicators indicators,int period, double[] arrays,String columnName, Put put) {
+        if(arrays.length>=period){
+            double[] values = indicators.sma(arrays, period);
+            put.add(TABLE_CF_DATA,Bytes.toBytes(columnName), Bytes.toBytes(values[arrays.length - 1]));
         }
     }
 }

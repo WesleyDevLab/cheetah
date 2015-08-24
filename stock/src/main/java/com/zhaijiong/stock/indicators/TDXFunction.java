@@ -34,4 +34,32 @@ public class TDXFunction {
         }
         return output;
     }
+
+    /**
+     * 计算A和B两条线的金叉和死叉
+     *      当A在B线以下，返回-1
+     *      当A向上穿过B（金叉），返回0
+     *      当A在B线以上，返回1
+     *      当A向下穿过B（死叉），返回0
+     * @param lineA
+     * @param lineB
+     * @return
+     */
+    public double[] cross(double[] lineA,double[] lineB){
+        if(lineA != null && lineB !=null & lineA.length!=lineB.length && lineA.length!=0){
+            return new double[0];
+        }
+        int length = lineA.length;
+        double[] output = new double[length];
+        for(int i =0;i<length;i++){
+            if(lineA[i]<lineB[i]){
+                output[i] = -1;
+            }else if(lineA[i]>lineB[i]){
+                output[i] = 1;
+            }else{
+                output[i] = 0;
+            }
+        }
+        return output;
+    }
 }

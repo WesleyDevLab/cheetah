@@ -78,21 +78,23 @@ public class StockDBTest {
 
     @Test
     public void testGet() throws IOException {
-        String start = "20150820";
-        String stop = "20150821";
-        String symbol = "000995";
+        String start = "20150801";
+        String stop = "20150825";
+        String symbol = "300332";
 
         StockDB stockDB = new StockDB(context);
         List<StockData> stocks = stockDB.getStockDataDaily(symbol, start, stop);
         for (StockData stock : stocks) {
-            System.out.println(stock);
+            for(Map.Entry<String,Double> entry:stock.entrySet()){
+                System.out.println(entry.getKey()+":"+entry.getValue());
+            }
         }
     }
 
     @Test
     public void testGetMinuteData() throws IOException {
-        String start = "20150818";
-        String stop = "20150820";
+        String start = "20150824";
+        String stop = "20150825";
         String symbol = "600376";
 
         StockDB stockDB = new StockDB(context);

@@ -7,7 +7,7 @@ database.pool.size: 10
 jobs:
   stockListDownload:
     classname: com.zhaijiong.stock.scheduler.StockListDownloadJob
-    cron: "0 0 9 ? * 2-6 *"
+    cron: "0 0 0 ? * 2-6 *"
   dailyDataDownload:
     classname: com.zhaijiong.stock.scheduler.DailyDataDownloadJob
     cron: "0 0 15 ? * 2-6 *"
@@ -23,4 +23,4 @@ jobs:
     cron: "0 0 0 1 * ? *"
   moneyFlowDataDownload:
     classname: com.zhaijiong.stock.scheduler.MoneyFlowDataDownloadJob
-    cron: "0 37 19 ? * 2-6 *"
+    cron: "0 10 15 ? * 2-6 *"

@@ -1,6 +1,7 @@
-package com.zhaijiong.stock.collect;
+package com.zhaijiong.stock.tools;
 
 import com.google.common.collect.Maps;
+import com.zhaijiong.stock.collect.Collecter;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.Symbol;
 import org.jsoup.Jsoup;
@@ -16,7 +17,7 @@ import java.util.Map;
  * 获取股票每天的平均成本
  */
 @Deprecated
-public class AvgCostCollecter implements Collecter<String,Double>{
+public class AvgCostCollecter implements Collecter<String,Double> {
     private static final Logger LOG= LoggerFactory.getLogger(AvgCostCollecter.class);
 
     //http://app.finance.ifeng.com/data/stock/tab_cccb.php?code=sh600376&begin_day=2015-08-04&end_day=2015-08-11
