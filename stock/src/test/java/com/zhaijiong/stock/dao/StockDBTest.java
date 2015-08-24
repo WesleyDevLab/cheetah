@@ -6,6 +6,7 @@ import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.collect.FinanceDataCollecter;
 import com.zhaijiong.stock.collect.MinuteDataCollecter;
 import com.zhaijiong.stock.common.Constants;
+import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.convert.FinanceDataConverter;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.tools.HistoryDailyDataInit;
@@ -78,9 +79,9 @@ public class StockDBTest {
 
     @Test
     public void testGet() throws IOException {
-        String start = "20150801";
-        String stop = "20150825";
-        String symbol = "300332";
+        String start = DateRange.getRange(3).start();
+        String stop = DateRange.getRange(3).stop();
+        String symbol = "600376";
 
         StockDB stockDB = new StockDB(context);
         List<StockData> stocks = stockDB.getStockDataDaily(symbol, start, stop);
