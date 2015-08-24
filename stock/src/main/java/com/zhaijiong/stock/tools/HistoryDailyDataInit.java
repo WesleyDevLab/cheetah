@@ -78,7 +78,7 @@ public class HistoryDailyDataInit {
         HistoryDailyDataInit dailyDataInit = new HistoryDailyDataInit();
         List<String> symbols = StockMap.getList();
         for(String symbol:symbols){
-            List<StockData> collect = dailyDataInit.collect(symbol, "20150101", "20150816");
+            List<StockData> collect = dailyDataInit.collect(symbol, "20150823", "20150825");
             Context context= new Context();
             StockDB stockDB = new StockDB(context);
             stockDB.saveStockDailyData(collect);

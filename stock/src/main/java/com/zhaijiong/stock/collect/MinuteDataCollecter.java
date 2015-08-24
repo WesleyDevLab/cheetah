@@ -77,7 +77,7 @@ public class MinuteDataCollecter implements Collecter<String, Map<String,String>
         final String startDate = "20150806";
         final String stopDate = "20150815";
         Stopwatch stopwatch = Stopwatch.createStarted();
-        final Collecter collect = new MinuteDataCollecter(startDate, stopDate, "5");
+        final Collecter collect = new MinuteDataCollecter(startDate, stopDate, "15");
         Map<String, Map<String,String>> stocks = collect.collect("600376");
         for(Map.Entry<String,Map<String,String>> stock:stocks.entrySet()){
             System.out.println("date:"+stock.getKey()+"map:"+stock.getValue());

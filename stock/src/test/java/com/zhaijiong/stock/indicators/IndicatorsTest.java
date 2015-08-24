@@ -5,12 +5,14 @@ import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
+import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.StockSlice;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class IndicatorsTest {
@@ -84,13 +86,13 @@ public class IndicatorsTest {
     @Test
     public void testMacd() throws Exception {
         String startDate = "20150201";
-        String stopDate = "20150812";
-        String symbol = "601886";
+        String stopDate = "20150824";
+        String symbol = "600376";
         StockSlice stockSlice = stockDB.getStockSliceDaily(symbol, startDate, stopDate);
-//        List<StockDailyData> stocks = stockSlice.getStocks();
-//        for(Stock stock:stocks){
-//            System.out.println(stock);
-//        }
+        List<StockData> stocks = stockSlice.getStocks();
+        for(StockData stock:stocks){
+            System.out.println(stock.date+":"+stock);
+        }
         double[] closes = stockSlice.getValues("close");
         for (double close : closes) {
             System.out.println(close);

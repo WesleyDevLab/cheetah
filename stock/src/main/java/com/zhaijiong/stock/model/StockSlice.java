@@ -48,7 +48,7 @@ public class StockSlice {
             closes = Lists.newLinkedList();
         }
         for (StockData stock : stocks) {
-            closes.add((Double)stock.get("close"));
+            closes.add(stock.get("close"));
         }
         points.put(Bytes.toString(Constants.CLOSE), closes);
     }
@@ -63,7 +63,7 @@ public class StockSlice {
             volumes = Lists.newLinkedList();
         }
         for (StockData stock : stocks) {
-            volumes.add((Double)stock.get("volume"));
+            volumes.add(stock.get("volume"));
         }
         points.put(Bytes.toString(Constants.VOLUME), volumes);
     }
@@ -79,6 +79,7 @@ public class StockSlice {
         }
         double[] result = new double[values.size()];
         for(int i=0;i<values.size();i++){
+            System.out.println("value"+i+":"+values.get(i));
             result[i] = values.get(i);
         }
         return result;
