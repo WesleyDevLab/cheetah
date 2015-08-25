@@ -1,6 +1,7 @@
 package com.zhaijiong.stock.convert;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.collect.RealtimeDataCollecter;
 import com.zhaijiong.stock.common.Utils;
@@ -111,6 +112,31 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
         return Lists.newArrayList(put);
     }
 
+    public Map<String,Double> toMap(Map<String, List<String>> map){
+        if(map.size()==0){
+            return null;
+        }
+        List<String> columns = map.get("Value");
+        if (columns.size() != 50) {
+            return null;
+        }
+        Date date = Utils.parseDate(columns.get(49), "yyyy-MM-dd HH:mm:ss");
+        Map<String,Double> maps = Maps.newTreeMap();
+        for (int i = 3; i < columns.size() - 1; i++) {
+
+            if (columnNames.get(i).equals("amount")) {
+                maps.put(columnNames.get(i),Double.parseDouble(columns.get(i).replaceAll("[亿|千万|百万|十万|万]", "")));
+            } else if (!columnNames.get(i).equals("")) {
+                if (Utils.isDouble(columns.get(i))) {
+                    maps.put(columnNames.get(i), Double.parseDouble(columns.get(i)));
+                } else {
+//                    LOG.error(String.format("rowkey=%s,%s=%s", Bytes.toString(rowkey), columnNames.get(i), columns.get(i)));
+                }
+            }
+        }
+        return maps;
+    }
+
     public static void main(String[] args) {
         RealtimeDataCollecter collecter = new RealtimeDataCollecter();
         Map<String, List<String>> collect = collecter.collect("601886");
@@ -125,11 +151,17 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
         HBase hbase = new HBase(context);
         hbase.put(TABLE_STOCK_DAILY, puts);
 
-        StockDB stockDB = new StockDB(context);
-        List<StockData> stockDataDaily = stockDB.getStockDataDaily("601886", "20150801", "20150817");
-        System.out.println(stockDataDaily.size());
-        for (StockData stockData : stockDataDaily) {
-            System.out.println(stockData);
+//        StockDB stockDB = new StockDB(context);
+//        List<StockData> stockDataDaily = stockDB.getStockDataDaily("601886", "20150801", "20150817");
+//        System.out.println(stockDataDaily.size());
+//        for (StockData stockData : stockDataDaily) {
+//            System.out.println(stockData);
+//        }
+
+        Map<String, Double> stringDoubleMap = converter.toMap(collect);
+        for(Map.Entry<String,Double> entry:stringDoubleMap.entrySet()){
+            System.out.println(entry.getKey()+":"+entry.getValue());
         }
+
     }
 }
