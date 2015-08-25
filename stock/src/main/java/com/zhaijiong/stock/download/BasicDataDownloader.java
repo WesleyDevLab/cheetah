@@ -16,18 +16,30 @@ import java.io.InputStream;
 public class BasicDataDownloader implements DataDownload {
     private static final Logger LOG = LoggerFactory.getLogger(DataDownload.class);
 
+    private static int RETRY_COUNT = 3;
+
     @Override
     public String downloadStr(String url) {
-        try {
-            HttpResponse<String> response = Unirest.get(url).asString();
-            if(response.getStatus()==200){
-                return response.getBody();
-            }else{
-                LOG.warn("status="+response.getStatus()+",url="+url);
+        int retry = 0;
+        while(retry<RETRY_COUNT){
+            try {
+                HttpResponse<String> response = Unirest.get(url).asString();
+                if(response.getStatus()==200){
+                    return response.getBody();
+                }else{
+                    LOG.warn("status="+response.getStatus()+",url="+url);
+                }
+            } catch (UnirestException e) {
+                retry++;
+                LOG.error("retry="+retry+",fail to download from " + url);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
             }
-        } catch (UnirestException e) {
-            LOG.error("fail to download from " + url);
         }
+
         return "";
     }
 
