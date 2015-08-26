@@ -1,8 +1,6 @@
-package com.zhaijiong.bumblebee.store;
+package com.zhaijiong.crawler;
 
 import com.google.common.collect.Maps;
-import com.zhaijiong.bumblebee.utils.Config;
-import com.zhaijiong.bumblebee.utils.Utils;
 import org.redisson.Redisson;
 import org.redisson.core.RQueue;
 import org.redisson.core.RSet;
@@ -10,13 +8,13 @@ import org.redisson.core.RSet;
 import java.util.Date;
 import java.util.Map;
 
+import static com.zhaijiong.crawler.Constants.*;
+
 public class RedisStorage implements Storage{
     private Config config;
     private Redisson redis;
 
-    private static final String REDIS_ADDRESS = "redis.address";
-    private static final String CRAWLED_URL = "redis.crawl.url";
-    private static final String TASK_QUEUE = "redis.task.queue";
+    //存储已经被爬过的url地址
     private Map<String,RSet<String>> crawledDB;
     private RQueue<String> taskQueue;
 
@@ -27,15 +25,15 @@ public class RedisStorage implements Storage{
     @Override
     public void init(){
         org.redisson.Config config = new org.redisson.Config();
-        Object address = this.config.get(REDIS_ADDRESS);
+        Object address = this.config.get(REDIS_SERVER_ADDRESS);
         if(address!=null){
             config.useSingleServer().setAddress(String.valueOf(address));
         }
         redis = Redisson.create(config);
         crawledDB = Maps.newHashMap();
-        RSet<String> set = redis.getSet(CRAWLED_URL);
+        RSet<String> set = redis.getSet(REDIS_CRAWLED_URL);
         crawledDB.put(Utils.getDateStr(new Date()),set);
-        taskQueue = redis.getQueue(TASK_QUEUE);
+        taskQueue = redis.getQueue(REDIS_TASK_QUEUE);
     }
 
     public boolean addTask(String url){

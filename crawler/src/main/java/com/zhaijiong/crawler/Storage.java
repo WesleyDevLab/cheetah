@@ -1,4 +1,4 @@
-package com.zhaijiong.bumblebee.store;
+package com.zhaijiong.crawler;
 
 public interface Storage {
 

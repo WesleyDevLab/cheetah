@@ -1,4 +1,4 @@
-package com.zhaijiong.bumblebee.utils;
+package com.zhaijiong.crawler;
 
 import org.yaml.snakeyaml.Yaml;
 

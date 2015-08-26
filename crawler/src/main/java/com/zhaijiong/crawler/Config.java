@@ -1,4 +1,4 @@
-package com.zhaijiong.bumblebee.utils;
+package com.zhaijiong.crawler;
 
 import com.google.common.collect.Lists;
 import com.zhaijiong.bumblebee.crawler.Template;
@@ -11,7 +11,11 @@ public class Config extends HashMap{
     private static final String TEMPLATES = "site.templates";
 
     public Config(String name) throws IOException {
-        super(Utils.readYamlConf(name,true));
+        super(Utils.readYamlConf(name, true));
+    }
+
+    public Config() throws IOException {
+        this("crawler.yaml");
     }
 
     public List<Template> getTemplates(){

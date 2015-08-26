@@ -1,7 +1,7 @@
 package store;
 
 import com.zhaijiong.bumblebee.crawler.Template;
-import com.zhaijiong.bumblebee.utils.Config;
+import com.zhaijiong.crawler.Config;
 import org.junit.Test;
 
 import java.io.IOException;

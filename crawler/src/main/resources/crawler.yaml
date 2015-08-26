@@ -18,4 +18,6 @@ site.templates:
         date: span#pubtime_baidu
         content: div.art_main
 
-redis.address: localhost:6379
+redis.server.address: localhost:6379
+redis.crawl.url: crawled_url
+redis.task.queue: task_queue

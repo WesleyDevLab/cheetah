@@ -1,7 +1,7 @@
 package store;
 
-import com.zhaijiong.bumblebee.store.RedisStorage;
-import com.zhaijiong.bumblebee.utils.Config;
+import com.zhaijiong.crawler.RedisStorage;
+import com.zhaijiong.crawler.Config;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
