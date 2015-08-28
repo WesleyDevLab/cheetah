@@ -25,7 +25,13 @@ public class Symbol {
             return netEaseSymbol(code);
         }
         if(url.contains("quote.eastmoney.com")){
-            return sinaSymbol(code);
+            if(code.equals("000001")){
+                return "zs000001";
+            }else if(code.equals("399001")){
+                return "zs399001";
+            }else{
+                return sinaSymbol(code);
+            }
         }
         if(url.contains("ifeng.com")){
             return sinaSymbol(code);

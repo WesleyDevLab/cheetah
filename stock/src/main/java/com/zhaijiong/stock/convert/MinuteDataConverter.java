@@ -1,9 +1,11 @@
 package com.zhaijiong.stock.convert;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zhaijiong.stock.collect.Collecter;
 import com.zhaijiong.stock.collect.MinuteDataCollecter;
 import com.zhaijiong.stock.common.Constants;
+import com.zhaijiong.stock.common.Utils;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -32,6 +34,27 @@ public class MinuteDataConverter implements Converter<Map<String, Map<String,Str
             puts.add(put);
         }
         return puts;
+    }
+
+    public Map<String,Map<String,Double>> toMap(Map<String, Map<String,String>> map){
+        Map<String,Map<String,Double>> results = Maps.newLinkedHashMap();
+        for(Map.Entry<String, Map<String,String>> entry:map.entrySet()){
+            Map<String, Double> stringMapMap = Maps.transformEntries(entry.getValue(),new Maps.EntryTransformer<String, String, Double>() {
+                @Override
+                public Double transformEntry(String key, String value) {
+                    if("day".equals(key)){
+                        String s = Utils.parseDate(value, "yyyy-MM-dd HH:mm:ss").getTime() + "";
+                        return Double.parseDouble(s);
+                    }else{
+                        return Double.parseDouble(value);
+                    }
+
+                }
+            });
+            results.put(entry.getKey(),stringMapMap);
+        }
+
+        return results;
     }
 
     public static void main(String[] args) {

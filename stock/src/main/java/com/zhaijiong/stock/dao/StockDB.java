@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Context;
+import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.model.*;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
@@ -195,6 +196,12 @@ public class StockDB {
         return getStockData(TABLE_STOCK_DAILY, symbol, startDate, stopDate);
     }
 
+    public StockData getLatestStockData(String symbol){
+        DateRange dateRange = DateRange.getRange(1);
+        List<StockData> stockDatas = getStockData(TABLE_STOCK_DAILY, symbol,dateRange.start(),dateRange.stop());
+        return stockDatas.get(stockDatas.size()-1);
+    }
+
     public List<StockData> getStockDataWeek(String symbol, String startDate, String stopDate) {
         return getStockData(TABLE_STOCK_WEEK, symbol, startDate, stopDate);
     }
@@ -211,8 +218,8 @@ public class StockDB {
         scan.setStartRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, startDate));
         scan.setStopRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, stopDate));
         scan.setCaching(2000);
-        LOG.info("startRow:" + Bytes.toString(getRowkeyWithMd5PrefixAndDateSuffix(symbol, startDate)));
-        LOG.info("stopRow:" + Bytes.toString(getRowkeyWithMd5PrefixAndDateSuffix(symbol, stopDate)));
+//        LOG.info("startRow:" + Bytes.toString(getRowkeyWithMd5PrefixAndDateSuffix(symbol, startDate)));
+//        LOG.info("stopRow:" + Bytes.toString(getRowkeyWithMd5PrefixAndDateSuffix(symbol, stopDate)));
         try {
             ResultScanner scanner = table.getScanner(scan);
             for(Result result :scanner){

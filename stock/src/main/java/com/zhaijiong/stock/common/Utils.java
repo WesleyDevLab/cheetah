@@ -292,4 +292,16 @@ public class Utils {
             return false;
         }
     }
+
+    public static void printMap(Map<String,Double> map){
+        for(Map.Entry<String,Double> entry:map.entrySet()){
+            System.out.println(entry.getKey()+":"+entry.getValue());
+        }
+    }
+
+    public static void printMapStr(Map<String,String> map){
+        for(Map.Entry<String,String> entry:map.entrySet()){
+            System.out.println(entry.getKey()+":"+entry.getValue());
+        }
+    }
 }

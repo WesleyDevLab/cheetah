@@ -26,6 +26,10 @@ public class DateRange {
         return new DateRange(dayCount);
     }
 
+    public static DateRange getRange(){
+        return new DateRange(0);
+    }
+
     public String start() {
         return start("yyyyMMdd");
     }

@@ -29,7 +29,7 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
     private static final Logger LOG = LoggerFactory.getLogger(RealTimeDataConverter.class);
 
 
-    private List<String> columnNames = Lists.newArrayList(
+    private static List<String> columnNames = Lists.newArrayList(
             "marketType",           //0     市场类型,沪市:1,深市:2
             "code",                 //1     证券代码
             "name",                 //2     证券名称
@@ -112,13 +112,13 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
         return Lists.newArrayList(put);
     }
 
-    public Map<String,Double> toMap(Map<String, List<String>> map){
+    public static Map<String,Double> toMap(Map<String, List<String>> map){
         if(map.size()==0){
-            return null;
+            return Maps.newLinkedHashMap();
         }
         List<String> columns = map.get("Value");
         if (columns.size() != 50) {
-            return null;
+            return Maps.newLinkedHashMap();
         }
         Date date = Utils.parseDate(columns.get(49), "yyyy-MM-dd HH:mm:ss");
         Map<String,Double> maps = Maps.newTreeMap();

@@ -47,12 +47,5 @@ public class Cheetah {
                     .build();
             scheduler.scheduleJob(jobDetail,trigger);
         }
-
-
-
-
-
-
-
     }
 }

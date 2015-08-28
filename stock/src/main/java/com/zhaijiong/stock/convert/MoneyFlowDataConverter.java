@@ -2,6 +2,7 @@ package com.zhaijiong.stock.convert;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zhaijiong.stock.collect.MoneyFlowDataCollecter;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
@@ -74,6 +75,21 @@ public class MoneyFlowDataConverter implements Converter<Map<String,String>>{
         }
         puts.add(put);
         return puts;
+    }
+
+    public Map<String,Double> toMap(Map<String, String> dataMap){
+        Map<String,Double> maps = Maps.newHashMap();
+
+        String data = dataMap.get("data");
+        if(Strings.isNullOrEmpty(data)){
+            LOG.error("fail to get money flow data from "+symbol);
+            return maps;
+        }
+        String[] values = data.split(",");
+        for(int i=0;i<values.length;i++){
+            maps.put(columnNames.get(i), Double.parseDouble(values[i]));
+        }
+        return maps;
     }
 
     public static void main(String[] args) {

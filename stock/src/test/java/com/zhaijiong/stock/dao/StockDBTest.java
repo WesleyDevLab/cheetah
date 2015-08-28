@@ -86,6 +86,7 @@ public class StockDBTest {
         StockDB stockDB = new StockDB(context);
         List<StockData> stocks = stockDB.getStockDataDaily(symbol, start, stop);
         for (StockData stock : stocks) {
+            System.out.println(stock.date);
             for(Map.Entry<String,Double> entry:stock.entrySet()){
                 System.out.println(entry.getKey()+":"+entry.getValue());
             }
@@ -95,7 +96,7 @@ public class StockDBTest {
     @Test
     public void testGetMinuteData() throws IOException {
         String start = "20150824";
-        String stop = "20150825";
+        String stop = "20150826";
         String symbol = "600376";
 
         StockDB stockDB = new StockDB(context);
@@ -139,6 +140,16 @@ public class StockDBTest {
             FinanceDataConverter converter = new FinanceDataConverter(symbol);
             List<Put> puts = converter.toPut(reports);
             stockDB.save(Constants.TABLE_ARTICLE,puts);
+        }
+    }
+
+    @Test
+    public void testGetLatestStockData(){
+        Context context = new Context();
+        StockDB stockDB = new StockDB(context);
+        StockData stockData = stockDB.getLatestStockData("600376");
+        for(Map.Entry<String,Double> entry:stockData.entrySet()){
+            System.out.println(entry.getKey()+":"+entry.getValue());
         }
     }
 }

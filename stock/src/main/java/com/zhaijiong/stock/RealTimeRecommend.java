@@ -4,14 +4,17 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.collect.Collecter;
 import com.zhaijiong.stock.collect.MinuteDataCollecter;
+import com.zhaijiong.stock.collect.MoneyFlowDataCollecter;
 import com.zhaijiong.stock.collect.RealtimeDataCollecter;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.convert.MoneyFlowDataConverter;
 import com.zhaijiong.stock.convert.RealTimeDataConverter;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.indicators.Indicators;
+import com.zhaijiong.stock.model.StockData;
 
 import java.util.List;
 import java.util.Map;
@@ -27,10 +30,12 @@ public class RealTimeRecommend {
     private CountDownLatch counter;
 
     private Context context;
+    private StockDB stockDB;
     private Indicators indicators;
 
     public RealTimeRecommend(){
         context = new Context();
+        stockDB = new StockDB(context);
         threadPool = Executors.newFixedThreadPool(context.getInt(Constants.DATABASE_POOL_SIZE,1));
         indicators = new Indicators();
 
@@ -46,12 +51,12 @@ public class RealTimeRecommend {
 
         @Override
         public void run() {
-            boolean isRecommend = false;
             counter.countDown();
 
-            DateRange dateRange = DateRange.getRange(8);
+//            DateRange dateRange = DateRange.getRange(8);
+            DateRange dateRange = DateRange.getRange(60);
 
-            Collecter collect = new MinuteDataCollecter(dateRange.start(), dateRange.stop(), "15");
+            MinuteDataCollecter collect = new MinuteDataCollecter(dateRange.start(), dateRange.stop(), "30");
             RealtimeDataCollecter realtimeDataCollecter = new RealtimeDataCollecter();
             Map<String, Map<String,String>> values = collect.collect(symbol);
             if(values.size()==0){
@@ -60,6 +65,15 @@ public class RealTimeRecommend {
             double[] closes = new double[values.size()];
             double[] volumes = new double[values.size()];
             int i=0;
+
+//            List<StockData> stockDataDaily = stockDB.getStockDataDaily(symbol, dateRange.start(), dateRange.stop());
+//            System.out.println("symbol:"+symbol+",size"+stockDataDaily.size());
+//            for(StockData stockData:stockDataDaily){
+//                closes[i] = stockData.get("close");
+//                volumes[i] = stockData.get("volume");
+//            }
+//            StockData stockData = stockDataDaily.get(stockDataDaily.size()-1);
+//            i=0;
             Map<String,String> lastStatus = Maps.newHashMap();
             for(Map.Entry<String,Map<String,String>> entry:values.entrySet()){
                 closes[i]=Double.parseDouble(entry.getValue().get("close"));
@@ -68,9 +82,10 @@ public class RealTimeRecommend {
                 i++;
             }
             double close = Double.parseDouble(lastStatus.get("close"));
-            double open = Double.parseDouble(lastStatus.get("open"));
-            double high = Double.parseDouble(lastStatus.get("high"));
-            double low = Double.parseDouble(lastStatus.get("low"));
+//            double close = stockData.get("close");
+//            double open = Double.parseDouble(lastStatus.get("open"));
+//            double high = Double.parseDouble(lastStatus.get("high"));
+//            double low = Double.parseDouble(lastStatus.get("low"));
 
             double ma5 = Utils.formatDouble(indicators.sma(closes, 5)[values.size()-1],"#.##");
             double ma10 = Utils.formatDouble(indicators.sma(closes, 10)[values.size()-1],"#.##");
@@ -97,6 +112,19 @@ public class RealTimeRecommend {
             if(realTimeData.get("PE")>200 || realTimeData.get("PE")<0){
                 return;
             }
+            //流通市值大于200亿
+            if(realTimeData.get("circulationMarketValue")>20000000000d){
+                return;
+            }
+
+            if(realTimeData.get("avgCost")<realTimeData.get("close")){
+                return;
+            }
+
+            MoneyFlowDataCollecter collecter = new MoneyFlowDataCollecter();
+            MoneyFlowDataConverter moneyFlowDataConverter = new MoneyFlowDataConverter(symbol);
+            Map<String, Double> moneyFlowData = moneyFlowDataConverter.toMap(collecter.collect(symbol));
+
 
             double[][] macd = indicators.macd(closes);
             double dif = macd[0][values.size()-1];
@@ -106,14 +134,15 @@ public class RealTimeRecommend {
             double difOld = macd[0][values.size()-2];
             double deaOld = macd[1][values.size()-2];
             double macdRtnOld = (difOld - deaOld) * 2;
-            if(deaOld>difOld && dea<dif && macdRtn>0){
-                System.out.println(symbol+":"+lastStatus+"\t"+realTimeData);
+            if(deaOld>difOld && dea<dif && macdRtn>0 && macdRtn > macdRtnOld){
+//                System.out.println(symbol+":"+stockData);
+                System.out.println(symbol+":"+lastStatus);
             }
-
-//            if(macdRtn>0 && dif>dea){
-//                System.out.println(symbol+":"+lastStatus+"\t"+realTimeData);
-//            }
         }
+    }
+
+    public void alert(String symbol){
+        System.out.println(symbol);
     }
 
     public void run(){
