@@ -1,21 +1,10 @@
 package com.zhaijiong.stock;
 
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zhaijiong.stock.collect.FinanceDataCollecter;
-import com.zhaijiong.stock.collect.MinuteDataCollecter;
-import com.zhaijiong.stock.collect.MoneyFlowDataCollecter;
 import com.zhaijiong.stock.common.DateRange;
-import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.convert.MinuteDataConverter;
-import com.zhaijiong.stock.convert.MoneyFlowDataConverter;
-import com.zhaijiong.stock.provider.*;
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.provider.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 成交量 单位：手

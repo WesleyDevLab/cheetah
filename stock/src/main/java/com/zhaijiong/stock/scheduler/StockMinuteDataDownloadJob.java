@@ -2,16 +2,13 @@ package com.zhaijiong.stock.scheduler;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.zhaijiong.stock.collect.MinuteDataCollecter;
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.convert.MinuteDataConverter;
-import com.zhaijiong.stock.tools.StockMap;
-import org.apache.hadoop.hbase.client.Put;
+import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.provider.MinuteDataProvider;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.zhaijiong.stock.common.Constants.*;
 
@@ -38,19 +35,18 @@ public class StockMinuteDataDownloadJob extends JobBase {
         }
 
         List<String> stockList = getSymbolList();
+
         for (String symbol : stockList) {
-            MinuteDataCollecter collecter = new MinuteDataCollecter(starttime, stoptime, type);
-            Map<String, Map<String, String>> data = collecter.collect(symbol);
-            MinuteDataConverter converter = new MinuteDataConverter();
-            List<Put> stocks = converter.toPut(data);
+
+            List<StockData> stocks = MinuteDataProvider.get(symbol, starttime, stoptime, type);
             if ("5".equals(type)) {
-                stockDB.save(TABLE_STOCK_5_MINUTES,stocks);
+                stockDB.saveStockData(TABLE_STOCK_5_MINUTES, stocks);
             } else if ("15".equals(type)) {
-                stockDB.save(TABLE_STOCK_15_MINUTES,stocks);
+                stockDB.saveStockData(TABLE_STOCK_15_MINUTES, stocks);
             } else if ("30".equals(type)) {
-                stockDB.save(TABLE_STOCK_30_MINUTES,stocks);
+                stockDB.saveStockData(TABLE_STOCK_30_MINUTES, stocks);
             } else if ("60".equals(type)) {
-                stockDB.save(TABLE_STOCK_60_MINUTES,stocks);
+                stockDB.saveStockData(TABLE_STOCK_60_MINUTES, stocks);
             }
         }
         context.close();

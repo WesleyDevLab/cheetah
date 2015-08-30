@@ -79,7 +79,7 @@ public class StockDB {
     public List<String> getTradingStockSymbols(){
         Scan scan = new Scan();
         scan.setCaching(5000);
-        scan.addColumn(TABLE_CF_INFO,Bytes.toBytes("status"));
+        scan.addColumn(TABLE_CF_INFO, Bytes.toBytes("status"));
         List<Result> resultList = hbase.scan(TABLE_STOCK_INFO, scan);
         List<String> symbols = Lists.newLinkedList();
         for(Result result :resultList){
@@ -117,7 +117,7 @@ public class StockDB {
      * @param tableName
      * @param stocks
      */
-    public void saveStockDate(String tableName, List<StockData> stocks) {
+    public void saveStockData(String tableName, List<StockData> stocks) {
         List<Put> puts = getPuts(stocks);
         hbase.put(tableName, puts);
     }
@@ -128,7 +128,7 @@ public class StockDB {
      * @param stocks
      */
     public void saveStock5MinData(List<StockData> stocks) {
-        saveStockDate(TABLE_STOCK_5_MINUTES, stocks);
+        saveStockData(TABLE_STOCK_5_MINUTES, stocks);
     }
 
     /**
@@ -137,7 +137,7 @@ public class StockDB {
      * @param stocks
      */
     public void saveStock15MinData(List<StockData> stocks) {
-        saveStockDate(TABLE_STOCK_15_MINUTES, stocks);
+        saveStockData(TABLE_STOCK_15_MINUTES, stocks);
     }
 
     /**
@@ -146,7 +146,7 @@ public class StockDB {
      * @param stocks
      */
     public void saveStock30MinData(List<StockData> stocks) {
-        saveStockDate(TABLE_STOCK_30_MINUTES, stocks);
+        saveStockData(TABLE_STOCK_30_MINUTES, stocks);
     }
 
     /**
@@ -155,7 +155,7 @@ public class StockDB {
      * @param stocks
      */
     public void saveStock60MinData(List<StockData> stocks) {
-        saveStockDate(TABLE_STOCK_60_MINUTES, stocks);
+        saveStockData(TABLE_STOCK_60_MINUTES, stocks);
     }
 
     /**
@@ -165,15 +165,15 @@ public class StockDB {
      * @throws java.io.IOException
      */
     public void saveStockDailyData(List<StockData> stocks){
-        saveStockDate(TABLE_STOCK_DAILY, stocks);
+        saveStockData(TABLE_STOCK_DAILY, stocks);
     }
 
     public void saveStockWeekData(List<StockData> stocks) throws IOException {
-        saveStockDate(TABLE_STOCK_WEEK, stocks);
+        saveStockData(TABLE_STOCK_WEEK, stocks);
     }
 
     public void saveStockMonthData(List<StockData> stocks) throws IOException {
-        saveStockDate(TABLE_STOCK_MONTH, stocks);
+        saveStockData(TABLE_STOCK_MONTH, stocks);
     }
 
     public List<StockData> getStockData5Min(String symbol, String startDate, String stopDate) {
