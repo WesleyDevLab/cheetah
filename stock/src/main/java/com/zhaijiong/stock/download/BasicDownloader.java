@@ -13,8 +13,8 @@ import java.io.InputStream;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-15.
  */
-public class BasicDataDownloader implements DataDownload {
-    private static final Logger LOG = LoggerFactory.getLogger(DataDownload.class);
+public class BasicDownloader implements Download {
+    private static final Logger LOG = LoggerFactory.getLogger(Download.class);
 
     private static int RETRY_COUNT = 3;
 
@@ -59,7 +59,7 @@ public class BasicDataDownloader implements DataDownload {
     }
 
     public static void main(String[] args) {
-        BasicDataDownloader downloader = new BasicDataDownloader();
+        BasicDownloader downloader = new BasicDownloader();
         String download = downloader.downloadStr("http://nuff.eastmoney.com/EM_Finance2015TradeInterface/JS.ashx?id=3002462&token=beb0a0047196124721f56b0f0ff5a27c&cb=callback031451186537742615&callback=callback031451186537742615&_=1439558792487");
         System.out.println(download);
     }

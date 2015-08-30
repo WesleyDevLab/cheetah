@@ -6,7 +6,6 @@ import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.collect.RealtimeDataCollecter;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.HBase;
-import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -25,9 +24,8 @@ import static com.zhaijiong.stock.common.Constants.TABLE_STOCK_DAILY;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-16.
  */
-public class RealTimeDataConverter implements Converter<Map<String, List<String>>> {
-    private static final Logger LOG = LoggerFactory.getLogger(RealTimeDataConverter.class);
-
+public class RealTimeDataCollecter {
+    private static final Logger LOG = LoggerFactory.getLogger(RealTimeDataCollecter.class);
 
     private static List<String> columnNames = Lists.newArrayList(
             "marketType",           //0     市场类型,沪市:1,深市:2
@@ -82,7 +80,6 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
             "date"                  //49    时间
     );
 
-    @Override
     public List<Put> toPut(Map<String, List<String>> map) {
         if(map.size()==0){
             return null;
@@ -91,7 +88,7 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
         if (columns.size() != 50) {
             return null;
         }
-        Date date = Utils.parseDate(columns.get(49), "yyyy-MM-dd HH:mm:ss");
+        Date date = Utils.str2Date(columns.get(49), "yyyy-MM-dd HH:mm:ss");
         //时间设置到15:00:00以方便后期获取日线级别数据,即每天一条记录
         String dateStr = Utils.formatDate(date, "yyyyMMdd") + "1500";
         byte[] rowkey = Utils.getRowkeyWithMd5PrefixAndDateSuffix(columns.get(1), dateStr);
@@ -120,7 +117,7 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
         if (columns.size() != 50) {
             return Maps.newLinkedHashMap();
         }
-        Date date = Utils.parseDate(columns.get(49), "yyyy-MM-dd HH:mm:ss");
+        Date date = Utils.str2Date(columns.get(49), "yyyy-MM-dd HH:mm:ss");
         Map<String,Double> maps = Maps.newTreeMap();
         for (int i = 3; i < columns.size() - 1; i++) {
 
@@ -134,13 +131,20 @@ public class RealTimeDataConverter implements Converter<Map<String, List<String>
                 }
             }
         }
+        maps.put("date",Utils.str2Double(date.getTime()+""));
         return maps;
+    }
+
+    public static StockData toData(Map<String, List<String>> map){
+        StockData stockData = new StockData(toMap(map));
+        stockData.date = Utils.double2Date(stockData.get("date"));
+        return stockData;
     }
 
     public static void main(String[] args) {
         RealtimeDataCollecter collecter = new RealtimeDataCollecter();
         Map<String, List<String>> collect = collecter.collect("601886");
-        RealTimeDataConverter converter = new RealTimeDataConverter();
+        RealTimeDataCollecter converter = new RealTimeDataCollecter();
         List<Put> puts = converter.toPut(collect);
 //        Map<byte[], List<KeyValue>> familyMap = puts.get(0).getFamilyMap();
 //        List<KeyValue> keyValues = familyMap.get(TABLE_CF_DATA);

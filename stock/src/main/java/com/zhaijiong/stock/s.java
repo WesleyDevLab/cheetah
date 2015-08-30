@@ -10,11 +10,8 @@ import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.convert.MinuteDataConverter;
 import com.zhaijiong.stock.convert.MoneyFlowDataConverter;
-import com.zhaijiong.stock.provider.MinuteDataProvider;
-import com.zhaijiong.stock.provider.MoneyFlowDataProvider;
-import com.zhaijiong.stock.provider.RealTimeDataProvider;
+import com.zhaijiong.stock.provider.*;
 import com.zhaijiong.stock.model.StockData;
-import com.zhaijiong.stock.provider.DailyDataProvider;
 
 import java.util.List;
 import java.util.Map;
@@ -52,21 +49,21 @@ public class s {
 
     public static List<StockData> dailyData(String symbol,String startDate,String stopDate){
         List<StockData> collect = DailyDataProvider.get(symbol, startDate, stopDate);
-        return Lists.reverse(collect);
+        return collect;
     }
 
     public static StockData minuteData(String symbol,String type){
         DateRange range = DateRange.getRange(10);
-        List<StockData> stockList = minuteData(symbol,range.start(),range.stop(),type);
-        if(stockList.size()>=1){
-            return stockList.get(stockList.size()-1);
+        List<StockData> stockDataList = minuteData(symbol,range.start(),range.stop(),type);
+        if(stockDataList.size()>=1){
+            return stockDataList.get(stockDataList.size()-1);
         }else{
-            return null;
+            return new StockData(symbol);
         }
     }
 
     public static List<StockData> minuteData(String symbol,String startDate,String stopDate,String type){
-        List<StockData> stockList = MinuteDataProvider.get(symbol,startDate,stopDate,type);
+        List<StockData> stockList = MinuteDataProvider.get(symbol, startDate, stopDate, type);
         return stockList;
     }
 
@@ -85,10 +82,9 @@ public class s {
      * @param symbol
      * @return
      */
-    public static Map<String, Map<String, String>> financialStatementHistory(String symbol){
-        FinanceDataCollecter collecter = new FinanceDataCollecter();
-        Map<String, Map<String, String>> collect = collecter.collect(symbol);
-        return collect;
+    public static List<StockData> financeData(String symbol, String startDate, String stopDate){
+        List<StockData> stockDataList = FinanceDataProvider.get(symbol,startDate,stopDate);
+        return stockDataList;
     }
 
     /**
@@ -96,22 +92,19 @@ public class s {
      * @param symbol
      * @return
      */
-    public static Map<String, Double> financialStatementLatest(String symbol){
-        FinanceDataCollecter collecter = new FinanceDataCollecter();
-        Map<String, Map<String, String>> collect = collecter.collect(symbol);
-        String date = Lists.newArrayList(collect.keySet()).get(collect.keySet().size() - 1);
-        Map<String, String> values = collect.get(date);
-        values.put("date",String.valueOf(Utils.str2Date(date, "yyyy-MM-dd").getTime()));
-        Map<String, Double> stringObjectMap = Maps.transformEntries(values, new Maps.EntryTransformer<String, String, Double>() {
-            @Override
-            public Double transformEntry(String key, String value) {
-                if (Utils.isDouble(value)) {
-                    return Double.parseDouble(value);
-                }
-                return 0d;
-            }
-        });
-        return stringObjectMap;
+    public static StockData financeData(String symbol){
+        DateRange range = DateRange.getRange(365);
+        List<StockData> stockDataList = FinanceDataProvider.get(symbol,range.start(),range.stop());
+        if(stockDataList.size()>=1){
+            return stockDataList.get(stockDataList.size()-1);
+        }else{
+            return new StockData(symbol);
+        }
+    }
+
+    public static List<StockData> financeYearData(String symbol){
+        List<StockData> stockDataList = FinanceDataProvider.getYear(symbol);
+        return stockDataList;
     }
 
 }

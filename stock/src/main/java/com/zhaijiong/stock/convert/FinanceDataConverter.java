@@ -27,7 +27,7 @@ public class FinanceDataConverter implements Converter<Map<String,Map<String,Str
     public List<Put> toPut(Map<String, Map<String, String>> reports) {
         List<Put> puts = Lists.newLinkedList();
         for(Map.Entry<String,Map<String,String>> entry:reports.entrySet()){
-            String date = Utils.formatDate(Utils.parseDate(entry.getKey(),"yyyy-MM-dd"),"yyyyMMddHHmm");
+            String date = Utils.formatDate(Utils.str2Date(entry.getKey(), "yyyy-MM-dd"),"yyyyMMddHHmm");
             byte[] rowkey = Bytes.add(Utils.getRowkeyWithMD5Prefix(symbol), ArticleType.FINANCIAL_STATEMENTS.getType(),Bytes.toBytes(date));
             Put put = new Put(rowkey);
             for(Map.Entry<String,String> kv:entry.getValue().entrySet()){

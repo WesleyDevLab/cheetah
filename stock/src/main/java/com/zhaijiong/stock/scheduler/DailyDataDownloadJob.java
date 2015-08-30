@@ -1,12 +1,8 @@
 package com.zhaijiong.stock.scheduler;
 
-import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.collect.RealtimeDataCollecter;
-import com.zhaijiong.stock.convert.RealTimeDataConverter;
-import com.zhaijiong.stock.dao.StockDB;
-import com.zhaijiong.stock.tools.StockMap;
+import com.zhaijiong.stock.convert.RealTimeDataCollecter;
 import org.apache.hadoop.hbase.client.Put;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -31,7 +27,7 @@ public class DailyDataDownloadJob extends JobBase{
             for (String symbol : symbols) {
                 RealtimeDataCollecter collecter = new RealtimeDataCollecter();
                 Map<String, List<String>> data = collecter.collect(symbol);
-                RealTimeDataConverter converter = new RealTimeDataConverter();
+                RealTimeDataCollecter converter = new RealTimeDataCollecter();
                 List<Put> puts = converter.toPut(data);
                 if(puts!=null){
                     stockDB.save(TABLE_STOCK_DAILY,puts);

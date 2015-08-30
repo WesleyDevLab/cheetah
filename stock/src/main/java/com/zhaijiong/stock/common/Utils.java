@@ -333,4 +333,12 @@ public class Utils {
         }
         return val;
     }
+
+    public static boolean isInRange(Date date,String startDate,String stopDate){
+        if(date.getTime() >= str2Date(startDate,"yyyyMMdd").getTime() && date.getTime() <= str2Date(stopDate,"yyyyMMdd").getTime()){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

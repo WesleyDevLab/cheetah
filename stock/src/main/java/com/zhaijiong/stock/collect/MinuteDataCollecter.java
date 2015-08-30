@@ -38,9 +38,9 @@ public class MinuteDataCollecter implements Collecter<String, Map<String,String>
     public long stopDateLong;
 
     public MinuteDataCollecter(String startDate, String stopDate, String type) {
-        this.startDate = Utils.parseDate(startDate, Constants.BISNESS_DATA_FORMAT);
+        this.startDate = Utils.str2Date(startDate, Constants.BISNESS_DATA_FORMAT);
         this.startDateLong = this.startDate.getTime();
-        this.stopDate = Utils.parseDate(stopDate, Constants.BISNESS_DATA_FORMAT);
+        this.stopDate = Utils.str2Date(stopDate, Constants.BISNESS_DATA_FORMAT);
         this.stopDateLong = this.stopDate.getTime();
         this.type = type;
     }
@@ -58,7 +58,7 @@ public class MinuteDataCollecter implements Collecter<String, Map<String,String>
         while (matcher.find()) {
             //{day:"2015-08-13 13:55:00",open:"16.300",high:"16.320",low:"16.270",close:"16.290",volume:"390800"}
             Map<String, String> map = gson.fromJson(matcher.group(), Map.class);
-            Date date = Utils.parseDate(map.get("day"), "yyyy-MM-dd HH:mm:ss");
+            Date date = Utils.str2Date(map.get("day"), "yyyy-MM-dd HH:mm:ss");
             if (date.getTime() >= startDateLong) {
                 stocks.put(Bytes.toString(Utils.getRowkeyWithMd5PrefixAndDateSuffix(symbol,Utils.formatDate(date, "yyyyMMddHHmm"))), map);
             }

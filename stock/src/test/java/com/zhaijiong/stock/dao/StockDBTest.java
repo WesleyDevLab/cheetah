@@ -9,7 +9,7 @@ import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.convert.FinanceDataConverter;
 import com.zhaijiong.stock.model.StockData;
-import com.zhaijiong.stock.tools.HistoryDailyDataInit;
+import com.zhaijiong.stock.provider.DailyDataProvider;
 import com.zhaijiong.stock.tools.StockMap;
 import org.apache.hadoop.hbase.client.Put;
 import org.junit.After;
@@ -60,8 +60,8 @@ public class StockDBTest {
         String stop = "20150813";
         String symbol = "600376";
 
-        HistoryDailyDataInit collecter = new HistoryDailyDataInit();
-        List<StockData> stocks = collecter.collect(symbol,start, stop);
+        DailyDataProvider collecter = new DailyDataProvider();
+        List<StockData> stocks = collecter.get(symbol, start, stop);
 
         StockDB stockDB = new StockDB(context);
         stockDB.saveStockDailyData(stocks);

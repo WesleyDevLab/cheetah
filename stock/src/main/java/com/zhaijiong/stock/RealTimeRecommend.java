@@ -2,7 +2,6 @@ package com.zhaijiong.stock;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
-import com.zhaijiong.stock.collect.Collecter;
 import com.zhaijiong.stock.collect.MinuteDataCollecter;
 import com.zhaijiong.stock.collect.MoneyFlowDataCollecter;
 import com.zhaijiong.stock.collect.RealtimeDataCollecter;
@@ -11,10 +10,9 @@ import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.convert.MoneyFlowDataConverter;
-import com.zhaijiong.stock.convert.RealTimeDataConverter;
+import com.zhaijiong.stock.convert.RealTimeDataCollecter;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.indicators.Indicators;
-import com.zhaijiong.stock.model.StockData;
 
 import java.util.List;
 import java.util.Map;
@@ -83,9 +81,9 @@ public class RealTimeRecommend {
             }
             double close = Double.parseDouble(lastStatus.get("close"));
 //            double close = stockData.get("close");
-//            double open = Double.parseDouble(lastStatus.get("open"));
-//            double high = Double.parseDouble(lastStatus.get("high"));
-//            double low = Double.parseDouble(lastStatus.get("low"));
+//            double open = Double.str2Double(lastStatus.get("open"));
+//            double high = Double.str2Double(lastStatus.get("high"));
+//            double low = Double.str2Double(lastStatus.get("low"));
 
             double ma5 = Utils.formatDouble(indicators.sma(closes, 5)[values.size()-1],"#.##");
             double ma10 = Utils.formatDouble(indicators.sma(closes, 10)[values.size()-1],"#.##");
@@ -107,8 +105,8 @@ public class RealTimeRecommend {
 //                return;
             }
 
-            RealTimeDataConverter realTimeDataConverter = new RealTimeDataConverter();
-            Map<String, Double> realTimeData = realTimeDataConverter.toMap(realtimeDataCollecter.collect(symbol));
+            RealTimeDataCollecter realTimeDataCollecter = new RealTimeDataCollecter();
+            Map<String, Double> realTimeData = realTimeDataCollecter.toMap(realtimeDataCollecter.collect(symbol));
             if(realTimeData.get("PE")>200 || realTimeData.get("PE")<0){
                 return;
             }

@@ -9,7 +9,7 @@ import java.io.InputStream;
  */
 public class Downloader {
 
-    private static BasicDataDownloader downloader = new BasicDataDownloader();
+    private static BasicDownloader downloader = new BasicDownloader();
 
     public static String downloadStr(String url){
         return downloader.downloadStr(url);

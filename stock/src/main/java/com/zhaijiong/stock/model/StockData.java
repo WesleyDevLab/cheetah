@@ -23,8 +23,24 @@ public class StockData extends LinkedHashMap<String,Double>{
 
     public StockData(){}
 
+    public StockData(String symbol){
+        this.symbol = symbol;
+        this.stockMarketType = StockMarketType.getType(symbol);
+        this.boardType = BoardType.getType(symbol);
+    }
+
     public StockData(Map<String,Double> map){
         this.putAll(map);
     }
 
+    @Override
+    public String toString() {
+        return "StockData{" +
+                "symbol='" + symbol + '\'' +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                ", boardType=" + boardType +
+                ", stockMarketType=" + stockMarketType +
+                '}';
+    }
 }

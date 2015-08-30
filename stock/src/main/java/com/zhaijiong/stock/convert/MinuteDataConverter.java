@@ -43,7 +43,7 @@ public class MinuteDataConverter implements Converter<Map<String, Map<String,Str
                 @Override
                 public Double transformEntry(String key, String value) {
                     if("day".equals(key)){
-                        String s = Utils.parseDate(value, "yyyy-MM-dd HH:mm:ss").getTime() + "";
+                        String s = Utils.str2Date(value, "yyyy-MM-dd HH:mm:ss").getTime() + "";
                         return Double.parseDouble(s);
                     }else{
                         return Double.parseDouble(value);
