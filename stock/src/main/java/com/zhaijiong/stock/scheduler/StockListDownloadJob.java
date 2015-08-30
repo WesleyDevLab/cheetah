@@ -1,6 +1,5 @@
 package com.zhaijiong.stock.scheduler;
 
-import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.tools.StockMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -8,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 /**

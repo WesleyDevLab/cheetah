@@ -2,7 +2,6 @@ package com.zhaijiong.stock.scheduler;
 
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.dao.StockDB;
-import com.zhaijiong.stock.tools.StockMap;
 import org.quartz.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

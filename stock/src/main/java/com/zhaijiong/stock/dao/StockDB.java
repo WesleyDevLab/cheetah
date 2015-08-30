@@ -3,11 +3,14 @@ package com.zhaijiong.stock.dao;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.DateRange;
-import com.zhaijiong.stock.model.*;
-import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.model.BoardType;
+import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.model.StockMarketType;
+import com.zhaijiong.stock.model.StockSlice;
 import com.zhaijiong.stock.tools.StockMap;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.*;
@@ -23,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.zhaijiong.stock.common.Constants.*;
-import static com.zhaijiong.stock.common.Utils.*;
+import static com.zhaijiong.stock.common.Utils.getRowkeyWithMD5Prefix;
+import static com.zhaijiong.stock.common.Utils.getRowkeyWithMd5PrefixAndDateSuffix;
 import static org.apache.hadoop.hbase.util.Bytes.toBytes;
-import static org.apache.hadoop.hbase.util.Bytes.toDouble;
 
 /**
  * Created by eryk on 15-7-25.

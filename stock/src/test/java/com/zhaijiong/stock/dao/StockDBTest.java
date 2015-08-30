@@ -1,17 +1,12 @@
 package com.zhaijiong.stock.dao;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
-import com.zhaijiong.stock.common.Context;
-import com.zhaijiong.stock.collect.FinanceDataCollecter;
-import com.zhaijiong.stock.collect.MinuteDataCollecter;
 import com.zhaijiong.stock.common.Constants;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.DateRange;
-import com.zhaijiong.stock.convert.FinanceDataConverter;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.DailyDataProvider;
 import com.zhaijiong.stock.tools.StockMap;
-import org.apache.hadoop.hbase.client.Put;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +66,7 @@ public class StockDBTest {
     public void testSaveSingleStockMinData(){
         String start = "19901219";
         String stop = "20150809";
-        MinuteDataCollecter collecter =new MinuteDataCollecter(start,stop,"5");
+//        MinuteDataCollecter collecter =new MinuteDataCollecter(start,stop,"5");
 //        List<StockData> stocks = collecter.collect("601886");
 //        StockDB stockDB = new StockDB(context);
 //        stockDB.saveStock5MinData(stocks);
@@ -129,18 +124,18 @@ public class StockDBTest {
 
     @Test
     public void testSaveFinanceData(){
-        Context context = new Context();
-        StockDB stockDB = new StockDB(context);
+//        Context context = new Context();
+//        StockDB stockDB = new StockDB(context);
 //        List<String> stockSymbols = stockDB.getStockSymbols();
-        List<String> stockSymbols = Lists.newArrayList("600376");
-        FinanceDataCollecter collecter= new FinanceDataCollecter();
-        for(String symbol:stockSymbols){
-            Map<String, Map<String, String>> reports = collecter.collect(symbol);
-            System.out.println("report:"+reports.size());
-            FinanceDataConverter converter = new FinanceDataConverter(symbol);
-            List<Put> puts = converter.toPut(reports);
-            stockDB.save(Constants.TABLE_ARTICLE,puts);
-        }
+//        List<String> stockSymbols = Lists.newArrayList("600376");
+//        FinanceDataCollecter collecter= new FinanceDataCollecter();
+//        for(String symbol:stockSymbols){
+//            Map<String, Map<String, String>> reports = collecter.collect(symbol);
+//            System.out.println("report:"+reports.size());
+//            FinanceDataConverter converter = new FinanceDataConverter(symbol);
+//            List<Put> puts = converter.toPut(reports);
+//            stockDB.save(Constants.TABLE_ARTICLE,puts);
+//        }
     }
 
     @Test
