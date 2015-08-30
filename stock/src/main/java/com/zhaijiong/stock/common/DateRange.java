@@ -11,8 +11,6 @@ import org.joda.time.ReadablePeriod;
  */
 public class DateRange {
 
-    private String startDate;
-    private String stopDate;
     private int dayCount;
 
     private DateRange() {

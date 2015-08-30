@@ -32,6 +32,21 @@ public class Utils {
         return dateTime.toDate();
     }
 
+    public static Date double2Date(Double date){
+        long time = Double.doubleToLongBits(date);
+        DateTime dateTime = new DateTime(time);
+        return dateTime.toDate();
+    }
+
+    public static Date long2Date(Long date){
+        DateTime datetime = new DateTime(date);
+        return datetime.toDate();
+    }
+
+    public static Date str2Date(String date, String format){
+        return DateTimeFormat.forPattern(format).parseDateTime(date).toDate();
+    }
+
     public static String getNow(){
         DateTime dateTime = new DateTime();
         return dateTime.toString(ROWKEY_DATA_FORMAT);
@@ -68,25 +83,20 @@ public class Utils {
         return dateTime.toString(pattern);
     }
 
-    public static Date parseDate(String date,String format){
-        return DateTimeFormat.forPattern(format).parseDateTime(date).toDate();
-    }
-
-
     public static String formatDate(Date date){
         DateTime dateTime = new DateTime(date);
         return dateTime.toString("yyyy/MM/dd HH:mm:ss");
+    }
+
+    public static String formatDate(Date date,String format){
+        DateTime dateTime = new DateTime(date);
+        return dateTime.toString(format);
     }
 
     public static Date getDailyClosingTime(Date date){
         DateTime dateTime = new DateTime(date);
         dateTime = dateTime.plusHours(15);
         return dateTime.toDate();
-    }
-
-    public static String formatDate(Date date,String format){
-        DateTime dateTime = new DateTime(date);
-        return dateTime.toString(format);
     }
 
     public static byte[] getRowkeyWithMd5PrefixAndDaySuffix(StockData stock) {
@@ -241,12 +251,19 @@ public class Utils {
         return toStr(conf.get(key));
     }
 
-    public static double parseDouble(String numStr){
-
+    public static double str2Double(String numStr){
         if(Strings.isNullOrEmpty(numStr)){
             return 0d;
         }else{
             return Double.parseDouble(numStr);
+        }
+    }
+
+    public static long str2Long(String numStr){
+        if(Strings.isNullOrEmpty(numStr)){
+            return 0l;
+        }else{
+            return  Long.parseLong(numStr);
         }
     }
 
@@ -257,14 +274,6 @@ public class Utils {
     public static double formatDouble(double num,String format){
         DecimalFormat df=new DecimalFormat(format);
         return Double.parseDouble(df.format(num));
-    }
-
-    public static long parseLong(String numStr){
-        if(Strings.isNullOrEmpty(numStr)){
-            return 0l;
-        }else{
-            return  Long.parseLong(numStr);
-        }
     }
 
     public static boolean isDouble(String value) {
@@ -303,5 +312,25 @@ public class Utils {
         for(Map.Entry<String,String> entry:map.entrySet()){
             System.out.println(entry.getKey()+":"+entry.getValue());
         }
+    }
+
+    public static double getAmount(String amount) {
+        double val = Double.parseDouble(amount.replaceAll("[亿|千万|百万|十万|万]", ""));
+        if(amount.contains("亿")){
+            return val * 100000000;
+        }
+        if(amount.contains("千万")){
+            return val * 10000000;
+        }
+        if(amount.contains("百万")){
+            return val * 1000000;
+        }
+        if(amount.contains("十万")){
+            return val * 100000;
+        }
+        if(amount.contains("万")){
+            return val * 10000;
+        }
+        return val;
     }
 }

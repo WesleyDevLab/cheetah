@@ -65,7 +65,7 @@ public class RealTimeDataProvider {
 
         for (int i = 3; i < columns.size() - 1; i++) {
             if (getColumnName(i).equals("amount")) {
-                stockData.put(getColumnName(i), getAmount(columns.get(i)));
+                stockData.put(getColumnName(i), Utils.getAmount(columns.get(i)));
             } else if (!getColumnName(i).equals("")) {
                 if (Utils.isDouble(columns.get(i))) {
                     stockData.put(getColumnName(i), Double.parseDouble(columns.get(i)));
@@ -75,33 +75,13 @@ public class RealTimeDataProvider {
         return stockData;
     }
 
-    private static double getAmount(String amount) {
-        double val = Double.parseDouble(amount.replaceAll("[亿|千万|百万|十万|万]", ""));
-        if(amount.contains("亿")){
-            return val * 100000000;
-        }
-        if(amount.contains("千万")){
-            return val * 10000000;
-        }
-        if(amount.contains("百万")){
-            return val * 1000000;
-        }
-        if(amount.contains("十万")){
-            return val * 100000;
-        }
-        if(amount.contains("万")){
-            return val * 10000;
-        }
-        return val;
-    }
-
     /**
      * 获取原始数据对应的列名称
      * @param i
      * @return
      */
     private static String getColumnName(int i) {
-        return StockConstants.REALTIME_DATA.get(i);
+        return StockConstants.REALTIME.get(i);
     }
 
     public static String getPath(String symbol) {
