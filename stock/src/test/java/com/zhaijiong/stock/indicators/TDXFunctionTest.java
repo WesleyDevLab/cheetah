@@ -1,9 +1,11 @@
 package com.zhaijiong.stock.indicators;
 
 import com.zhaijiong.stock.common.Context;
+import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.provider.DailyDataProvider;
 import org.junit.Test;
 
 import java.util.List;
@@ -31,6 +33,25 @@ public class TDXFunctionTest {
         for(int i=0;i<prices.length;i++){
             System.out.println("hhv:"+hhv[i]+",close:"+prices[i]);
         }
+    }
+
+    @Test
+    public void testllv(){
+        DateRange range = DateRange.getRange(9);
+        List<StockData> stocks = DailyDataProvider.get("600376", range.start(), range.stop());
+
+        double[] prices = new double[stocks.size()];
+        int size = stocks.size();
+        for(int i =0;i<size;i++){
+            StockData stock = stocks.get(i);
+            prices[i] = stock.get("close");
+        }
+
+        double[] llv = function.llv(prices, 5);
+        for(int i=0;i<prices.length;i++){
+            System.out.println("llv:"+llv[i]+",close:"+prices[i]);
+        }
+
     }
 
     @Test

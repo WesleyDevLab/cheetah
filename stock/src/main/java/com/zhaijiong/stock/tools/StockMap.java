@@ -4,8 +4,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.download.Downloader;
-import com.zhaijiong.stock.model.Symbol;
-import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -85,7 +81,7 @@ public class StockMap {
     public static String getStockStatus(String symbol) throws IOException {
         Random random = new Random();
         String url = String.format(stockDetailURL, symbol, random.nextInt(999999));
-        String content = Downloader.downloadStr(url);
+        String content = Downloader.download(url);
         if(Strings.isNullOrEmpty(content)){
             return "delisted"; //退市
         }else{

@@ -1,19 +1,12 @@
 package com.zhaijiong.stock.provider;
 
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.download.Downloader;
-import com.zhaijiong.stock.model.ArticleType;
-import com.zhaijiong.stock.model.BoardType;
 import com.zhaijiong.stock.model.StockData;
-import com.zhaijiong.stock.model.StockMarketType;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -76,17 +69,17 @@ public class FinanceDataProvider {
     private static Map<String,Map<String,String>> collect(String symbol) {
         Map<String,Map<String,String>> report = Maps.newTreeMap();
 
-        String[] lines = Downloader.downloadStr(String.format(mainFinanceReport, symbol)).split("\n");
+        String[] lines = Downloader.download(String.format(mainFinanceReport, symbol)).split("\n");
         toReport(lines, report);
-        lines = Downloader.downloadStr(String.format(profitReport, symbol)).split("\n");
+        lines = Downloader.download(String.format(profitReport, symbol)).split("\n");
         toReport(lines, report);
-        lines = Downloader.downloadStr(String.format(debtReport, symbol)).split("\n");
+        lines = Downloader.download(String.format(debtReport, symbol)).split("\n");
         toReport(lines, report);
-        lines = Downloader.downloadStr(String.format(growReport, symbol)).split("\n");
+        lines = Downloader.download(String.format(growReport, symbol)).split("\n");
         toReport(lines, report);
-        lines = Downloader.downloadStr(String.format(operateReport, symbol)).split("\n");
+        lines = Downloader.download(String.format(operateReport, symbol)).split("\n");
         toReport(lines, report);
-        lines = Downloader.downloadStr(String.format(abstractFinanceReport, symbol)).split("\n");
+        lines = Downloader.download(String.format(abstractFinanceReport, symbol)).split("\n");
         toReport(lines, report);
 
         return report;

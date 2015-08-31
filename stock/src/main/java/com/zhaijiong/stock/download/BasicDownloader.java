@@ -13,13 +13,12 @@ import java.io.InputStream;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-15.
  */
-public class BasicDownloader implements Download {
-    private static final Logger LOG = LoggerFactory.getLogger(Download.class);
+public class BasicDownloader {
+    private static final Logger LOG = LoggerFactory.getLogger(BasicDownloader.class);
 
     private static int RETRY_COUNT = 3;
 
-    @Override
-    public String downloadStr(String url) {
+    public static String download(String url) {
         int retry = 0;
         while(retry<RETRY_COUNT){
             try {
@@ -43,7 +42,6 @@ public class BasicDownloader implements Download {
         return "";
     }
 
-    @Override
     public InputStream downloadStream(String url) {
         try {
             HttpResponse<String> response = Unirest.get(url).asString();
@@ -60,7 +58,7 @@ public class BasicDownloader implements Download {
 
     public static void main(String[] args) {
         BasicDownloader downloader = new BasicDownloader();
-        String download = downloader.downloadStr("http://nuff.eastmoney.com/EM_Finance2015TradeInterface/JS.ashx?id=3002462&token=beb0a0047196124721f56b0f0ff5a27c&cb=callback031451186537742615&callback=callback031451186537742615&_=1439558792487");
+        String download = downloader.download("http://nuff.eastmoney.com/EM_Finance2015TradeInterface/JS.ashx?id=3002462&token=beb0a0047196124721f56b0f0ff5a27c&cb=callback031451186537742615&callback=callback031451186537742615&_=1439558792487");
         System.out.println(download);
     }
 }

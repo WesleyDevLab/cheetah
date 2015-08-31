@@ -3,7 +3,6 @@ package com.zhaijiong.stock.provider;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.BoardType;
@@ -63,7 +62,7 @@ public class MinuteDataProvider {
     private static Map<String, Map<String,String>> collect(String symbol,Date startDate,Date stopDate,String type) {
         String url = getPath(symbol,type);
         Map<String,Map<String,String>> stocks = Maps.newTreeMap();
-        String data = Downloader.downloadStr(url);
+        String data = Downloader.download(url);
 
         Pattern pattern = Pattern.compile("\\{([\\w|\"|,|:|\\s|.|-]*)\\}");
         Matcher matcher = pattern.matcher(data.trim());

@@ -28,7 +28,7 @@ public class RealTimeDataProvider {
     private static String realTimeDateURL = "http://nuff.eastmoney.com/EM_Finance2015TradeInterface/JS.ashx?id=%s&_=%s";
 
     private static Map<String, List<String>> collect(String symbol) {
-        String data = Downloader.downloadStr(getPath(symbol));
+        String data = Downloader.download(getPath(symbol));
         if (Strings.isNullOrEmpty(data)) {
             LOG.error("fail to get real time data from " + getPath(symbol));
             return Maps.newHashMap();

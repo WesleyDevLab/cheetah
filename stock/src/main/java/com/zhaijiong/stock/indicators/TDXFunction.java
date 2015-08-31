@@ -16,6 +16,12 @@ public class TDXFunction {
         core = new Core();
     }
 
+    /**
+     * 计算一段时间周期内的最大值
+     * @param prices
+     * @param period
+     * @return
+     */
     public double[] hhv(double[] prices,int period){
         double[] output = new double[prices.length];
         double[] tempOutPut = new double[prices.length];
@@ -25,6 +31,25 @@ public class TDXFunction {
         length.value = -1;
 
         RetCode max = core.max(0, prices.length-1, prices, period, begin, length, tempOutPut);
+
+        for (int i = 0; i < period; i++) {
+            output[i] = 0;
+        }
+        for (int i = period; 0 < i && i < (prices.length); i++) {
+            output[i] = tempOutPut[i - period];
+        }
+        return output;
+    }
+
+    public double[] llv(double[] prices,int period){
+        double[] output = new double[prices.length];
+        double[] tempOutPut = new double[prices.length];
+        MInteger begin = new MInteger();
+        MInteger length = new MInteger();
+        begin.value = -1;
+        length.value = -1;
+
+        RetCode max = core.min(0, prices.length-1, prices, period, begin, length, tempOutPut);
 
         for (int i = 0; i < period; i++) {
             output[i] = 0;

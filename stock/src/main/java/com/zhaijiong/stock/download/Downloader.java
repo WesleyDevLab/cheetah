@@ -1,7 +1,5 @@
 package com.zhaijiong.stock.download;
 
-import java.io.InputStream;
-
 /**
  * author: xuqi.xq
  * mail: xuqi.xq@alibaba-inc.com
@@ -9,13 +7,11 @@ import java.io.InputStream;
  */
 public class Downloader {
 
-    private static BasicDownloader downloader = new BasicDownloader();
-
-    public static String downloadStr(String url){
-        return downloader.downloadStr(url);
+    public static String download(String url){
+        return BasicDownloader.download(url);
     }
 
-    public static InputStream downloadStream(String url){
-        return downloader.downloadStream(url);
+    public static String downloadAjax(String url){
+        return AjaxDownloader.download(url);
     }
 }

@@ -111,7 +111,7 @@ public class MoneyFlowDataProvider {
     }
 
     private static List<String[]> collectDaPan(){
-        String data = AjaxDownloader.download(moneyFlowDapanHisURL);
+        String data = Downloader.downloadAjax(moneyFlowDapanHisURL);
         Elements doc = Jsoup.parse(data).getElementById("dt_1").getElementsByTag("tbody").get(0).getElementsByTag("tr");
 
         List<String[]> stockDataList = Lists.newLinkedList();
@@ -128,7 +128,7 @@ public class MoneyFlowDataProvider {
 
     private static List<String[]> collectHis(String symbol){
         String url = String.format(moneyFlowHisURL,symbol);
-        String data = Downloader.downloadStr(url);
+        String data = Downloader.download(url);
         Elements doc = Jsoup.parse(data).getElementById("dt_1").getElementsByTag("tbody").get(0).getElementsByTag("tr");
 
         List<String[]> stockDataList = Lists.newLinkedList();
@@ -145,7 +145,7 @@ public class MoneyFlowDataProvider {
 
     private static Map<String, String> collect(String symbol) {
         Map<String, String> map = Maps.newLinkedHashMap();
-        String data = Downloader.downloadStr(getPath(symbol));
+        String data = Downloader.download(getPath(symbol));
         Pattern pattern = Pattern.compile("(\\{.*})");
         Matcher matcher = pattern.matcher(data);
         if(matcher.find()){
