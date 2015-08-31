@@ -1,6 +1,7 @@
-package com.zhaijiong.bumblebee.crawler;
+package com.zhaijiong.crawler.fetch;
 
 import com.google.common.base.Strings;
+import com.zhaijiong.crawler.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,9 @@ public class PageFetcher implements Fetcher {
             }
             rChannel.close();
             inputStream.close();
-            return new Page(url, sb.toString());
+            Page page = new Page(url, sb.toString());
+            page.setEncode(encoding);
+            return page;
         } catch (IOException e) {
             LOG.error(String.format("failed to fetch url %s",url),e);
         }
@@ -63,7 +66,7 @@ public class PageFetcher implements Fetcher {
 
     public static void main(String[] args) {
         PageFetcher fetcher = new PageFetcher();
-        Page page =fetcher.fetch("http://yuanchuang.10jqka.com.cn/qingbao/");
+        Page page =fetcher.fetch("http://stock.10jqka.com.cn/tzjh_list/");
         System.out.println(page.getSource());
     }
 }

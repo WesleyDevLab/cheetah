@@ -1,4 +1,6 @@
-package com.zhaijiong.bumblebee.crawler;
+package com.zhaijiong.crawler.parse;
+
+import com.zhaijiong.crawler.Page;
 
 import java.util.Map;
 

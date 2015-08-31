@@ -1,4 +1,4 @@
-package com.zhaijiong.crawler;
+package com.zhaijiong.crawler.storage;
 
 public interface Storage {
 

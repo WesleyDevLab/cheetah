@@ -1,6 +1,6 @@
 package store;
 
-import com.zhaijiong.crawler.RedisStorage;
+import com.zhaijiong.crawler.storage.RedisStorage;
 import com.zhaijiong.crawler.Config;
 import org.junit.After;
 import org.junit.Assert;

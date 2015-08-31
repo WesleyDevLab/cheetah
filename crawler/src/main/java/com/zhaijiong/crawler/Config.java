@@ -1,7 +1,6 @@
 package com.zhaijiong.crawler;
 
 import com.google.common.collect.Lists;
-import com.zhaijiong.bumblebee.crawler.Template;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -1,6 +1,8 @@
-package com.zhaijiong.crawler;
+package com.zhaijiong.crawler.storage;
 
 import com.google.common.collect.Maps;
+import com.zhaijiong.crawler.Config;
+import com.zhaijiong.crawler.Utils;
 import org.redisson.Redisson;
 import org.redisson.core.RQueue;
 import org.redisson.core.RSet;
