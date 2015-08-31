@@ -64,6 +64,6 @@ public class PageFetcher implements Fetcher {
     public static void main(String[] args) {
         PageFetcher fetcher = new PageFetcher();
         Page page =fetcher.fetch("http://yuanchuang.10jqka.com.cn/qingbao/");
-        System.out.println(page.getSourceHTML());
+        System.out.println(page.getSource());
     }
 }

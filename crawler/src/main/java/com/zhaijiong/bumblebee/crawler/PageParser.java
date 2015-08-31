@@ -19,7 +19,7 @@ public class PageParser implements Parser{
 
     @Override
     public Map parse(Page page) {
-        Document doc = Jsoup.parse(page.getSourceHTML());
+        Document doc = Jsoup.parse(page.getSource());
 
         Elements elements;
         if(Pattern.matches(template.getListURL(),page.getUrl())){

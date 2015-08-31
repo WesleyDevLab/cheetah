@@ -51,9 +51,10 @@ public class RealTimeRecommend {
         public void run() {
             counter.countDown();
 
-            DateRange dateRange = DateRange.getRange(120);
+            DateRange dateRange = DateRange.getRange(10);
 
-            List<StockData> values = DailyDataProvider.get(symbol, dateRange.start(), dateRange.stop());
+//            List<StockData> values = DailyDataProvider.get(symbol, dateRange.start(), dateRange.stop());
+            List<StockData> values = MinuteDataProvider.get(symbol, dateRange.start(), dateRange.stop(),"15");
             if(values.size()==0){
                 return;
             }

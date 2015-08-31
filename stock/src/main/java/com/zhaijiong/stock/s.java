@@ -67,6 +67,17 @@ public class s {
     }
 
     /**
+     * 大盘资金流向历史数据
+     * @param startDate
+     * @param stopDate
+     * @return
+     */
+    public static List<StockData> moneyFlowDapanData(String startDate,String stopDate){
+        List<StockData> stockDataList = MoneyFlowDataProvider.getDapan(startDate,stopDate);
+        return stockDataList;
+    }
+
+    /**
      * 历史财报
      * @param symbol
      * @return

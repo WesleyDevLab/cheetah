@@ -2,20 +2,20 @@ package com.zhaijiong.bumblebee.crawler;
 
 public class Page {
 
-    private final String url;
+    private String url;
 
-    private final String sourceHTML;
+    private String source;
 
-    public Page(String url, String sourceHTML) {
+    public Page(String url, String source) {
         this.url = url;
-        this.sourceHTML = sourceHTML;
+        this.source = source;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public String getSourceHTML() {
-        return sourceHTML;
+    public String getSource() {
+        return source;
     }
 }

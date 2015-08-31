@@ -1,12 +1,12 @@
 package com.zhaijiong.stock.provider;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.download.AjaxDownloader;
 import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.BoardType;
 import com.zhaijiong.stock.model.StockData;
@@ -35,6 +35,9 @@ public class MoneyFlowDataProvider {
     private static String moneyFlowURL = "http://hqchart.eastmoney.com/hq20/js/%s.js?%s";
 
     private static String moneyFlowHisURL = "http://data.eastmoney.com/zjlx/%s.html";
+
+    private static String moneyFlowDapanHisURL = "http://data.eastmoney.com/zjlx/dpzjlx.html";
+
 
     public static StockData get(String symbol){
         Map<String, String> map = collect(symbol);
@@ -81,6 +84,46 @@ public class MoneyFlowDataProvider {
             }
         }
         return stockDataList;
+    }
+
+    public static List<StockData> getDapan(String startDate,String stopDate){
+        List<String[]> list = collectDaPan();
+        List<StockData> stockDataList = Lists.newLinkedList();
+        for(String[] columns:list){
+            StockData stockData = new StockData();
+            stockData.date = Utils.str2Date(columns[0], "yyyy-MM-dd");
+
+            if(stockData.date.getTime() >= Utils.str2Date(startDate,"yyyyMMdd").getTime()
+                    && stockData.date.getTime() <= Utils.str2Date(stopDate,"yyyyMMdd").getTime()){
+                for(int i=1;i<columns.length;i++){
+                    double val = 0;
+                    if(columns[i].contains("%")){
+                        val = Double.parseDouble(columns[i].replace("%",""));
+                    }else{
+                        val = Utils.getAmount(columns[i]);
+                    }
+                    stockData.put(StockConstants.DAPAN_MONEYFLOW_HIS.get(i),val);
+                }
+                stockDataList.add(stockData);
+            }
+        }
+        return stockDataList;
+    }
+
+    private static List<String[]> collectDaPan(){
+        String data = AjaxDownloader.download(moneyFlowDapanHisURL);
+        Elements doc = Jsoup.parse(data).getElementById("dt_1").getElementsByTag("tbody").get(0).getElementsByTag("tr");
+
+        List<String[]> stockDataList = Lists.newLinkedList();
+        for(Element tr:doc){
+            Elements tds = tr.getElementsByTag("td");
+            String[] columnValues = new String[15];
+            for(int i=0;i<15;i++){
+                columnValues[i] = tds.get(i).text();
+            }
+            stockDataList.add(columnValues);
+        }
+        return Lists.reverse(stockDataList);
     }
 
     private static List<String[]> collectHis(String symbol){
