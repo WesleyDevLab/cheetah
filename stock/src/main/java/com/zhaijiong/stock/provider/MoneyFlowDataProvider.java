@@ -40,12 +40,24 @@ public class MoneyFlowDataProvider {
 
     //http://data.eastmoney.com/bkzj/hy.html
     private static String moneyFlowIndustryHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKHY&type=ct&st=(BalFlowMain)&&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK&rt=%s";
-
     private static String moneyFlowIndustry5DayHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKHY&type=ct&st=(BalFlowMainNet5)&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK5&rt=%s";
-
     private static String moneyFlowIndustry10DayHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKHY&type=ct&st=(BalFlowMainNet10)&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK10&rt=%s";
 
-    public static StockData get(String symbol){
+    //http://data.eastmoney.com/bkzj/gn.html
+    private static String moneyFlowConceptHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKGN&type=ct&st=(BalFlowMain)&sr=-1&p=1&ps=500&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK&rt=%s";
+    private static String moneyFlowConcept5DayHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKGN&type=ct&st=(BalFlowMainNet5)&sr=-1&p=1&ps=500&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK5&rt=%s";
+    private static String moneyFlowConcept10DayHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKGN&type=ct&st=(BalFlowMainNet10)&sr=-1&p=1&ps=500&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK10&rt=%s";
+
+    //http://data.eastmoney.com/bkzj/dy.html
+    private static String moneyFlowRegionHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKDY&type=ct&st=(BalFlowMain)&sr=-1&p=1&ps=50&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK&rt=%s";
+    private static String moneyFlowRegion5DayHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKDY&type=ct&st=(BalFlowMainNet5)&sr=-1&p=1&ps=50&&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK5&rt=%s";
+    private static String moneyFlowRegion10DayHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKDY&type=ct&st=(BalFlowMainNet10)&sr=-1&p=1&ps=50&&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK10&rt=%s";
+    /**
+     * 获取当天个股资金流数据
+     * @param symbol
+     * @return
+     */
+    public static StockData get(String symbol) {
         Map<String, String> map = collect(symbol);
 
         StockData stockData = new StockData();
@@ -54,61 +66,44 @@ public class MoneyFlowDataProvider {
         stockData.boardType = BoardType.getType(symbol);
 
         String data = map.get("data");
-        if(Strings.isNullOrEmpty(data)){
-            LOG.error("fail to get money flow data from "+symbol);
+        if (Strings.isNullOrEmpty(data)) {
+            LOG.error("fail to get money flow data from " + symbol);
             return null;
         }
         String[] values = data.split(",");
-        for(int i=0;i<values.length;i++){
+        for (int i = 0; i < values.length; i++) {
             stockData.put(StockConstants.MONEYFLOW.get(i), java.lang.Double.parseDouble(values[i]));
         }
         return stockData;
     }
 
-    public static List<StockData> get(String symbol,String startDate,String stopDate){
+    /**
+     * 获取指定时间段股票资金流数据
+     * @param symbol
+     * @param startDate
+     * @param stopDate
+     * @return
+     */
+    public static List<StockData> get(String symbol, String startDate, String stopDate) {
         List<String[]> list = collectHis(symbol);
         List<StockData> stockDataList = Lists.newLinkedList();
-        for(String[] columns:list){
+        for (String[] columns : list) {
             StockData stockData = new StockData();
             stockData.symbol = symbol;
             stockData.stockMarketType = StockMarketType.getType(symbol);
             stockData.boardType = BoardType.getType(symbol);
-            stockData.date = Utils.str2Date(columns[0],"yyyy-MM-dd");
-
-            if(stockData.date.getTime() >= Utils.str2Date(startDate,"yyyyMMdd").getTime()
-                    && stockData.date.getTime() <= Utils.str2Date(stopDate,"yyyyMMdd").getTime()){
-                for(int i=1;i<columns.length;i++){
-                    double val = 0;
-                    if(columns[i].contains("%")){
-                        val = Double.parseDouble(columns[i].replace("%",""));
-                    }else{
-                        val = Utils.getAmount(columns[i]);
-                    }
-                    stockData.put(StockConstants.MONEYFLOW_HIS.get(i),val);
-                }
-                stockDataList.add(stockData);
-            }
-        }
-        return stockDataList;
-    }
-
-    public static List<StockData> getDapan(String startDate,String stopDate){
-        List<String[]> list = collectDaPan();
-        List<StockData> stockDataList = Lists.newLinkedList();
-        for(String[] columns:list){
-            StockData stockData = new StockData();
             stockData.date = Utils.str2Date(columns[0], "yyyy-MM-dd");
 
-            if(stockData.date.getTime() >= Utils.str2Date(startDate,"yyyyMMdd").getTime()
-                    && stockData.date.getTime() <= Utils.str2Date(stopDate,"yyyyMMdd").getTime()){
-                for(int i=1;i<columns.length;i++){
+            if (stockData.date.getTime() >= Utils.str2Date(startDate, "yyyyMMdd").getTime()
+                    && stockData.date.getTime() <= Utils.str2Date(stopDate, "yyyyMMdd").getTime()) {
+                for (int i = 1; i < columns.length; i++) {
                     double val = 0;
-                    if(columns[i].contains("%")){
-                        val = Double.parseDouble(columns[i].replace("%",""));
-                    }else{
+                    if (columns[i].contains("%")) {
+                        val = Double.parseDouble(columns[i].replace("%", ""));
+                    } else {
                         val = Utils.getAmount(columns[i]);
                     }
-                    stockData.put(StockConstants.DAPAN_MONEYFLOW_HIS.get(i),val);
+                    stockData.put(StockConstants.MONEYFLOW_HIS.get(i), val);
                 }
                 stockDataList.add(stockData);
             }
@@ -117,37 +112,101 @@ public class MoneyFlowDataProvider {
     }
 
     /**
-     *
-     * @param type  1,5,10
+     * 获取大盘资金流数据
      * @return
      */
-    public static List<StockData> getIndustry(String type){
-        List<String> list = collectIndustry(type);
+    public static List<StockData> getDapan() {
+        List<String[]> list = collectDaPan();
         List<StockData> stockDataList = Lists.newLinkedList();
-        for(String line:list){
-            String[] columns = line.split(",",16);
+        for (String[] columns : list) {
             StockData stockData = new StockData();
-            stockData.symbol = columns[1];
-            stockData.name = columns[2];
-            for(int i = 3;i<13;i++){
-                stockData.put(StockConstants.INDUSTRY_MONEYFLOW.get(i),Double.parseDouble(columns[i]));
+            stockData.date = Utils.str2Date(columns[0], "yyyy-MM-dd");
+
+            for (int i = 1; i < columns.length; i++) {
+                double val;
+                if (columns[i].contains("%")) {
+                    val = Double.parseDouble(columns[i].replace("%", ""));
+                } else {
+                    val = Utils.getAmount(columns[i]);
+                }
+                stockData.put(StockConstants.DAPAN_MONEYFLOW_HIS.get(i), val);
             }
             stockDataList.add(stockData);
         }
         return stockDataList;
     }
 
-    private static List<String> collectIndustry(String type){
+    /**
+     * 获取行业版块资金流数据
+     * @param type 1,5,10
+     * @return
+     */
+    public static List<StockData> getIndustry(String type) {
+        List<String> list = collectIndustry(type);
+        List<StockData> stockDataList = Lists.newLinkedList();
+        for (String line : list) {
+            String[] columns = line.split(",", 16);
+            StockData stockData = new StockData();
+            stockData.symbol = columns[1];
+            stockData.name = columns[2];
+            for (int i = 3; i < 13; i++) {
+                stockData.put(StockConstants.INDUSTRY_MONEYFLOW.get(i), Double.parseDouble(columns[i]));
+            }
+            stockDataList.add(stockData);
+        }
+        return stockDataList;
+    }
 
+    /**
+     * 获取概念版块资金流数据
+     * @return
+     */
+    public static List<StockData> getConcept(String type){
+        List<String> list = collectConcept(type);
+        List<StockData> stockDataList = Lists.newLinkedList();
+        for (String line : list) {
+            String[] columns = line.split(",", 16);
+            StockData stockData = new StockData();
+            stockData.symbol = columns[1];
+            stockData.name = columns[2];
+            for (int i = 3; i < 13; i++) {
+                stockData.put(StockConstants.INDUSTRY_MONEYFLOW.get(i), Double.parseDouble(columns[i]));
+            }
+            stockDataList.add(stockData);
+        }
+        return stockDataList;
+    }
+
+    /**
+     * 获取地区版块资金流数据
+     * @return
+     */
+    public static List<StockData> getRegion(String type){
+        List<String> list = collectRegion(type);
+        List<StockData> stockDataList = Lists.newLinkedList();
+        for (String line : list) {
+            String[] columns = line.split(",", 16);
+            StockData stockData = new StockData();
+            stockData.symbol = columns[1];
+            stockData.name = columns[2];
+            for (int i = 3; i < 13; i++) {
+                stockData.put(StockConstants.INDUSTRY_MONEYFLOW.get(i), Double.parseDouble(columns[i]));
+            }
+            stockDataList.add(stockData);
+        }
+        return stockDataList;
+    }
+
+    private static List<String> collectRegion(String type) {
         String url;
         Random random = new Random();
         int i = random.nextInt(99999999);
-        if(type.equals("5")){
-            url = String.format(moneyFlowIndustry5DayHisURL,i);
-        }else if(type.equals("10")){
-            url = String.format(moneyFlowIndustry10DayHisURL,i);
-        }else{
-            url =  String.format(moneyFlowIndustryHisURL, i);
+        if (type.equals("5")) {
+            url = String.format(moneyFlowRegion5DayHisURL, i);
+        } else if (type.equals("10")) {
+            url = String.format(moneyFlowRegion10DayHisURL, i);
+        } else {
+            url = String.format(moneyFlowRegionHisURL, i);
         }
         String data = Downloader.download(url);
         String s = data.substring(1, data.length() - 1);
@@ -156,15 +215,52 @@ public class MoneyFlowDataProvider {
         return list;
     }
 
-    private static List<String[]> collectDaPan(){
+    private static List<String> collectConcept(String type) {
+        String url;
+        Random random = new Random();
+        int i = random.nextInt(99999999);
+        if (type.equals("5")) {
+            url = String.format(moneyFlowConcept5DayHisURL, i);
+        } else if (type.equals("10")) {
+            url = String.format(moneyFlowConcept10DayHisURL, i);
+        } else {
+            url = String.format(moneyFlowConceptHisURL, i);
+        }
+        String data = Downloader.download(url);
+        String s = data.substring(1, data.length() - 1);
+        Gson gson = new Gson();
+        List<String> list = gson.fromJson(s, List.class);
+        return list;
+    }
+
+    private static List<String> collectIndustry(String type) {
+
+        String url;
+        Random random = new Random();
+        int i = random.nextInt(99999999);
+        if (type.equals("5")) {
+            url = String.format(moneyFlowIndustry5DayHisURL, i);
+        } else if (type.equals("10")) {
+            url = String.format(moneyFlowIndustry10DayHisURL, i);
+        } else {
+            url = String.format(moneyFlowIndustryHisURL, i);
+        }
+        String data = Downloader.download(url);
+        String s = data.substring(1, data.length() - 1);
+        Gson gson = new Gson();
+        List<String> list = gson.fromJson(s, List.class);
+        return list;
+    }
+
+    private static List<String[]> collectDaPan() {
         String data = Downloader.downloadAjax(moneyFlowDapanHisURL);
         Elements doc = Jsoup.parse(data).getElementById("dt_1").getElementsByTag("tbody").get(0).getElementsByTag("tr");
 
         List<String[]> stockDataList = Lists.newLinkedList();
-        for(Element tr:doc){
+        for (Element tr : doc) {
             Elements tds = tr.getElementsByTag("td");
             String[] columnValues = new String[15];
-            for(int i=0;i<15;i++){
+            for (int i = 0; i < 15; i++) {
                 columnValues[i] = tds.get(i).text();
             }
             stockDataList.add(columnValues);
@@ -172,16 +268,16 @@ public class MoneyFlowDataProvider {
         return Lists.reverse(stockDataList);
     }
 
-    private static List<String[]> collectHis(String symbol){
-        String url = String.format(moneyFlowHisURL,symbol);
+    private static List<String[]> collectHis(String symbol) {
+        String url = String.format(moneyFlowHisURL, symbol);
         String data = Downloader.download(url);
         Elements doc = Jsoup.parse(data).getElementById("dt_1").getElementsByTag("tbody").get(0).getElementsByTag("tr");
 
         List<String[]> stockDataList = Lists.newLinkedList();
-        for(Element tr:doc){
+        for (Element tr : doc) {
             Elements tds = tr.getElementsByTag("td");
             String[] columnValues = new String[13];
-            for(int i=0;i<13;i++){
+            for (int i = 0; i < 13; i++) {
                 columnValues[i] = tds.get(i).text();
             }
             stockDataList.add(columnValues);
@@ -194,7 +290,7 @@ public class MoneyFlowDataProvider {
         String data = Downloader.download(getPath(symbol));
         Pattern pattern = Pattern.compile("(\\{.*})");
         Matcher matcher = pattern.matcher(data);
-        if(matcher.find()){
+        if (matcher.find()) {
             Gson gson = new Gson();
             map.putAll(gson.fromJson(matcher.group(), Map.class));
         }
@@ -204,7 +300,7 @@ public class MoneyFlowDataProvider {
     public static String getPath(String symbol) {
         Random random = new Random();
         int i = random.nextInt(999999);
-        return String.format(moneyFlowURL,symbol,i);
+        return String.format(moneyFlowURL, symbol, i);
     }
 
     public static void main(String[] args) {
@@ -215,7 +311,7 @@ public class MoneyFlowDataProvider {
 //        }
 
         List<StockData> industry = MoneyFlowDataProvider.getIndustry("1");
-        for(StockData stockData :industry){
+        for (StockData stockData : industry) {
             System.out.println(stockData);
             Utils.printMap(stockData);
         }

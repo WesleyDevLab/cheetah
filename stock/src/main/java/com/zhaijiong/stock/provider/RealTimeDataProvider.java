@@ -49,11 +49,11 @@ public class RealTimeDataProvider {
         Map<String, List<String>> map = collect(symbol);
 
         if(map.size()==0){
-            return null;
+            return new StockData();
         }
         List<String> columns = map.get("Value");
         if (columns.size() != 50) {
-            return null;
+            return new StockData();
         }
 
         StockData stockData = new StockData();

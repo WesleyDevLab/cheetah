@@ -68,12 +68,40 @@ public class s {
 
     /**
      * 大盘资金流向历史数据
-     * @param startDate
-     * @param stopDate
      * @return
      */
-    public static List<StockData> moneyFlowDapanData(String startDate,String stopDate){
-        List<StockData> stockDataList = MoneyFlowDataProvider.getDapan(startDate,stopDate);
+    public static List<StockData> moneyFlowDapanData(){
+        List<StockData> stockDataList = MoneyFlowDataProvider.getDapan();
+        return stockDataList;
+    }
+
+    /**
+     * 获取今天、5日、10日行业版块资金流数据
+     * @param type 1,5,10
+     * @return
+     */
+    public static List<StockData> moneyFlowIndustryData(String type){
+        List<StockData> stockDataList = MoneyFlowDataProvider.getIndustry(type);
+        return stockDataList;
+    }
+
+    /**
+     * 获取今天、5日、10日行业版块资金流数据
+     * @param type 1,5,10
+     * @return
+     */
+    public static List<StockData> moneyFlowConceptData(String type){
+        List<StockData> stockDataList = MoneyFlowDataProvider.getConcept(type);
+        return stockDataList;
+    }
+
+    /**
+     * 获取今天、5日、10日行业版块资金流数据
+     * @param type 1,5,10
+     * @return
+     */
+    public static List<StockData> moneyFlowRegionData(String type){
+        List<StockData> stockDataList = MoneyFlowDataProvider.getRegion(type);
         return stockDataList;
     }
 
