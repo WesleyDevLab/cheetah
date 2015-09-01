@@ -6,7 +6,6 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.download.AjaxDownloader;
 import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.BoardType;
 import com.zhaijiong.stock.model.StockData;
@@ -17,6 +16,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -38,6 +38,12 @@ public class MoneyFlowDataProvider {
 
     private static String moneyFlowDapanHisURL = "http://data.eastmoney.com/zjlx/dpzjlx.html";
 
+    //http://data.eastmoney.com/bkzj/hy.html
+    private static String moneyFlowIndustryHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKHY&type=ct&st=(BalFlowMain)&&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK&rt=%s";
+
+    private static String moneyFlowIndustry5DayHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKHY&type=ct&st=(BalFlowMainNet5)&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK5&rt=%s";
+
+    private static String moneyFlowIndustry10DayHisURL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cmd=C._BKHY&type=ct&st=(BalFlowMainNet10)&token=894050c76af8597a853f5b408b759f5d&sty=DCFFITABK10&rt=%s";
 
     public static StockData get(String symbol){
         Map<String, String> map = collect(symbol);
@@ -110,6 +116,46 @@ public class MoneyFlowDataProvider {
         return stockDataList;
     }
 
+    /**
+     *
+     * @param type  1,5,10
+     * @return
+     */
+    public static List<StockData> getIndustry(String type){
+        List<String> list = collectIndustry(type);
+        List<StockData> stockDataList = Lists.newLinkedList();
+        for(String line:list){
+            String[] columns = line.split(",",16);
+            StockData stockData = new StockData();
+            stockData.symbol = columns[1];
+            stockData.name = columns[2];
+            for(int i = 3;i<13;i++){
+                stockData.put(StockConstants.INDUSTRY_MONEYFLOW.get(i),Double.parseDouble(columns[i]));
+            }
+            stockDataList.add(stockData);
+        }
+        return stockDataList;
+    }
+
+    private static List<String> collectIndustry(String type){
+
+        String url;
+        Random random = new Random();
+        int i = random.nextInt(99999999);
+        if(type.equals("5")){
+            url = String.format(moneyFlowIndustry5DayHisURL,i);
+        }else if(type.equals("10")){
+            url = String.format(moneyFlowIndustry10DayHisURL,i);
+        }else{
+            url =  String.format(moneyFlowIndustryHisURL, i);
+        }
+        String data = Downloader.download(url);
+        String s = data.substring(1, data.length() - 1);
+        Gson gson = new Gson();
+        List<String> list = gson.fromJson(s, List.class);
+        return list;
+    }
+
     private static List<String[]> collectDaPan(){
         String data = Downloader.downloadAjax(moneyFlowDapanHisURL);
         Elements doc = Jsoup.parse(data).getElementById("dt_1").getElementsByTag("tbody").get(0).getElementsByTag("tr");
@@ -162,10 +208,17 @@ public class MoneyFlowDataProvider {
     }
 
     public static void main(String[] args) {
-        List<StockData> stockDataList = MoneyFlowDataProvider.get("600376", "20150801", "20150830");
-        for(StockData stockData :stockDataList){
+//        List<StockData> stockDataList = MoneyFlowDataProvider.get("600376", "20150801", "20150830");
+//        for(StockData stockData :stockDataList){
+//            System.out.println(stockData);
+//            Utils.printMap(stockData);
+//        }
+
+        List<StockData> industry = MoneyFlowDataProvider.getIndustry("1");
+        for(StockData stockData :industry){
             System.out.println(stockData);
             Utils.printMap(stockData);
         }
+
     }
 }
