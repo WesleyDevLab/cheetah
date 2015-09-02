@@ -16,11 +16,11 @@ import java.io.InputStream;
 public class BasicDownloader {
     private static final Logger LOG = LoggerFactory.getLogger(BasicDownloader.class);
 
-    private static int RETRY_COUNT = 3;
+    private static int RETRY_COUNT = 1;
 
     public static String download(String url) {
         int retry = 0;
-        while(retry<RETRY_COUNT){
+        while(retry<=RETRY_COUNT){
             try {
                 HttpResponse<String> response = Unirest.get(url).asString();
                 if(response.getStatus()==200){
@@ -28,6 +28,7 @@ public class BasicDownloader {
                 }else{
                     LOG.warn("status="+response.getStatus()+",url="+url);
                 }
+                retry++;
             } catch (UnirestException e) {
                 retry++;
                 LOG.error("retry="+retry+",fail to download from " + url);

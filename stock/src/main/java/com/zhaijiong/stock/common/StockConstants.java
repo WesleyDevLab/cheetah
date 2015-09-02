@@ -47,7 +47,7 @@ public class StockConstants {
             "",                     //33    未知
             "lastClose",            //34    昨收盘
             "amount",               //35    成交额,单位:元
-            "quantityRelative ",    //36    量比
+            "quantityRelative",    //36    量比
             "turnoverRate",         //37    换手率
             "PE",                   //38    市盈率
             "outerDisc",            //39    外盘,主动买
