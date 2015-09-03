@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 import static com.zhaijiong.stock.common.Constants.ROWKEY_DATA_FORMAT;
 import static com.zhaijiong.stock.common.Constants.UTF8;
@@ -339,6 +340,18 @@ public class Utils {
             return true;
         }else{
             return false;
+        }
+    }
+
+    public static void closeThreadPool(ExecutorService threadPool){
+        threadPool.shutdown();
+        while(!threadPool.isTerminated()){
+            threadPool.shutdownNow();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

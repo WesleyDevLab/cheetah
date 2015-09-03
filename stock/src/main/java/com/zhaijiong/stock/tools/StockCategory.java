@@ -1,9 +1,12 @@
 package com.zhaijiong.stock.tools;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import com.zhaijiong.stock.common.Pair;
+import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.StockBlock;
 import org.jsoup.Jsoup;
@@ -15,9 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,45 +40,65 @@ public class StockCategory {
     private static int RETRY_TIMES = 3;
     private static int SLEEP_INTERVAL_MS = 3000;
 
+    private static ExecutorService threadPool  = Executors.newFixedThreadPool(30);
+
     //获取概念版块、行业版块、地域版块分类
     //key:版块分类：概念，行业，地域
     //value：List<StockBlock>具体版块信息
     public static Map<String,List<StockBlock>> getCategory() {
-        Map<String,List<StockBlock>> blockMap = Maps.newHashMap();
+        final Map<String,List<StockBlock>> blockMap = Maps.newConcurrentMap();
 
         int retryTimes = 0;
         while (retryTimes < RETRY_TIMES) {
 
             try {
+                List<Pair<String,Element>> taskList = Lists.newLinkedList();
+
                 Document document = Jsoup.connect(tagsURL).get();
                 Elements elements = document.select("li[class=node-sub-sub]");
                 for (Element element : elements) {
                     String html = new String(element.html().getBytes(Charset.forName("utf8")));
                     Elements items = element.select("ul li");
 
-                    String type ="";
+                    final String type;
                     if (html.contains("概念板块")) {
                         type = "概念";
                     } else if (html.contains("行业板块")) {
                         type = "行业";
                     } else if (html.contains("地域板块")) {
                         type = "地域";
+                    } else {
+                        type = "";
                     }
-
-                    List<StockBlock> list = Lists.newArrayListWithCapacity(200);
-                    for (Element item : items) {
-                        StockBlock stockBlock = new StockBlock();
-                        stockBlock.name = new String(item.select("span[class=text]").text().getBytes(Charset.forName("utf8")));
-                        stockBlock.url = blockBaseURL+item.select("a").attr("href");
-                        String _id = CharMatcher.DIGIT.retainFrom(stockBlock.url);
-                        stockBlock.id = _id.substring(0,_id.length()-2);
-                        stockBlock.symbolList.addAll(getBlockStockList(stockBlock.id));
-                        stockBlock.type = type;
-                        list.add(stockBlock);
+                    for (final Element item : items) {
+                        taskList.add(new Pair(type,item));
                     }
-                    blockMap.put(type,list);
-
                 }
+
+                blockMap.put("概念",new LinkedList<StockBlock>());
+                blockMap.put("行业",new LinkedList<StockBlock>());
+                blockMap.put("地域",new LinkedList<StockBlock>());
+
+                final CountDownLatch countDownLatch = new CountDownLatch(taskList.size());
+                for(final Pair<String,Element> block:taskList){
+                    threadPool.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            StockBlock stockBlock = new StockBlock();
+                            stockBlock.name = new String(block.getVal().select("span[class=text]").text().getBytes(Charset.forName("utf8")));
+                            stockBlock.url = blockBaseURL+block.getVal().select("a").attr("href");
+                            String _id = CharMatcher.DIGIT.retainFrom(stockBlock.url);
+                            stockBlock.id = _id.substring(0,_id.length()-2);
+                            stockBlock.symbolList.addAll(getBlockStockList(stockBlock.id));
+                            stockBlock.type = block.getKey();
+                            blockMap.get(block.getKey()).add(stockBlock);
+                            countDownLatch.countDown();
+                        }
+                    });
+                }
+                countDownLatch.await();
+                Utils.closeThreadPool(threadPool);
+                LOG.info("概念:" + blockMap.get("概念").size() + ",行业:" + blockMap.get("行业").size() + ",地域:" + blockMap.get("地域").size());
                 return blockMap;
             } catch (IOException e) {
                 LOG.error("fail to get stock list",e);
@@ -86,9 +108,11 @@ public class StockCategory {
                 } catch (InterruptedException e1) {
                     LOG.error("fail to sleep "+ SLEEP_INTERVAL_MS + "ms");
                 }
+            } catch (InterruptedException e) {
+                LOG.error("fail to stop thread pool",e);
             }
         }
-        LOG.info("概念:" + blockMap.get("概念板块").size() + ",行业:" + blockMap.get("行业板块").size() + ",地域:" + blockMap.get("地域板块").size());
+
         return blockMap;
     }
 
@@ -111,6 +135,7 @@ public class StockCategory {
     }
 
     public static void main(String[] args) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         Map<String, List<StockBlock>> stockBlocks = StockCategory.getCategory();
         for (Map.Entry<String, List<StockBlock>> entry : stockBlocks.entrySet()) {
             for (StockBlock stockBlock : entry.getValue()) {
@@ -122,5 +147,6 @@ public class StockCategory {
             }
             System.out.println(entry.getKey() + ":" + entry.getValue().size());
         }
+        System.out.println("cost:"+stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 }
