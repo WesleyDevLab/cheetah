@@ -19,7 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by eryk on 15-4-8.
+ * key:symbol
+ * value:stock name
  */
 public class StockMap {
     private static final Logger LOG = LoggerFactory.getLogger(StockMap.class);
@@ -78,6 +79,12 @@ public class StockMap {
         return Maps.newLinkedHashMap();
     }
 
+    /**
+     * 获取股票状态，分为三种情况：已退市，停牌中，交易中
+     * @param symbol
+     * @return
+     * @throws IOException
+     */
     public static String getStockStatus(String symbol) throws IOException {
         Random random = new Random();
         String url = String.format(stockDetailURL, symbol, random.nextInt(999999));
