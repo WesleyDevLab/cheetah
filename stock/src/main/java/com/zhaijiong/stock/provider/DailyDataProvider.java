@@ -7,7 +7,7 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.Symbol;
-import com.zhaijiong.stock.tools.StockMap;
+import com.zhaijiong.stock.tools.StockList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +88,7 @@ public class DailyDataProvider {
     }
 
     public static void main(String[] args) {
-        List<String> symbols = StockMap.getList();
+        List<String> symbols = StockList.getList();
         for(String symbol:symbols){
             List<StockData> collect = DailyDataProvider.get(symbol, "20150823", "20150825");
             Context context= new Context();

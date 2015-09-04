@@ -1,6 +1,6 @@
 package com.zhaijiong.stock.scheduler;
 
-import com.zhaijiong.stock.tools.StockMap;
+import com.zhaijiong.stock.tools.StockList;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ public class StockListDownloadJob extends JobBase {
     @Override
     public void execute(JobExecutionContext jobContext) throws JobExecutionException {
         try {
-            Map<String, String> stockMap = StockMap.getMap();
+            Map<String, String> stockMap = StockList.getMap();
             stockDB.saveStockSymbols(stockMap);
         } catch (IOException e) {
             LOG.error("failed to download stock list");

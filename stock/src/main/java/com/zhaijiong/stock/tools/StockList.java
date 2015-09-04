@@ -1,8 +1,6 @@
 package com.zhaijiong.stock.tools;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Utils;
@@ -26,8 +24,8 @@ import java.util.regex.Pattern;
  * key:symbol
  * value:stock name
  */
-public class StockMap {
-    private static final Logger LOG = LoggerFactory.getLogger(StockMap.class);
+public class StockList {
+    private static final Logger LOG = LoggerFactory.getLogger(StockList.class);
 
     private static String stockURL = "http://quote.eastmoney.com/stocklist.html";
 
@@ -145,9 +143,9 @@ public class StockMap {
 //        }
 //        System.out.println("stock:"+stockMap.size());
 
-        System.out.println(StockMap.getStockStatus("000003"));
-        System.out.println(StockMap.getStockStatus("002106"));
-        System.out.println(StockMap.getStockStatus("600376"));
+        System.out.println(StockList.getStockStatus("000003"));
+        System.out.println(StockList.getStockStatus("002106"));
+        System.out.println(StockList.getStockStatus("600376"));
     }
 
 }

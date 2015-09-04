@@ -150,13 +150,18 @@ public class s {
         return stockDataList;
     }
 
+    /**
+     * 获取最新一天股票逐笔数据
+     * @param symbol
+     * @return
+     */
     public static List<Tick> tickData(String symbol){
         List<Tick> ticks = TickDataProvider.get(symbol);
         return ticks;
     }
 
     /**
-     * 获取指定某天逐笔股票数据
+     * 获取指定日期逐笔股票数据
      * @param symbol
      * @param date  格式: yyyyMMdd
      * @return

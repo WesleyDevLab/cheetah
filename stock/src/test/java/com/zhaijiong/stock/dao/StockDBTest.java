@@ -6,7 +6,7 @@ import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.DailyDataProvider;
-import com.zhaijiong.stock.tools.StockMap;
+import com.zhaijiong.stock.tools.StockList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,7 +104,7 @@ public class StockDBTest {
     @Test
     public void testSaveStockList() throws IOException {
         StockDB stockDB = new StockDB(context);
-        stockDB.saveStockSymbols(StockMap.getMap());
+        stockDB.saveStockSymbols(StockList.getMap());
         context.close();
     }
 

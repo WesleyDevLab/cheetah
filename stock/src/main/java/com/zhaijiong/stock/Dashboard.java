@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.RealTimeDataProvider;
-import com.zhaijiong.stock.tools.StockMap;
+import com.zhaijiong.stock.tools.StockList;
 import com.zhaijiong.stock.tools.tableformat.SimpleTableFormatter;
 import com.zhaijiong.stock.tools.tableformat.TableFormatter;
 import org.HdrHistogram.ConcurrentDoubleHistogram;
@@ -37,7 +37,7 @@ public class Dashboard {
 
     public void overview() throws IOException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        List<String> stockList = StockMap.getList();
+        List<String> stockList = StockList.getList();
         stockCount.addAndGet(stockList.size());
         latch = new CountDownLatch(stockList.size());
         for (final String symbol : stockList) {
@@ -45,7 +45,7 @@ public class Dashboard {
                 @Override
                 public void run() {
                     try {
-                        String stockStatus = StockMap.getStockStatus(symbol);
+                        String stockStatus = StockList.getStockStatus(symbol);
                         if (stockStatus.equals("delisted")) {
                             delistedCount.incrementAndGet();
                             latch.countDown();
