@@ -1,8 +1,11 @@
 package com.zhaijiong.stock.tools;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.download.Downloader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,9 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,6 +103,35 @@ public class StockMap {
             }
         }
         return "trading";  //交易中
+    }
+
+    public static List<String> getTradingStockList(){
+        List<String> list = getList();
+        final List<String> stockList = Collections.synchronizedList(new LinkedList<String>());
+        ExecutorService threadPool = Executors.newFixedThreadPool(30);
+        final CountDownLatch countDownLatch = new CountDownLatch(list.size());
+        for(final String symbol:list){
+            threadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if(getStockStatus(symbol).equals("trading")){
+                            stockList.add(symbol);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Utils.closeThreadPool(threadPool);
+        return stockList;
     }
 
     public static List<String> getList(){

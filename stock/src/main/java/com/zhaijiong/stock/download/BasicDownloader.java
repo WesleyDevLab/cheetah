@@ -43,7 +43,7 @@ public class BasicDownloader {
         return "";
     }
 
-    public InputStream downloadStream(String url) {
+    public static InputStream downloadStream(String url) {
         try {
             HttpResponse<String> response = Unirest.get(url).asString();
             if(response.getStatus()==200){

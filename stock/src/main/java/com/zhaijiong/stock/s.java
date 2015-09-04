@@ -1,7 +1,9 @@
 package com.zhaijiong.stock;
 
 import com.zhaijiong.stock.common.DateRange;
+import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.model.Tick;
 import com.zhaijiong.stock.provider.*;
 
 import java.util.List;
@@ -36,11 +38,24 @@ public class s {
         return collect;
     }
 
+    /**
+     * 获取指定时间段内的日线股票数据
+     * @param symbol
+     * @param startDate
+     * @param stopDate
+     * @return
+     */
     public static List<StockData> dailyData(String symbol,String startDate,String stopDate){
         List<StockData> collect = DailyDataProvider.get(symbol, startDate, stopDate);
         return collect;
     }
 
+    /**
+     * 获取最新一笔股票分钟级别数据
+     * @param symbol
+     * @param type
+     * @return
+     */
     public static StockData minuteData(String symbol,String type){
         DateRange range = DateRange.getRange(10);
         List<StockData> stockDataList = minuteData(symbol,range.start(),range.stop(),type);
@@ -135,4 +150,20 @@ public class s {
         return stockDataList;
     }
 
+    public static List<Tick> tickData(String symbol){
+        List<Tick> ticks = TickDataProvider.get(symbol);
+        return ticks;
+    }
+
+    /**
+     * 获取指定某天逐笔股票数据
+     * @param symbol
+     * @param date  格式: yyyyMMdd
+     * @return
+     */
+    public static List<Tick> tickData(String symbol,String date){
+        String _date = Utils.formatDate(Utils.str2Date(date,"yyyyMMdd"),"yyyy-MM-dd");
+        List<Tick> ticks = TickDataProvider.get(symbol,_date);
+        return ticks;
+    }
 }

@@ -88,10 +88,9 @@ public class DailyDataProvider {
     }
 
     public static void main(String[] args) {
-        DailyDataProvider dailyDataProvider = new DailyDataProvider();
         List<String> symbols = StockMap.getList();
         for(String symbol:symbols){
-            List<StockData> collect = dailyDataProvider.get(symbol, "20150823", "20150825");
+            List<StockData> collect = DailyDataProvider.get(symbol, "20150823", "20150825");
             Context context= new Context();
             StockDB stockDB = new StockDB(context);
             stockDB.saveStockDailyData(collect);
