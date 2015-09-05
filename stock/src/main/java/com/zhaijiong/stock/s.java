@@ -2,11 +2,15 @@ package com.zhaijiong.stock;
 
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.model.StockBlock;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.Tick;
 import com.zhaijiong.stock.provider.*;
+import com.zhaijiong.stock.tools.StockCategory;
+import com.zhaijiong.stock.tools.StockList;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 成交量 单位：手
@@ -28,7 +32,7 @@ public class s {
     }
 
     /**
-     * 获取日线级别历史数据
+     * 获取日线级别最近120天历史数据
      * @param symbol
      * @return
      */
@@ -41,8 +45,8 @@ public class s {
     /**
      * 获取指定时间段内的日线股票数据
      * @param symbol
-     * @param startDate
-     * @param stopDate
+     * @param startDate 格式：yyyyMMdd
+     * @param stopDate  格式：yyyyMMdd
      * @return
      */
     public static List<StockData> dailyData(String symbol,String startDate,String stopDate){
@@ -53,7 +57,7 @@ public class s {
     /**
      * 获取最新一笔股票分钟级别数据
      * @param symbol
-     * @param type
+     * @param type  参数值：5,15,30,60
      * @return
      */
     public static StockData minuteData(String symbol,String type){
@@ -66,16 +70,36 @@ public class s {
         }
     }
 
+    /**
+     * 获取指定时间段内历史分钟级别数据，受数据源限制
+     * @param symbol
+     * @param startDate 格式：yyyyMMdd
+     * @param stopDate  格式：yyyyMMdd
+     * @param type
+     * @return
+     */
     public static List<StockData> minuteData(String symbol,String startDate,String stopDate,String type){
         List<StockData> stockList = MinuteDataProvider.get(symbol, startDate, stopDate, type);
         return stockList;
     }
 
+    /**
+     * 获取个股当日资金流数据
+     * @param symbol
+     * @return
+     */
     public static StockData moneyFlowData(String symbol){
         StockData stockData = MoneyFlowDataProvider.get(symbol);
         return stockData;
     }
 
+    /**
+     * 获取个股指定时间段内资金流数据，受数据源限制
+     * @param symbol
+     * @param startDate 格式：yyyyMMdd
+     * @param stopDate  格式：yyyyMMdd
+     * @return
+     */
     public static List<StockData> moneyFlowData(String symbol,String startDate,String stopDate){
         List<StockData> stockDataList = MoneyFlowDataProvider.get(symbol,startDate,stopDate);
         return stockDataList;
@@ -102,7 +126,7 @@ public class s {
 
     /**
      * 获取今天、5日、10日行业版块资金流数据
-     * @param type 1,5,10
+     * @param type 输入值：1,5,10
      * @return
      */
     public static List<StockData> moneyFlowConceptData(String type){
@@ -123,15 +147,17 @@ public class s {
     /**
      * 历史财报
      * @param symbol
+     * @param startDate 格式：yyyyMMdd
+     * @param stopDate  格式：yyyyMMdd
      * @return
      */
     public static List<StockData> financeData(String symbol, String startDate, String stopDate){
-        List<StockData> stockDataList = FinanceDataProvider.get(symbol,startDate,stopDate);
+        List<StockData> stockDataList = FinanceDataProvider.get(symbol, startDate, stopDate);
         return stockDataList;
     }
 
     /**
-     * 最新一期财报
+     * 最新一期财报数据
      * @param symbol
      * @return
      */
@@ -145,6 +171,11 @@ public class s {
         }
     }
 
+    /**
+     * 股票年报数据
+     * @param symbol
+     * @return
+     */
     public static List<StockData> financeYearData(String symbol){
         List<StockData> stockDataList = FinanceDataProvider.getYear(symbol);
         return stockDataList;
@@ -171,4 +202,31 @@ public class s {
         List<Tick> ticks = TickDataProvider.get(symbol,_date);
         return ticks;
     }
+
+    /**
+     * 获取股票版块数据
+     * map key: 股票的版块分类名称，包含三项：概念，地区，行业
+     * value: list是版块分类下的版块，每个版块包含一个股票列表
+     * @return
+     */
+    public static Map<String,List<StockBlock>> stockBlock(){
+        return StockCategory.getCategory();
+    }
+
+    /**
+     * 获取股票列表
+     * @return
+     */
+    public static List<String> stockList(){
+        return StockList.getList();
+    }
+
+    /**
+     * 获取交易中的股票列表，剔除了退市和停牌的股票
+     * @return
+     */
+    public static List<String> tradingStockList(){
+        return StockList.getTradingStockList();
+    }
+
 }
