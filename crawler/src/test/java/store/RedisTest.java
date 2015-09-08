@@ -45,13 +45,6 @@ public class RedisTest {
     }
 
     @Test
-    public void testIsCrawled() throws Exception {
-        Assert.assertFalse(redis.isCrawled(url));
-        redis.crawlURL(url);
-        Assert.assertTrue(redis.isCrawled(url));
-    }
-
-    @Test
     public void performance() {
         long starttime = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {

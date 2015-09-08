@@ -17,6 +17,18 @@ public class Config extends HashMap{
         this("crawler.yaml");
     }
 
+    public String getStr(String key){
+        Object o = this.get(key);
+        if(o!=null){
+            return String.valueOf(o);
+        }
+        return null;
+    }
+
+    public Integer getInt(String key){
+        return (Integer) this.get(key);
+    }
+
     public List<Template> getTemplates(){
         List list = (List) get(TEMPLATES);
         List<Template> templates = Lists.newArrayList();

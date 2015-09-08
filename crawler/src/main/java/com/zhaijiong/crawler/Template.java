@@ -3,19 +3,11 @@ package com.zhaijiong.crawler;
 
 import java.util.Map;
 
+import static com.zhaijiong.crawler.Constants.*;
+
 public class Template {
 
-    public static final String TEMPLATE_NAME = "source";
 
-    public static final String TEMPLATE_CATEGORY = "category";
-
-    public static final String TEMPLATE_START_URL = "start.url";
-
-    public static final String TEMPLATE_LIST_URL = "list.url";
-
-    public static final String TEMPLATE_CONTENT_URL = "content.url";
-
-    public static final String TEMPLATE_RULES = "rules";
 
     private Map<String,Object> items;
 

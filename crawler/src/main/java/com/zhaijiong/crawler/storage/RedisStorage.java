@@ -1,14 +1,12 @@
 package com.zhaijiong.crawler.storage;
 
-import com.google.common.collect.Maps;
+import com.google.common.base.Strings;
 import com.zhaijiong.crawler.Config;
-import com.zhaijiong.crawler.Utils;
 import org.redisson.Redisson;
+import org.redisson.core.RList;
 import org.redisson.core.RQueue;
-import org.redisson.core.RSet;
 
-import java.util.Date;
-import java.util.Map;
+import java.util.List;
 
 import static com.zhaijiong.crawler.Constants.*;
 
@@ -17,25 +15,30 @@ public class RedisStorage implements Storage{
     private Redisson redis;
 
     //存储已经被爬过的url地址
-    private Map<String,RSet<String>> crawledDB;
+    private RList<String> indexList;
     private RQueue<String> taskQueue;
+
+    private int indexLength = 0;
 
     public RedisStorage(Config config){
         this.config = config;
     }
 
+    private org.redisson.Config getRedissonConf() {
+        org.redisson.Config redisonConf = new org.redisson.Config();
+        String address = this.config.getStr(REDIS_SERVER_ADDRESS);
+        if(!Strings.isNullOrEmpty(address)){
+            redisonConf.useSingleServer().setAddress(address);
+        }
+        return redisonConf;
+    }
+
     @Override
     public void init(){
-        org.redisson.Config config = new org.redisson.Config();
-        Object address = this.config.get(REDIS_SERVER_ADDRESS);
-        if(address!=null){
-            config.useSingleServer().setAddress(String.valueOf(address));
-        }
-        redis = Redisson.create(config);
-        crawledDB = Maps.newHashMap();
-        RSet<String> set = redis.getSet(REDIS_CRAWLED_URL);
-        crawledDB.put(Utils.getDateStr(new Date()),set);
-        taskQueue = redis.getQueue(REDIS_TASK_QUEUE);
+        redis = Redisson.create(getRedissonConf());
+        indexList = redis.getList(this.config.getStr(REDIS_INDEX_LIST));
+        taskQueue = redis.getQueue(this.config.getStr(REDIS_TASK_QUEUE));
+        indexLength = this.config.getInt(REDIS_INDEX_SIZE);
     }
 
     public boolean addTask(String url){
@@ -50,21 +53,24 @@ public class RedisStorage implements Storage{
         return taskQueue.size();
     }
 
-    public boolean crawlURL(String url){
-        return crawledDB.get(Utils.getDateStr(new Date())).add(url);
+    public void addIndex(String url){
+        while(indexList.size() > indexLength){
+            indexList.remove(0);
+        }
+        indexList.add(url);
     }
 
-    public boolean isCrawled(String url){
-        return crawledDB.get(Utils.getDateStr(new Date())).contains(url);
+    public List<String> getIndex(String url){
+        List<String> index = indexList.subList(0, indexList.size());
+        return index;
     }
 
-    @Override
     public void flush() {
         redis.flushdb();
     }
 
     public void cleanDB(){
-        crawledDB.clear();
+        indexList.clear();
         taskQueue.clear();
     }
 

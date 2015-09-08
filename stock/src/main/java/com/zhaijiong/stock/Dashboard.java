@@ -159,9 +159,9 @@ public class Dashboard {
     public static void main(String[] args) throws IOException, InterruptedException {
 //        reporter.start(3, TimeUnit.SECONDS);
         Dashboard dashboard = new Dashboard();
-//        dashboard.overview();
+        dashboard.overview();
 //        reporter.report();
-        dashboard.list();
+//        dashboard.list();
 
 
     }
