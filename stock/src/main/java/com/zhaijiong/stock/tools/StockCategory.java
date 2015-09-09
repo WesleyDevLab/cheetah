@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.zhaijiong.stock.common.Pair;
 import com.zhaijiong.stock.common.Utils;
@@ -116,6 +117,32 @@ public class StockCategory {
         return blockMap;
     }
 
+    /**
+     * 获取股票某个大分类下的具体分类
+     * @param type 概念，行业，地域
+     * @return
+     */
+    public static Map<String,Set<String>> getStockCategory(String type){
+        List<StockBlock> stockBlocks = getCategory().get(type);
+        Map<String,Set<String>> symbolMap = Maps.newTreeMap();
+        for(StockBlock stockBlock :stockBlocks){
+            for(String symbol:stockBlock.symbolList){
+                Set<String> category = symbolMap.get(symbol);
+                if(category == null){
+                    category = Sets.newHashSet();
+                }
+                category.add(stockBlock.name);
+                symbolMap.put(symbol, category);
+            }
+        }
+        return symbolMap;
+    }
+
+    /**
+     * 获取某个板块下的全部股票
+     * @param id
+     * @return
+     */
     private static List<String> getBlockStockList(String id) {
         String url = String.format(blockStockListURL,id);
         String data = Downloader.download(url);
@@ -136,16 +163,20 @@ public class StockCategory {
 
     public static void main(String[] args) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Map<String, List<StockBlock>> stockBlocks = StockCategory.getCategory();
-        for (Map.Entry<String, List<StockBlock>> entry : stockBlocks.entrySet()) {
-            for (StockBlock stockBlock : entry.getValue()) {
-                System.out.println(entry.getKey() + ":" + stockBlock);
-                List<String> symbolList = stockBlock.symbolList;
-                for(String symbol:symbolList){
-                    System.out.println(symbol);
-                }
-            }
-            System.out.println(entry.getKey() + ":" + entry.getValue().size());
+//        Map<String, List<StockBlock>> stockBlocks = StockCategory.getCategory();
+//        for (Map.Entry<String, List<StockBlock>> entry : stockBlocks.entrySet()) {
+//            for (StockBlock stockBlock : entry.getValue()) {
+//                System.out.println(entry.getKey() + ":" + stockBlock);
+//                List<String> symbolList = stockBlock.symbolList;
+//                for(String symbol:symbolList){
+//                    System.out.println(symbol);
+//                }
+//            }
+//            System.out.println(entry.getKey() + ":" + entry.getValue().size());
+//        }
+        Map<String, Set<String>> stockCategory = StockCategory.getStockCategory("概念");
+        for(Map.Entry<String,Set<String>> entry:stockCategory.entrySet()){
+            System.out.println(entry.getKey()+":"+entry.getValue());
         }
         System.out.println("cost:"+stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
