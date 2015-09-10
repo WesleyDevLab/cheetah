@@ -1,6 +1,8 @@
 package com.zhaijiong.stock.tools;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Utils;
@@ -103,8 +105,48 @@ public class StockList {
         return "trading";  //交易中
     }
 
+    /**
+     * 获取中小板股票列表
+     * @return
+     */
+    public static List<String> getSMEStockList(){
+        Collection<String> list = Collections2.filter(getList(),(String input) -> input.startsWith("002"));
+        return Lists.newArrayList(list);
+    }
+
+    /**
+     * 获取创业板股票列表
+     * @return
+     */
+    public static List<String> getGEMStockList(){
+        Collection<String> list = Collections2.filter(getList(),(String input) -> input.startsWith("300"));
+        return Lists.newArrayList(list);
+    }
+
+    public static List<String> getSTStockList(){
+        Map<String, String> map = getMap();
+        List<String> list = Lists.newArrayList();
+        for(Map.Entry<String,String> entry:map.entrySet()){
+            if(entry.getValue().toLowerCase().contains("st"))
+                list.add(entry.getKey());
+        }
+        return list;
+    }
+
+    /**
+     * 获取股票列表中“交易中”的股票,即未退市和停牌的股票列表
+     * @return
+     */
     public static List<String> getTradingStockList(){
-        List<String> list = getList();
+        return getTradingStockList(getList());
+    }
+
+    /**
+     * 获取指定股票列表中交易中的股票
+     * @param list
+     * @return
+     */
+    public static List<String> getTradingStockList(List<String> list){
         final List<String> stockList = Collections.synchronizedList(new LinkedList<String>());
         ExecutorService threadPool = Executors.newFixedThreadPool(30);
         final CountDownLatch countDownLatch = new CountDownLatch(list.size());
@@ -143,9 +185,19 @@ public class StockList {
 //        }
 //        System.out.println("stock:"+stockMap.size());
 
-        System.out.println(StockList.getStockStatus("000003"));
-        System.out.println(StockList.getStockStatus("002106"));
-        System.out.println(StockList.getStockStatus("600376"));
+//        System.out.println(StockList.getStockStatus("000003"));
+//        System.out.println(StockList.getStockStatus("002106"));
+//        System.out.println(StockList.getStockStatus("600376"));
+
+//        List<String> list = getSMEStockList();
+//        for(String symbol:list){
+//            System.out.println(symbol);
+//        }
+
+        List<String> list = getSTStockList();
+        for(String symbol:list){
+            System.out.println(symbol);
+        }
     }
 
 }

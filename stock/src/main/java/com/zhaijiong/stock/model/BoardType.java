@@ -8,8 +8,8 @@ package com.zhaijiong.stock.model;
 public enum BoardType {
     MAIN, //主板
     SME, //中小板
-    GEM,
-    UNKNOW; //创业板
+    GEM, //创业板
+    UNKNOW;
 
     public static BoardType getType(String symbol){
         if(symbol.startsWith("6") || symbol.startsWith("000")){
