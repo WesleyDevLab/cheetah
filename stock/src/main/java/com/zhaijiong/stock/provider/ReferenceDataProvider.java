@@ -1,6 +1,7 @@
 package com.zhaijiong.stock.provider;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.download.AjaxDownloader;
 import com.zhaijiong.stock.download.BasicDownloader;
@@ -29,7 +30,9 @@ public class ReferenceDataProvider {
 
     private static String MARGINTRADE_SZ_URL = "http://data.eastmoney.com/rzrq/sz.html";
 
-    private static String MARGINTRADE_TOTAL_URL = "http://data.eastmoney.com/rzrq/total.html";
+    //http://data.eastmoney.com/rzrq/total.html
+    private static String MARGINTRADE_TOTAL_URL = "http://datainterface.eastmoney.com/EM_DataCenter/JS.aspx?type=FD&sty=SHSZHSSUM&st=0&sr=1&p=1&ps=10000&rt=48069399";
+
 
     /**
      * 获取分配预案数据
@@ -104,6 +107,43 @@ public class ReferenceDataProvider {
         return count;
     }
 
+    public static List<StockData> getTotalMarginTrade(){
+        List<StockData> stockDataList = Lists.newLinkedList();
+
+        String data = BasicDownloader.download(MARGINTRADE_TOTAL_URL);
+        System.out.println(data);
+        Gson gson = new Gson();
+        List<String> records = gson.fromJson(data.substring(1, data.length() - 1), List.class);
+
+        for(String record:records){
+            String[] fields = record.split(",");
+            StockData stockData = new StockData();
+            stockData.date = Utils.str2Date(fields[0].replaceAll("\"","").trim(),"yyyy-MM-dd");
+            stockData.put("rzye_sh",getYI(fields[1]));
+            stockData.put("rzye_sz",getYI(fields[2]));
+            stockData.put("rzye_total",getYI(fields[3]));
+            stockData.put("rzmre_sh",getYI(fields[4]));
+            stockData.put("rzmre_sz",getYI(fields[5]));
+            stockData.put("rzmre_total",getYI(fields[6]));
+            stockData.put("rqylye_sh",getYI(fields[7]));
+            stockData.put("rqylye_sz",getYI(fields[8]));
+            stockData.put("rqylye_total",getYI(fields[9]));
+            stockData.put("rzrqye_sh",getYI(fields[10]));
+            stockData.put("rzrqye_sz",getYI(fields[11]));
+            stockData.put("rzrqye_total",getYI(fields[12]));
+
+            stockDataList.add(stockData);
+        }
+        return stockDataList;
+    }
+
+    public static Double getYI(String text){
+        if(text.trim().equals("-")){
+            return 0d;
+        }
+        return Double.parseDouble(text.trim());
+    }
+
     /**
      * 获取两市融资融券数据
      * 市场融资融券交易总量＝本日融资余额＋本日融券余量金额
@@ -174,7 +214,14 @@ public class ReferenceDataProvider {
 //                    stockData.get("dividend") + "\t" +
 //                    stockData.get("shares")
 //            ));
-        List<StockData> margintrade = ReferenceDataProvider.getMarginTrade();
+
+//        List<StockData> margintrade = ReferenceDataProvider.getMarginTrade();
+//        margintrade.forEach(stockData ->{
+//            System.out.println(stockData.toString());
+//            Utils.printMap(stockData);
+//        });
+
+        List<StockData> margintrade = ReferenceDataProvider.getTotalMarginTrade();
         margintrade.forEach(stockData ->{
             System.out.println(stockData.toString());
             Utils.printMap(stockData);
