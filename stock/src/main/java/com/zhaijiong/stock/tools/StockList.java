@@ -151,18 +151,15 @@ public class StockList {
         ExecutorService threadPool = Executors.newFixedThreadPool(30);
         final CountDownLatch countDownLatch = new CountDownLatch(list.size());
         for(final String symbol:list){
-            threadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if(getStockStatus(symbol).equals("trading")){
-                            stockList.add(symbol);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            threadPool.execute(() -> {
+                try {
+                    if(getStockStatus(symbol).equals("trading")){
+                        stockList.add(symbol);
                     }
-                    countDownLatch.countDown();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                countDownLatch.countDown();
             });
         }
         try {
@@ -185,7 +182,7 @@ public class StockList {
 //        }
 //        System.out.println("stock:"+stockMap.size());
 
-//        System.out.println(StockList.getStockStatus("000003"));
+        System.out.println(StockList.getStockStatus("000003"));
 //        System.out.println(StockList.getStockStatus("002106"));
 //        System.out.println(StockList.getStockStatus("600376"));
 
@@ -194,10 +191,8 @@ public class StockList {
 //            System.out.println(symbol);
 //        }
 
-        List<String> list = getSTStockList();
-        for(String symbol:list){
-            System.out.println(symbol);
-        }
+//        List<String> list = getSTStockList();
+//        list.forEach((symbol) -> System.out.println(symbol));
     }
 
 }
