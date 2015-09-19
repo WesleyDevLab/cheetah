@@ -1,12 +1,18 @@
 package com.zhaijiong.stock.download;
 
+import com.google.common.base.Joiner;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * author: xuqi.xq
@@ -55,6 +61,17 @@ public class BasicDownloader {
             LOG.error("fail to download from " + url);
         }
         return null;
+    }
+
+    public static String download(String url,String encoding){
+        InputStream inputStream = downloadStream(url);
+        try {
+            List<String> strings = IOUtils.readLines(inputStream, encoding);
+            return Joiner.on("\n").join(strings);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     public static void main(String[] args) {
