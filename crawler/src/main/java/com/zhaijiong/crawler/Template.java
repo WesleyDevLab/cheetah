@@ -32,7 +32,7 @@ public class Template {
     }
 
     public String getContentURL(){
-        return (String) items.get(TEMPLATE_CONTENT_URL);
+        return (String) items.get(TEMPLATE_DETAIL_URL);
     }
 
     public Map<String,String> getRules(){

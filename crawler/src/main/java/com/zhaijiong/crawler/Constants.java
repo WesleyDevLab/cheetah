@@ -8,7 +8,7 @@ public class Constants {
     public static final String TEMPLATE_CATEGORY = "category";
     public static final String TEMPLATE_START_URL = "start.url";
     public static final String TEMPLATE_LIST_URL = "list.url";
-    public static final String TEMPLATE_CONTENT_URL = "content.url";
+    public static final String TEMPLATE_DETAIL_URL = "detail.url";
     public static final String TEMPLATE_RULES = "rules";
 
     /**
