@@ -16,7 +16,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -253,7 +252,7 @@ public class MoneyFlowDataProvider {
     }
 
     private static List<String[]> collectDaPan() {
-        String data = Downloader.downloadAjax(moneyFlowDapanHisURL);
+        String data = Downloader.downloadAjaxData(moneyFlowDapanHisURL);
         Elements doc = Jsoup.parse(data).getElementById("dt_1").getElementsByTag("tbody").get(0).getElementsByTag("tr");
 
         List<String[]> stockDataList = Lists.newLinkedList();
