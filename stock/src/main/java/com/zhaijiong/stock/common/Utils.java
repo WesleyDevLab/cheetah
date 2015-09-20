@@ -3,6 +3,7 @@ package com.zhaijiong.stock.common;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.hash.Hashing;
+import com.google.gson.Gson;
 import com.zhaijiong.stock.model.StockData;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.joda.time.DateTime;
@@ -307,6 +308,11 @@ public class Utils {
         for(Map.Entry<String,Double> entry:map.entrySet()){
             System.out.println(entry.getKey()+":"+entry.getValue());
         }
+    }
+
+    public static String map2Json(Map map){
+        Gson gson = new Gson();
+        return gson.toJson(map);
     }
 
     public static void printMapStr(Map<String,String> map){
