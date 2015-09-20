@@ -3,7 +3,7 @@ site.templates:
     category: 新闻
     start.url: http://stock.10jqka.com.cn/tzjh_list/
     list.url: http://stock.10jqka.com.cn/tzjh_list/(index_\d{0,2}.html)?
-    content.url: http://stock.10jqka.com.cn/\d{8}/.*.shtml
+    detail.url: http://stock.10jqka.com.cn/\d{8}/.*.shtml
     rules:
         title: div.art_head
         date: span#pubtime_baidu
@@ -12,7 +12,7 @@ site.templates:
     category: 新闻
     start.url: http://stock.10jqka.com.cn/bkfy_list/
     list.url: http://stock.10jqka.com.cn/bkfy_list/(index_\d{0,2}.html)?
-    content.url: http://stock.10jqka.com.cn/\d{8}/.*.shtml
+    detail.url: http://stock.10jqka.com.cn/\d{8}/.*.shtml
     rules:
         title: div.art_head
         date: span#pubtime_baidu
