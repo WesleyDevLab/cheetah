@@ -219,7 +219,7 @@ public class ReferenceDataProvider {
     }
 
     /**
-     * 获取沪市融资融券数据
+     * 获取融资融券数据
      * @return
      */
     public static List<StockData> getMarginTrade(String url){
