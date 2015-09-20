@@ -3,6 +3,7 @@ package com.zhaijiong.stock.provider;
 import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Constants;
+import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
@@ -89,11 +90,17 @@ public class DailyDataProvider {
 
     public static void main(String[] args) {
         List<String> symbols = StockList.getList();
-        for(String symbol:symbols){
-            List<StockData> collect = DailyDataProvider.get(symbol, "20150823", "20150825");
-            Context context= new Context();
-            StockDB stockDB = new StockDB(context);
-            stockDB.saveStockDailyData(collect);
-        }
+        DateRange range = DateRange.getRange(10);
+//        for(String symbol:symbols){
+//            List<StockData> collect = DailyDataProvider.get(symbol, range.start(), range.stop());
+//            Context context= new Context();
+//            StockDB stockDB = new StockDB(context);
+//            stockDB.saveStockDailyData(collect);
+//        }
+        List<StockData> stockDataList = DailyDataProvider.get("600376", range.start(), range.stop());
+        stockDataList.forEach(stockData -> {
+            System.out.println(stockData);
+            Utils.printMap(stockData);
+        });
     }
 }
