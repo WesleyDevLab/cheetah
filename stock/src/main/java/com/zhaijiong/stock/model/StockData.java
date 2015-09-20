@@ -1,5 +1,8 @@
 package com.zhaijiong.stock.model;
 
+import com.google.common.collect.Maps;
+import com.zhaijiong.stock.common.Utils;
+
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,6 +24,8 @@ public class StockData extends LinkedHashMap<String,Double>{
 
     public StockMarketType stockMarketType; //市场：深市，沪市
 
+    public Map<String,String> attribute = Maps.newHashMap();
+
     public StockData(){}
 
     public StockData(String symbol){
@@ -33,6 +38,14 @@ public class StockData extends LinkedHashMap<String,Double>{
         this.putAll(map);
     }
 
+    public void attr(String key,String val){
+        attribute.put(key,val);
+    }
+
+    public String attr(String key){
+        return attribute.get(key);
+    }
+
     @Override
     public String toString() {
         return "StockData{" +
@@ -41,6 +54,8 @@ public class StockData extends LinkedHashMap<String,Double>{
                 ", date=" + date +
                 ", boardType=" + boardType +
                 ", stockMarketType=" + stockMarketType +
+                ", stockData=" + Utils.map2Json(this) +
+                ", stockAttribute= " + Utils.map2Json(attribute) +
                 '}';
     }
 }
