@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -46,6 +47,51 @@ public class ReferenceDataProvider {
 
     private static String EXPECT_EARNINGS_PAGE_URL = "http://data.eastmoney.com/report/ylyc.html";
 
+    /**
+     * 股东人数变化
+     * mkt=市场
+     *      1=沪深A股
+     *      2=沪市A股
+     *      3=深市A股
+     *      4=中小板
+     *      5=创业板
+     * fd=时间,格式yyyy-MM-dd
+     */
+    private static String SHAREHOLDER_COUNT_URL= "http://datainterface.eastmoney.com/EM_DataCenter/JS.aspx?type=GG&sty=GDRS&st=2&sr=-1&p=1&ps=5000&mkt=%s&fd=%s&rt=48094965";
+
+    /**
+     * 股东人数变化，周期为季度
+     * @param market
+     * @param date
+     * @return
+     */
+    public static List<StockData> getShareHolderCountData(String market,String date){
+        List<StockData> stockDataList = Lists.newLinkedList();
+
+        Date day = Utils.str2Date(date, "yyyyMMdd");
+        String url = String.format(SHAREHOLDER_COUNT_URL, market, Utils.formatDate(day, "yyyy-MM-dd"));
+        String data = Downloader.download(url);
+        Gson gson = new Gson();
+        List<String> records = gson.fromJson(data.substring(1, data.length() - 1), List.class);
+        for(String record:records){
+            String[] fields = record.split(",",16);
+            StockData stockData = new StockData(fields[0]);
+            stockData.name = fields[1];
+            stockData.date = Utils.str2Date(fields[14],"yyyy-MM-dd");
+            stockData.put("股东人数(户)",Double.parseDouble(fields[2]));
+            stockData.put("较上期变化",Double.parseDouble(fields[3]));
+            stockData.put("人均流通股(股)",Double.parseDouble(fields[4]));
+            stockData.put("前十大流通股东_持股数量",Double.parseDouble(fields[5]));
+            stockData.put("前十大流通股东_占流通股本比例",Double.parseDouble(fields[6]));
+            stockData.put("十大股东_持股数量",Double.parseDouble(fields[7]));
+            stockData.put("十大股东_占流通股本比例",Double.parseDouble(fields[8]));
+            stockData.put("机构持仓_持股数量",Double.parseDouble(fields[9]));
+            stockData.put("机构持仓_占流通股本比例",Double.parseDouble(fields[10]));
+            stockData.attr("筹码集中度",fields[11]);
+            stockDataList.add(stockData);
+        }
+        return stockDataList;
+    }
     /**
      * 获取盈利预期数据，全部版块=_A
      */
