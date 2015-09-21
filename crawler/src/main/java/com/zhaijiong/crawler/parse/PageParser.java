@@ -6,16 +6,23 @@ import com.zhaijiong.crawler.Page;
 import com.zhaijiong.crawler.Template;
 import com.zhaijiong.crawler.fetch.Fetcher;
 import com.zhaijiong.crawler.fetch.PageFetcher;
+import com.zhaijiong.crawler.storage.CrawlerDB;
+import com.zhaijiong.crawler.storage.HBase;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static com.zhaijiong.crawler.Constants.*;
+
 public class PageParser implements Parser {
+    private static final Logger LOG = LoggerFactory.getLogger(PageParser.class);
 
     private Template template;
 
@@ -29,13 +36,20 @@ public class PageParser implements Parser {
 
         if(Pattern.matches(template.getListURL(),page.getUrl())){
             Elements elements = doc.select(String.format("a[href=%s]", template.getContentURL()));
-            //TODO 查重 并且 add url to redis queue
+            for(Element element:elements){
+                String url = element.attr("href");
+                if(!CrawlerDB.isCrawled(url)){
+                    CrawlerDB.addTask(url);
+                }else{
+                    LOG.warn("crawled url:"+url);
+                }
+            }
             return null;
         }else if(Pattern.matches(template.getContentURL(),page.getUrl())){
 
             Map<String,String> content = Maps.newHashMap();
-            content.put(Template.TEMPLATE_NAME,template.getSourceName());
-            content.put(Template.TEMPLATE_CATEGORY,template.getCategory());
+            content.put(TEMPLATE_NAME,template.getSourceName());
+            content.put(TEMPLATE_CATEGORY,template.getCategory());
 
             Map<String, String> rules = template.getRules();
             for(Map.Entry<String,String> rule: rules.entrySet()){

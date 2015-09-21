@@ -1,6 +1,6 @@
 package store;
 
-import com.zhaijiong.crawler.storage.RedisStorage;
+import com.zhaijiong.crawler.storage.Redis;
 import com.zhaijiong.crawler.Config;
 import org.junit.After;
 import org.junit.Assert;
@@ -8,13 +8,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class RedisTest {
-    private RedisStorage redis;
+    private Redis redis;
     String url = "http://www.zhaijiong.com";
 
     @Before
     public void setUp() throws Exception {
         Config config = new Config("crawler.yaml");
-        redis = new RedisStorage(config);
+        redis = new Redis(config);
         redis.init();
     }
 

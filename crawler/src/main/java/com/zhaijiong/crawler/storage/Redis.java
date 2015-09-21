@@ -10,72 +10,67 @@ import java.util.List;
 
 import static com.zhaijiong.crawler.Constants.*;
 
-public class RedisStorage implements Storage{
-    private Config config;
-    private Redisson redis;
+public class Redis {
+    private static Config config;
+    private static Redisson redis;
 
     //存储已经被爬过的url地址
-    private RList<String> indexList;
-    private RQueue<String> taskQueue;
+    private static RList<String> indexList;
+    private static RQueue<String> taskQueue;
 
-    private int indexLength = 0;
+    private static int indexLength = 0;
 
-    public RedisStorage(Config config){
-        this.config = config;
-    }
-
-    private org.redisson.Config getRedissonConf() {
+    private static org.redisson.Config getRedissonConf() {
         org.redisson.Config redisonConf = new org.redisson.Config();
-        String address = this.config.getStr(REDIS_SERVER_ADDRESS);
+        String address = config.getStr(REDIS_SERVER_ADDRESS);
         if(!Strings.isNullOrEmpty(address)){
             redisonConf.useSingleServer().setAddress(address);
         }
         return redisonConf;
     }
 
-    @Override
-    public void init(){
+    public static void init(Config conf){
+        config = conf;
         redis = Redisson.create(getRedissonConf());
-        indexList = redis.getList(this.config.getStr(REDIS_INDEX_LIST));
-        taskQueue = redis.getQueue(this.config.getStr(REDIS_TASK_QUEUE));
-        indexLength = this.config.getInt(REDIS_INDEX_SIZE);
+        indexList = redis.getList(config.getStr(REDIS_INDEX_LIST));
+        taskQueue = redis.getQueue(config.getStr(REDIS_TASK_QUEUE));
+        indexLength = config.getInt(REDIS_INDEX_SIZE);
     }
 
-    public boolean addTask(String url){
+    public static boolean addTask(String url){
         return taskQueue.add(url);
     }
 
-    public String getTask(){
+    public static String getTask(){
         return taskQueue.poll();
     }
 
-    public int taskCount(){
+    public static int taskCount(){
         return taskQueue.size();
     }
 
-    public void addIndex(String url){
+    public static void addIndex(String url){
         while(indexList.size() > indexLength){
             indexList.remove(0);
         }
         indexList.add(url);
     }
 
-    public List<String> getIndex(String url){
+    public static List<String> getIndex(){
         List<String> index = indexList.subList(0, indexList.size());
         return index;
     }
 
-    public void flush() {
+    public static void flush() {
         redis.flushdb();
     }
 
-    public void cleanDB(){
+    public static void cleanDB(){
         indexList.clear();
         taskQueue.clear();
     }
 
-    @Override
-    public void close() {
+    public static void close() {
         redis.shutdown();
     }
 }
