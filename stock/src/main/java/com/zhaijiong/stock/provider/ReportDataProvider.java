@@ -28,6 +28,15 @@ public class ReportDataProvider {
     private static String STOCK_REPORT_URL = "http://datainterface.eastmoney.com//EM_DataCenter/js.aspx?type=SR&sty=GGSR&ps=200&p=%s&mkt=0&stat=0&cmd=2&rt=48097671";
 
     /**
+     * 盈利预期数据 http://data.eastmoney.com/report/ylyc.html
+     * param1=版块，全部=_A
+     */
+    private static String EXPECT_EARNINGS_URL = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?type=CT&cmd=C._A&sty=GEMCPF&st=(AllNum)&sr=-1&p=2&ps=5000&cb=&token=3a965a43f705cf1d9ad7e1a3e429d622&rt=48090871";
+
+    private static String EXPECT_EARNINGS_PAGE_URL = "http://data.eastmoney.com/report/ylyc.html";
+
+
+    /**
      *
      * @param startDate 报告起始时间，格式:yyyyMMdd
      * @return
@@ -77,5 +86,51 @@ public class ReportDataProvider {
                 stockData.attr(year + stockAttrName,list.get(i));
             }
         }
+    }
+
+    /**
+     * 获取盈利预期数据，全部版块=_A
+     */
+    public static List<StockData> getExpectEarnings(){
+        List<StockData> stockDataList = Lists.newLinkedList();
+
+        String data = Downloader.download(EXPECT_EARNINGS_URL);
+
+        Gson gson = new Gson();
+        List<String> records = gson.fromJson(data.substring(1, data.length() - 1), List.class);
+        for(String record:records){
+            String[] fields = record.split(",",21);
+            double yanbaoCount = Double.parseDouble(fields[5]);
+            if(yanbaoCount<=0){
+                break;
+            }
+            StockData stockData = new StockData(fields[1]);
+            stockData.name = fields[2];
+            stockData.put("close",checkValueIsDouble(fields[3]));
+            stockData.put("change",checkValueIsDouble(fields[4].replace("%","")));
+            stockData.put("研报数",yanbaoCount);
+            stockData.put("机构投资评级(近六个月)_买入",checkValueIsDouble(fields[6]));
+            stockData.put("机构投资评级(近六个月)_增持",checkValueIsDouble(fields[7]));
+            stockData.put("机构投资评级(近六个月)_中性",checkValueIsDouble(fields[8]));
+            stockData.put("机构投资评级(近六个月)_减持",checkValueIsDouble(fields[9]));
+            stockData.put("机构投资评级(近六个月)_卖出",checkValueIsDouble(fields[10]));
+            stockData.put("2014实际_收益",checkValueIsDouble(fields[11]));
+            stockData.put("2015预测_收益",checkValueIsDouble(fields[12]));
+            stockData.put("2015预测_市盈率",checkValueIsDouble(fields[13]));
+            stockData.put("2016预测_收益",checkValueIsDouble(fields[14]));
+            stockData.put("2016预测_市盈率",checkValueIsDouble(fields[15]));
+            stockData.put("2017预测_收益",checkValueIsDouble(fields[16]));
+            stockData.put("2017预测_市盈率",checkValueIsDouble(fields[17]));
+            stockDataList.add(stockData);
+        }
+        return stockDataList;
+    }
+
+
+    private static Double checkValueIsDouble(String field){
+        if(Utils.isDouble(field)){
+            return Double.parseDouble(field);
+        }
+        return Double.MIN_VALUE;
     }
 }
