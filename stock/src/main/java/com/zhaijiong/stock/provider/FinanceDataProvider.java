@@ -14,8 +14,8 @@ import java.util.Map;
 
 /**
  * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-30.
+ * 财务报表数据
  */
 public class FinanceDataProvider {
 

@@ -85,6 +85,12 @@ public class Utils {
         return dateTime.toString(pattern);
     }
 
+    public static String getYear(int plusYear){
+        DateTime dateTime = new DateTime();
+        dateTime = dateTime.plusYears(plusYear);
+        return String.valueOf(dateTime.getYear());
+    }
+
     public static String formatDate(Date date){
         DateTime dateTime = new DateTime(date);
         return dateTime.toString("yyyy/MM/dd HH:mm:ss");

@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 /**
  * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
  * date: 15-9-3.
+ * 逐笔数据
  */
 public class TickDataProvider {
     private static final Logger LOG = LoggerFactory.getLogger(TickDataProvider.class);
