@@ -6,8 +6,6 @@ import com.google.gson.Gson;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.StockData;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import java.util.Date;
 import java.util.List;
@@ -114,13 +112,13 @@ public class ReportDataProvider {
             stockData.put("机构投资评级(近六个月)_中性",checkValueIsDouble(fields[8]));
             stockData.put("机构投资评级(近六个月)_减持",checkValueIsDouble(fields[9]));
             stockData.put("机构投资评级(近六个月)_卖出",checkValueIsDouble(fields[10]));
-            stockData.put("2014实际_收益",checkValueIsDouble(fields[11]));
-            stockData.put("2015预测_收益",checkValueIsDouble(fields[12]));
-            stockData.put("2015预测_市盈率",checkValueIsDouble(fields[13]));
-            stockData.put("2016预测_收益",checkValueIsDouble(fields[14]));
-            stockData.put("2016预测_市盈率",checkValueIsDouble(fields[15]));
-            stockData.put("2017预测_收益",checkValueIsDouble(fields[16]));
-            stockData.put("2017预测_市盈率",checkValueIsDouble(fields[17]));
+            stockData.put(Utils.getYear(-1) + "实际_收益",checkValueIsDouble(fields[11]));
+            stockData.put(Utils.getYear(0) + "预测_收益",checkValueIsDouble(fields[12]));
+            stockData.put(Utils.getYear(0) + "预测_市盈率",checkValueIsDouble(fields[13]));
+            stockData.put(Utils.getYear(1) + "预测_收益",checkValueIsDouble(fields[14]));
+            stockData.put(Utils.getYear(1) + "预测_市盈率",checkValueIsDouble(fields[15]));
+            stockData.put(Utils.getYear(2) + "预测_收益",checkValueIsDouble(fields[16]));
+            stockData.put(Utils.getYear(2) + "预测_市盈率",checkValueIsDouble(fields[17]));
             stockDataList.add(stockData);
         }
         return stockDataList;
