@@ -23,15 +23,6 @@ import java.util.Map;
  * date: 15-8-27.
  */
 public class Provider {
-    /**
-     * 获取实时数据股票数据
-     * @param symbol
-     * @return
-     */
-    public static StockData realtimeData(String symbol){
-        StockData stockData = RealTimeDataProvider.get(symbol);
-        return stockData;
-    }
 
     /**
      * 获取日线级别最近120天历史数据
@@ -54,6 +45,16 @@ public class Provider {
     public static List<StockData> dailyData(String symbol,String startDate,String stopDate){
         List<StockData> collect = DailyDataProvider.get(symbol, startDate, stopDate);
         return collect;
+    }
+
+    /**
+     * 获取实时数据股票数据
+     * @param symbol
+     * @return
+     */
+    public static StockData realtimeData(String symbol){
+        StockData stockData = RealTimeDataProvider.get(symbol);
+        return stockData;
     }
 
     /**

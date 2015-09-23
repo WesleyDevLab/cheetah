@@ -60,10 +60,10 @@ public class DailyDataProvider {
     }
 
     private static void changeUnit(StockData stockData) {
-        stockData.put(VOLUME,stockData.get(VOLUME)/100);
-        stockData.put(AMOUNT,stockData.get(AMOUNT)/10000);
-        stockData.put(TOTAL_VALUE,stockData.get(TOTAL_VALUE)/100000000);
-        stockData.put(MARKET_VALUE, stockData.get(MARKET_VALUE) / 100000000);
+        stockData.put(VOLUME,stockData.get(VOLUME)/100);    //成交量,单位：手
+        stockData.put(AMOUNT,stockData.get(AMOUNT)/10000);  //成交金额,单位：万
+        stockData.put(TOTAL_VALUE,stockData.get(TOTAL_VALUE)/100000000);    //总市值,单位:亿
+        stockData.put(MARKET_VALUE, stockData.get(MARKET_VALUE) / 100000000);   //流通市值,单位:亿
     }
 
     /**
