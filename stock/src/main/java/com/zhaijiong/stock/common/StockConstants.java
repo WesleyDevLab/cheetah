@@ -81,14 +81,14 @@ public class StockConstants {
             "quantityRelative",    //36    量比
             "turnoverRate",         //37    换手率
             "PE",                   //38    市盈率
-            "outerDisc",            //39    外盘,主动买
-            "innerDisc",            //40    内盘,主动卖
+            "outerDisc",            //39    外盘,主动买,单位:手
+            "innerDisc",            //40    内盘,主动卖,单位:手
             "committeeThan",        //41    委比,百分比
             "committeeSent",        //42    委差
             "PB",                   //43    市净率
             "",                     //44    未知
-            "circulationMarketValue",   //45流通市值,单位:元
-            "aggregateMarketValue",     //46总市值,单位:元
+            "marketValue",   //45流通市值,单位:元
+            "totalValue",     //46总市值,单位:元
             "",                     //47    未知
             "",                     //48    未知
             "date"                  //49    时间

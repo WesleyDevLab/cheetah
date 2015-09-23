@@ -115,15 +115,10 @@ public class Dashboard {
         return Utils.formatDouble(histogram.getCountBetweenValues(start, stop) / histogram.getTotalCount() * 100, "#.##");
     }
 
-    public void list() {
-        List<String> symbols = Lists.newArrayList(
-                "601886",
-                "600376"
-        );
-
+    public void list(List<String> symbols) {
         TableFormatter tf = new SimpleTableFormatter(true);
         tf.nextRow()
-                .nextCell().addLine("  code  ")
+                .nextCell().addLine("  namename  ")
                 .nextCell().addLine("  close  ")
                 .nextCell().addLine("  change  ")
                 .nextCell().addLine("  open  ")
@@ -137,7 +132,7 @@ public class Dashboard {
         for (String symbol : symbols) {
             StockData stockData = RealTimeDataProvider.get(symbol);
                 tf.nextRow()
-                        .nextCell(TableFormatter.ALIGN_CENTER, TableFormatter.VALIGN_CENTER).addLine(stockData.symbol)
+                        .nextCell(TableFormatter.ALIGN_CENTER, TableFormatter.VALIGN_CENTER).addLine(stockData.name)
                         .nextCell(TableFormatter.ALIGN_CENTER, TableFormatter.VALIGN_CENTER).addLine(stockData.get("close")+"")
                         .nextCell(TableFormatter.ALIGN_CENTER, TableFormatter.VALIGN_CENTER).addLine(stockData.get("change")+"")
                         .nextCell(TableFormatter.ALIGN_CENTER, TableFormatter.VALIGN_CENTER).addLine(stockData.get("open")+"")
@@ -159,10 +154,18 @@ public class Dashboard {
     public static void main(String[] args) throws IOException, InterruptedException {
 //        reporter.start(3, TimeUnit.SECONDS);
         Dashboard dashboard = new Dashboard();
-        dashboard.overview();
+//        dashboard.overview();
 //        reporter.report();
-//        dashboard.list();
 
+        List<String> symbols = Lists.newArrayList(
+                "601886",
+                "600376",
+                "600232"
+        );
 
+        while(true){
+            dashboard.list(symbols);
+            TimeUnit.SECONDS.sleep(30);
+        }
     }
 }

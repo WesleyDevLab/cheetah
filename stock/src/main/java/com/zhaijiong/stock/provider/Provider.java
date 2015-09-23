@@ -17,6 +17,8 @@ import java.util.Map;
  * 成交金额,单位：万
  * 总市值,单位:亿
  * 流通市值,单位:亿
+ * 外盘,单位:手
+ * 内盘,单位:手
  *
  * author: xuqi.xq
  * mail: xuqi.xq@gmail.com

@@ -17,6 +17,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.zhaijiong.stock.common.StockConstants.*;
+import static com.zhaijiong.stock.common.StockConstants.MARKET_VALUE;
+
 /**
  * author: xuqi.xq
  * mail: xuqi86@gmail.com
@@ -56,11 +59,8 @@ public class RealTimeDataProvider {
             return new StockData();
         }
 
-        StockData stockData = new StockData();
-        stockData.symbol = symbol;
+        StockData stockData = new StockData(symbol);
         stockData.name = columns.get(2);
-        stockData.stockMarketType = StockMarketType.getType(symbol);
-        stockData.boardType = BoardType.getType(symbol);
         stockData.date = Utils.str2Date(columns.get(49), "yyyy-MM-dd HH:mm:ss");
 
         for (int i = 3; i < columns.size() - 1; i++) {
@@ -72,7 +72,14 @@ public class RealTimeDataProvider {
                 }
             }
         }
+        changeUnit(stockData);
         return stockData;
+    }
+
+    private static void changeUnit(StockData stockData) {
+        stockData.put(AMOUNT,stockData.get(AMOUNT)/10000);  //成交金额,单位：万
+        stockData.put(TOTAL_VALUE,stockData.get(TOTAL_VALUE)/100000000);    //总市值,单位:亿
+        stockData.put(MARKET_VALUE, stockData.get(MARKET_VALUE) / 100000000);   //流通市值,单位:亿
     }
 
     /**
@@ -87,5 +94,10 @@ public class RealTimeDataProvider {
     public static String getPath(String symbol) {
         Date date = new Date();
         return String.format(realTimeDateURL, Symbol.getSymbol(symbol, realTimeDateURL), date.getTime());
+    }
+
+    public static void main(String[] args) {
+        StockData stock = RealTimeDataProvider.get("600376");
+        System.out.println(stock);
     }
 }
