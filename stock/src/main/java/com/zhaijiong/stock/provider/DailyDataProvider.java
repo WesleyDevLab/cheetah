@@ -1,21 +1,18 @@
 package com.zhaijiong.stock.provider;
 
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.dao.StockDB;
+import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.Symbol;
-import com.zhaijiong.stock.tools.StockList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
-import java.util.Scanner;
+
+import static com.zhaijiong.stock.common.StockConstants.*;
 
 /**
  * author: xuqi.xq
@@ -32,40 +29,25 @@ public class DailyDataProvider {
 
         List<StockData> stocks = Lists.newLinkedList();
         try {
-            URL netEaseFin = new URL(url);
-            URLConnection data = netEaseFin.openConnection();
-            data.setConnectTimeout(60000);
-            Scanner input = new Scanner(data.getInputStream());
-            if (input.hasNext()) { // skip line (header)
-                input.nextLine();
-            }
+            String data = Downloader.download(url, "gb2312");
+            String[] lines = data.split("\n");
 
-            while (input.hasNextLine()) {
-                String record = input.nextLine();
-                String[] line = record.split(",");
-                if (line.length == 15 && !record.contains("None")) {
+            for(int i=1;i<lines.length;i++){    //第一行是标题，跳过
+                String[] line = lines[i].split(",");
+                if (line.length == 15 && !lines[i].contains("None")) {
                     try {
-                        StockData stock = new StockData();
+                        StockData stock = new StockData(line[1].replace("'", ""));
 
                         stock.date = Utils.str2Date(line[0], Constants.NETEASE_DATE_STYLE);
-                        stock.symbol = line[1].replace("'", "");
                         stock.name = line[2];
-                        stock.put("close",Utils.str2Double(line[3]));
-                        stock.put("high",Utils.str2Double(line[4]));
-                        stock.put("low",Utils.str2Double(line[5]));
-                        stock.put("open",Utils.str2Double(line[6]));
-                        stock.put("lastClose",Utils.str2Double(line[7]));
-                        stock.put("changeAmount",Utils.str2Double(line[8]));
-                        stock.put("change",Utils.str2Double(line[9]));
-                        stock.put("turnoverRate",Utils.str2Double(line[10]));
-                        stock.put("volume",Utils.str2Double(line[11])/100); //单位：手
-                        stock.put("amount",Utils.str2Double(line[12]));
-                        stock.put("totalValue",Utils.str2Double(line[13]));
-                        stock.put("marketValue",Utils.formatDouble(Utils.str2Double(line[14])));
+                        for(int j = 0 ;j<DAILY.size()-1;j++){
+                            stock.put(DAILY.get(j),Utils.str2Double(line[j+3]));
+                        }
                         stock.put("amplitude",Utils.formatDouble((stock.get("high") - stock.get("low")) / stock.get("lastClose")));
+                        changeUnit(stock);
                         stocks.add(stock);
                     } catch (Exception e) {
-                        LOG.warn(String.format("stock %s convert error", symbol) + record);
+                        LOG.warn(String.format("stock %s convert error", symbol) + lines[i]);
                     }
                 }
             }
@@ -75,6 +57,13 @@ public class DailyDataProvider {
         }
         //按照时间从最早到最新
         return Lists.reverse(stocks);
+    }
+
+    private static void changeUnit(StockData stockData) {
+        stockData.put(VOLUME,stockData.get(VOLUME)/100);
+        stockData.put(AMOUNT,stockData.get(AMOUNT)/10000);
+        stockData.put(TOTAL_VALUE,stockData.get(TOTAL_VALUE)/100000000);
+        stockData.put(MARKET_VALUE, stockData.get(MARKET_VALUE) / 100000000);
     }
 
     /**
@@ -89,18 +78,8 @@ public class DailyDataProvider {
     }
 
     public static void main(String[] args) {
-        List<String> symbols = StockList.getList();
         DateRange range = DateRange.getRange(10);
-//        for(String symbol:symbols){
-//            List<StockData> collect = DailyDataProvider.get(symbol, range.start(), range.stop());
-//            Context context= new Context();
-//            StockDB stockDB = new StockDB(context);
-//            stockDB.saveStockDailyData(collect);
-//        }
         List<StockData> stockDataList = DailyDataProvider.get("600376", range.start(), range.stop());
-        stockDataList.forEach(stockData -> {
-            System.out.println(stockData);
-            Utils.printMap(stockData);
-        });
+        stockDataList.forEach(stockData -> System.out.println(stockData));
     }
 }

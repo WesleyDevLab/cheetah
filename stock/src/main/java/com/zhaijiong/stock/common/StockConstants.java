@@ -10,6 +10,37 @@ import java.util.List;
  * date: 15-8-30.
  */
 public class StockConstants {
+    public static String CLOSE = "close";                   //最新价,收盘价
+    public static String HIGH = "high";                     //最高价
+    public static String LOW = "low";                       //最低价
+    public static String OPEN = "open";                     //开盘价
+    public static String LAST_CLOSE = "lastClose";          //昨日收盘价
+    public static String CHANGE_AMOUNT = "changeAmount";    //涨跌额
+    public static String CHANGE = "change";                 //涨跌幅
+    public static String TURNOVER_RATE = "turnoverRate";    //换手率
+    public static String VOLUME = "volume";                 //成交量，单位：手
+    public static String AMOUNT = "amount";                 //成交额,单位:万
+    public static String TOTAL_VALUE = "totalValue";        //总市值,单位:亿
+    public static String MARKET_VALUE = "marketValue";      //流通市值,单位:亿
+    public static String AMPLITUDE = "amplitude";           //振幅
+
+    public static List<String> DAILY = Lists.newArrayList(
+            "close",            //最新价,收盘价
+            "high",             //最高价
+            "low",              //最低价
+            "open",             //开盘价
+            "lastClose",        //昨日收盘价
+            "changeAmount",     //涨跌额
+            "change",           //涨跌幅
+            "turnoverRate",     //换手率
+            "volume",           //成交量,单位：手
+            "amount",           //成交额,单位:万
+            "totalValue",       //总市值,单位:亿
+            "marketValue",      //流通市值,单位:亿
+            "amplitude"         //振幅
+    );
+
+
     public static List<String> REALTIME = Lists.newArrayList(
             "marketType",           //0     市场类型,沪市:1,深市:2
             "code",                 //1     证券代码
@@ -45,7 +76,7 @@ public class StockConstants {
             "volume",               //31    成交量，单位：手
             "low",                  //32    最低价
             "",                     //33    未知
-            "lastClose",            //34    昨收盘
+            "lastClose",            //34    昨日收盘价
             "amount",               //35    成交额,单位:元
             "quantityRelative",    //36    量比
             "turnoverRate",         //37    换手率

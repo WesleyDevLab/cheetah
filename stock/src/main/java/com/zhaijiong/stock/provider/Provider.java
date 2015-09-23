@@ -1,4 +1,4 @@
-package com.zhaijiong.stock;
+package com.zhaijiong.stock.provider;
 
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
@@ -13,14 +13,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 成交量 单位：手
- * 成交金额 单位：元
+ * 成交量,单位：手
+ * 成交金额,单位：万
+ * 总市值,单位:亿
+ * 流通市值,单位:亿
  *
  * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * mail: xuqi.xq@gmail.com
  * date: 15-8-27.
  */
-public class s {
+public class Provider {
     /**
      * 获取实时数据股票数据
      * @param symbol

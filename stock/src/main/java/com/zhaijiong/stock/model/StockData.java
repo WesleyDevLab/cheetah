@@ -51,7 +51,7 @@ public class StockData extends LinkedHashMap<String,Double>{
         return "StockData{" +
                 "symbol='" + symbol + '\'' +
                 ", name='" + name + '\'' +
-                ", date=" + date +
+                ", date=" + Utils.formatDate(date,"yyyy-MM-dd HH:mm:ss") +
                 ", boardType=" + boardType +
                 ", stockMarketType=" + stockMarketType +
                 ", stockData=" + Utils.map2Json(this) +
