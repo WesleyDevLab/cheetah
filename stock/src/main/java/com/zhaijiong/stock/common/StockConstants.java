@@ -52,7 +52,7 @@ public class StockConstants {
             "buy5",                 //7     买五
             "sell1",                //8     卖一
             "sell2",                //9     卖二
-            "sell3",                //10     卖三
+            "sell3",                //10    卖三
             "sell4",                //11    卖四
             "sell5",                //12    卖五
             "buy1Volume",           //13    买一手数
@@ -73,12 +73,12 @@ public class StockConstants {
             "open",                 //28    开盘价
             "change",               //29    涨跌幅
             "high",                 //30    最高价
-            "volume",               //31    成交量，单位：手
+            "volume",               //31    成交量,单位：手
             "low",                  //32    最低价
             "",                     //33    未知
             "lastClose",            //34    昨日收盘价
-            "amount",               //35    成交额,单位:元
-            "quantityRelative",    //36    量比
+            "amount",               //35    成交额,单位:万
+            "quantityRelative",     //36    量比
             "turnoverRate",         //37    换手率
             "PE",                   //38    市盈率
             "outerDisc",            //39    外盘,主动买,单位:手
@@ -87,8 +87,8 @@ public class StockConstants {
             "committeeSent",        //42    委差
             "PB",                   //43    市净率
             "",                     //44    未知
-            "marketValue",   //45流通市值,单位:元
-            "totalValue",     //46总市值,单位:元
+            "marketValue",          //45    流通市值,单位:亿
+            "totalValue",           //46    总市值,单位:亿
             "",                     //47    未知
             "",                     //48    未知
             "date"                  //49    时间
