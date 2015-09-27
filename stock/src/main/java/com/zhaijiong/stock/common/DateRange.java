@@ -1,9 +1,8 @@
 package com.zhaijiong.stock.common;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.Interval;
-import org.joda.time.ReadablePeriod;
+
+import java.util.Date;
 
 /**
  * start:今天往前的n个工作日
@@ -38,6 +37,14 @@ public class DateRange {
         return dt.toString(format);
     }
 
+    public Date startDate(String format){
+        return Utils.str2Date(start(),format);
+    }
+
+    public Date startDate(){
+        return startDate("yyyyMMdd");
+    }
+
     private DateTime addDays(DateTime dateTime, int days) {
         DateTime dt = dateTime;
         for (int i = 0; i < days; i++) {
@@ -57,5 +64,13 @@ public class DateRange {
         DateTime dt = new DateTime();
         dt = dt.plusDays(1);
         return dt.toString(format);
+    }
+
+    public Date stopDate(String format){
+        return Utils.str2Date(stop(),format);
+    }
+
+    public Date stopDate(){
+        return stopDate("yyyyMMdd");
     }
 }
