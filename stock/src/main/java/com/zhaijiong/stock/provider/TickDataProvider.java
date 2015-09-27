@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
 public class TickDataProvider {
     private static final Logger LOG = LoggerFactory.getLogger(TickDataProvider.class);
 
-    public static String tickHisDataURL = "http://market.finance.sina.com.cn/downxls.php?date=%s&symbol=%s";
+    private static String tickHisDataURL = "http://market.finance.sina.com.cn/downxls.php?date=%s&symbol=%s";
 
-    public static String tickRTDataURL = "http://vip.stock.finance.sina.com.cn/quotes_service/view/CN_TransListV2.php?num=10000&symbol=%s&rn=%s";
+    private static String tickRTDataURL = "http://vip.stock.finance.sina.com.cn/quotes_service/view/CN_TransListV2.php?num=10000&symbol=%s&rn=%s";
 
     public static List<Tick> get(String symbol,String date){
         String url = String.format(tickHisDataURL, date, Symbol.getSymbol(symbol, tickHisDataURL));
@@ -77,7 +77,7 @@ public class TickDataProvider {
         return ticks;
     }
 
-    public static Tick.Type getTickType(String type){
+    private static Tick.Type getTickType(String type){
         if(type.equals("买盘") || type.equals("UP")){
             return Tick.Type.BUY;
         }else if(type.equals("卖盘") || type.equals("DOWN")){

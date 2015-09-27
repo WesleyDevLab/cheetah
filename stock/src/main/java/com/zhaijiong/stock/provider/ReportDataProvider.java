@@ -35,7 +35,7 @@ public class ReportDataProvider {
 
 
     /**
-     *
+     * 个股研究报告
      * @param startDate 报告起始时间，格式:yyyyMMdd
      * @return
      */

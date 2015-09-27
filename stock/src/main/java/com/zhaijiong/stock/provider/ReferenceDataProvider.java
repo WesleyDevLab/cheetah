@@ -158,6 +158,10 @@ public class ReferenceDataProvider {
         return count;
     }
 
+    /**
+     * 获取大盘融资融券数据
+     * @return
+     */
     public static List<StockData> getTotalMarginTrade(){
         List<StockData> stockDataList = Lists.newLinkedList();
 

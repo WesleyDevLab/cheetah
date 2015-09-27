@@ -5,12 +5,12 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockBlock;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.Tick;
-import com.zhaijiong.stock.provider.*;
 import com.zhaijiong.stock.tools.StockCategory;
 import com.zhaijiong.stock.tools.StockList;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 成交量,单位：手
@@ -33,8 +33,7 @@ public class Provider {
      */
     public static List<StockData> dailyData(String symbol){
         DateRange range = DateRange.getRange(120);
-        List<StockData> collect = DailyDataProvider.get(symbol, range.start(), range.stop());
-        return collect;
+        return DailyDataProvider.get(symbol, range.start(), range.stop());
     }
 
     /**
@@ -45,8 +44,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> dailyData(String symbol,String startDate,String stopDate){
-        List<StockData> collect = DailyDataProvider.get(symbol, startDate, stopDate);
-        return collect;
+        return DailyDataProvider.get(symbol, startDate, stopDate);
     }
 
     /**
@@ -55,8 +53,7 @@ public class Provider {
      * @return
      */
     public static StockData realtimeData(String symbol){
-        StockData stockData = RealTimeDataProvider.get(symbol);
-        return stockData;
+        return RealTimeDataProvider.get(symbol);
     }
 
     /**
@@ -84,8 +81,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> minuteData(String symbol,String startDate,String stopDate,String type){
-        List<StockData> stockList = MinuteDataProvider.get(symbol, startDate, stopDate, type);
-        return stockList;
+        return MinuteDataProvider.get(symbol, startDate, stopDate, type);
     }
 
     /**
@@ -94,8 +90,7 @@ public class Provider {
      * @return
      */
     public static StockData moneyFlowData(String symbol){
-        StockData stockData = MoneyFlowDataProvider.get(symbol);
-        return stockData;
+        return MoneyFlowDataProvider.get(symbol);
     }
 
     /**
@@ -106,8 +101,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> moneyFlowData(String symbol,String startDate,String stopDate){
-        List<StockData> stockDataList = MoneyFlowDataProvider.get(symbol,startDate,stopDate);
-        return stockDataList;
+        return MoneyFlowDataProvider.get(symbol,startDate,stopDate);
     }
 
     /**
@@ -115,8 +109,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> moneyFlowDapanData(){
-        List<StockData> stockDataList = MoneyFlowDataProvider.getDapan();
-        return stockDataList;
+        return MoneyFlowDataProvider.getDapan();
     }
 
     /**
@@ -125,8 +118,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> moneyFlowIndustryData(String type){
-        List<StockData> stockDataList = MoneyFlowDataProvider.getIndustry(type);
-        return stockDataList;
+        return MoneyFlowDataProvider.getIndustry(type);
     }
 
     /**
@@ -135,8 +127,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> moneyFlowConceptData(String type){
-        List<StockData> stockDataList = MoneyFlowDataProvider.getConcept(type);
-        return stockDataList;
+        return MoneyFlowDataProvider.getConcept(type);
     }
 
     /**
@@ -145,8 +136,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> moneyFlowRegionData(String type){
-        List<StockData> stockDataList = MoneyFlowDataProvider.getRegion(type);
-        return stockDataList;
+        return MoneyFlowDataProvider.getRegion(type);
     }
 
     /**
@@ -157,8 +147,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> financeData(String symbol, String startDate, String stopDate){
-        List<StockData> stockDataList = FinanceDataProvider.get(symbol, startDate, stopDate);
-        return stockDataList;
+        return FinanceDataProvider.get(symbol, startDate, stopDate);
     }
 
     /**
@@ -182,8 +171,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> financeYearData(String symbol){
-        List<StockData> stockDataList = FinanceDataProvider.getYear(symbol);
-        return stockDataList;
+        return FinanceDataProvider.getYear(symbol);
     }
 
     /**
@@ -192,8 +180,7 @@ public class Provider {
      * @return
      */
     public static List<Tick> tickData(String symbol){
-        List<Tick> ticks = TickDataProvider.get(symbol);
-        return ticks;
+        return TickDataProvider.get(symbol);
     }
 
     /**
@@ -204,8 +191,7 @@ public class Provider {
      */
     public static List<Tick> tickData(String symbol,String date){
         String _date = Utils.formatDate(Utils.str2Date(date,"yyyyMMdd"),"yyyy-MM-dd");
-        List<Tick> ticks = TickDataProvider.get(symbol,_date);
-        return ticks;
+        return TickDataProvider.get(symbol,_date);
     }
 
     /**
@@ -216,6 +202,15 @@ public class Provider {
      */
     public static Map<String,List<StockBlock>> stockBlock(){
         return StockCategory.getCategory();
+    }
+
+    /**
+     * 获取某个股票在大分类下的具体分类
+     * @param type 概念，行业，地域
+     * @return
+     */
+    public static Map<String, Set<String>> stockCategory(String type){
+        return StockCategory.getStockCategory(type);
     }
 
     /**
@@ -234,4 +229,114 @@ public class Provider {
         return StockList.getTradingStockList();
     }
 
+    /**
+     * 股东人数变化
+     * mkt=市场
+     *      1=沪深A股
+     *      2=沪市A股
+     *      3=深市A股
+     *      4=中小板
+     *      5=创业板
+     * fd=时间,格式yyyy-MM-dd,季度末
+     */
+    public static List<StockData> getShareHolderCountData(String market,String data){
+        return ReferenceDataProvider.getShareHolderCountData(market, data);
+    }
+
+    /**
+     * 获取分配预案数据
+     *
+     * @param year 年份
+     * @return
+     */
+    public static List<StockData> getFPYA(String year){
+        return ReferenceDataProvider.getFPYA(year);
+    }
+
+    /**
+     * 获取大盘融资融券数据
+     * @return
+     */
+    public static List<StockData> getTotalMarginTrade(){
+        return ReferenceDataProvider.getTotalMarginTrade();
+    }
+
+    /**
+     * 获取两市融资融券数据
+     * 市场融资融券交易总量＝本日融资余额＋本日融券余量金额
+     * 本日融资余额＝前日融资余额＋本日融资买入额－本日融资偿还额；
+     * 本日融资偿还额＝本日直接还款额＋本日卖券还款额＋本日融资强制平仓额＋本日融资正权益调整－本日融资负权益调整；
+     * 本日融券余量=前日融券余量+本日融券卖出数量-本日融券偿还量；
+     * 本日融券偿还量＝本日买券还券量＋本日直接还券量＋本日融券强制平仓量＋本日融券正权益调整－本日融券负权益调整－本日余券应划转量；
+     * 融券单位：股（标的证券为股票）/份（标的证券为基金）/手（标的证券为债券）。
+     * @return
+     */
+    public static List<StockData> getMarginTrade(){
+        return ReferenceDataProvider.getMarginTrade();
+    }
+
+    /**
+     * 个股研究报告
+     * @param startDate 报告起始时间，格式:yyyyMMdd
+     * @return
+     */
+    public static List<StockData> getStockReportData(String startDate){
+        return ReportDataProvider.getStockReportData(startDate);
+    }
+
+    /**
+     * 获取盈利预期数据
+     */
+    public static List<StockData> getExpectEarnings(){
+        return ReportDataProvider.getExpectEarnings();
+    }
+
+    /**
+     * 获取股票指标数据
+     *      上证指数
+     *      深证成指
+     *      创业板指
+     *      中小板指
+     *      上证50
+     *      中证500
+     *      沪深300
+     *      纳斯达克
+     *      道琼斯
+     *      标普指数
+     */
+    public static List<Map<String,String>> getStockIndexData(){
+        return StockIndexDataProvider.get();
+    }
+
+    /**
+     * 每日龙虎榜详情
+     * @param date yyyyMMdd
+     * @return
+     */
+    public static List<StockData> getDailyTopList(String date){
+        return TopListDataProvider.getDailyTopList(date);
+    }
+
+    /**
+     * 个股龙虎榜统计
+     * @param dayCount 取值:5,10,30,60
+     * @return
+     */
+    public static List<StockData> getStockRanking(int dayCount){
+        return TopListDataProvider.getStockRanking(dayCount);
+    }
+
+    //TODO
+    public static List<StockData> getOrganizationRanking(int dayCount){
+        return TopListDataProvider.getOrganizationRanking(dayCount);
+    }
+
+    /**
+     * 机构席位成交明细
+     * @param count 获取最近多少条
+     * @return
+     */
+    public static List<StockData> getOrganizationDetailRanking(int count){
+        return TopListDataProvider.getOrganizationDetailRanking(count);
+    }
 }

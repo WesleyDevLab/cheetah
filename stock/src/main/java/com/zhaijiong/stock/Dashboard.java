@@ -160,7 +160,9 @@ public class Dashboard {
         List<String> symbols = Lists.newArrayList(
                 "601886",
                 "600376",
-                "600232"
+                "600232",
+                "002295"
+
         );
 
         while(true){
