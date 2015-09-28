@@ -1,5 +1,6 @@
 package com.zhaijiong.stock.provider;
 
+import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockBlock;
@@ -227,6 +228,15 @@ public class Provider {
      */
     public static List<String> tradingStockList(){
         return StockList.getTradingStockList();
+    }
+
+    /**
+     * 按照条件过滤
+     * @param conditions
+     * @return
+     */
+    public static List<String> tradingStockListWith(Conditions conditions){
+        return StockList.getTradingStockList(conditions);
     }
 
     /**

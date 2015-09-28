@@ -5,8 +5,13 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
+import com.google.common.util.concurrent.*;
+import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.download.Downloader;
+import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.provider.RealTimeDataProvider;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,7 +71,11 @@ public class StockList {
                     }
                     String[] stockArr = stock.text().split("\\(");
                     //key:name,value:symbol
-                    stockMap.put(stockArr[1].replaceAll("\\)",""),stockArr[0]);
+                    if(stockArr.length==2){
+                        stockMap.put(stockArr[1].replaceAll("\\)",""),stockArr[0]);
+                    }else{
+                        LOG.error("can't split:"+stock.text());
+                    }
                 }
                 LOG.info("600:"+sh+",000:"+sz+",002:"+zxb+",300:"+cyb+",other:"+other);
                 LOG.info("total:"+(sh+sz+zxb+cyb));
@@ -139,6 +149,30 @@ public class StockList {
      */
     public static List<String> getTradingStockList(){
         return getTradingStockList(getList());
+    }
+
+    public static List<String> getTradingStockList(Conditions condition){
+        ExecutorService service = Executors.newFixedThreadPool(10);
+
+        List<String> tradingStockList = getTradingStockList();
+        CountDownLatch countDownLatch = new CountDownLatch(tradingStockList.size());
+        List<String> stocks = Lists.newLinkedList();
+        for(String stock:tradingStockList){
+            service.execute(() -> {
+                StockData stockData = RealTimeDataProvider.get(stock);
+                if(condition.check(stockData)){
+                    stocks.add(stock);
+                }
+                countDownLatch.countDown();
+            });
+        }
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Utils.closeThreadPool(service);
+        return stocks;
     }
 
     /**
