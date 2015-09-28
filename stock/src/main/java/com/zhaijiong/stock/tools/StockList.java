@@ -57,7 +57,7 @@ public class StockList {
                 Elements stocks = doc.select("div[id=quotesearch] li a");
                 for(Element stock :stocks){
                     String url = stock.attr("href");
-                    if(url.contains("sh600")){
+                    if(url.contains("sh6")){
                         ++sh;
                     }else if(url.contains("sz000")){
                         ++sz;
@@ -77,7 +77,7 @@ public class StockList {
                         LOG.error("can't split:"+stock.text());
                     }
                 }
-                LOG.info("600:"+sh+",000:"+sz+",002:"+zxb+",300:"+cyb+",other:"+other);
+                LOG.info("6:"+sh+",000:"+sz+",002:"+zxb+",300:"+cyb+",other:"+other);
                 LOG.info("total:"+(sh+sz+zxb+cyb));
                 return stockMap;
             } catch (IOException e) {
