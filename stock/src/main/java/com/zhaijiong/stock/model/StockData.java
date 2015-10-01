@@ -1,5 +1,6 @@
 package com.zhaijiong.stock.model;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Utils;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-15.
  */
-public class StockData extends LinkedHashMap<String,Double>{
+public class StockData extends LinkedHashMap<String,Double> implements Comparable<StockData>{
 
     public String       symbol;     //代码
 
@@ -57,5 +58,14 @@ public class StockData extends LinkedHashMap<String,Double>{
                 ", stockData=" + Utils.map2Json(this) +
                 ", stockAttribute= " + Utils.map2Json(attribute) +
                 '}';
+    }
+
+    @Override
+    public int compareTo(StockData stockData) {
+        int compare = this.symbol.compareTo(stockData.symbol);
+        if(compare!=0){
+            return compare;
+        }
+        return this.date.compareTo(stockData.date);
     }
 }
