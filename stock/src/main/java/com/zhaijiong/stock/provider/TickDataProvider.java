@@ -30,6 +30,12 @@ public class TickDataProvider {
 
     private static String tickRTDataURL = "http://vip.stock.finance.sina.com.cn/quotes_service/view/CN_TransListV2.php?num=10000&symbol=%s&rn=%s";
 
+    /**
+     *
+     * @param symbol
+     * @param date yyyy-MM-dd
+     * @return
+     */
     public static List<Tick> get(String symbol,String date){
         String url = String.format(tickHisDataURL, date, Symbol.getSymbol(symbol, tickHisDataURL));
         InputStream input = BasicDownloader.downloadStream(url);
