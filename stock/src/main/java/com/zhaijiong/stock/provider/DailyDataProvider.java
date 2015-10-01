@@ -1,30 +1,108 @@
 package com.zhaijiong.stock.provider;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.common.Constants;
-import com.zhaijiong.stock.common.DateRange;
-import com.zhaijiong.stock.common.Utils;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.zhaijiong.stock.common.*;
 import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.Symbol;
+import org.joda.time.DateTime;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.*;
 
 import static com.zhaijiong.stock.common.StockConstants.*;
 
 /**
  * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
  * date: 15-8-4.
+ * 注意：复权只对开盘价，收盘价，最高价，最低价复权
+ * 昨日收盘价，
  */
 public class DailyDataProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DailyDataProvider.class);
 
-    public static final String dailyDataUrl = "http://quotes.money.163.com/service/chddata.html?code=%s&start=%s&end=%s&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;TURNOVER;VOTURNOVER;VATURNOVER;TCAP;MCAP";
+    public static final String DAILY_DATA_URL = "http://quotes.money.163.com/service/chddata.html?code=%s&start=%s&end=%s&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;TURNOVER;VOTURNOVER;VATURNOVER;TCAP;MCAP";
 
-    public static List<StockData> get(String symbol, String startDate, String stopDate) {
+    public static final String DAILY_PRICE_HFQ_URl = "http://vip.stock.finance.sina.com.cn/api/json.php/BasicStockSrv.getStockFuQuanData?symbol=%s&type=hfq";
+
+    public static final String DAILY_HFQ_URL = "http://vip.stock.finance.sina.com.cn/corp/go.php/vMS_FuQuanMarketHistory/stockid/%s.phtml"; //?year=%s&jidu=%s
+
+    /**
+     * 参数1：6位代码
+     * year：年份
+     * jidu：季度，1，2，3，4
+     */
+    public static final String DAILY_HFQ_PARAM_URL = "http://vip.stock.finance.sina.com.cn/corp/go.php/vMS_FuQuanMarketHistory/stockid/%s.phtml?year=%s&jidu=%s";
+
+    /**
+     * 获取前复权数据
+     * @param symbol
+     * @param startDate
+     * @param stopDate
+     * @return
+     */
+    private static Map<String,StockData> qfqData(String symbol, String startDate, String stopDate){
+        Map<String,StockData> stockDataMap = Maps.newHashMap();
+
+        String hfqURL = String.format(DAILY_HFQ_URL,symbol);
+        String data = Downloader.download(hfqURL,"gb2312");
+        Elements select = Jsoup.parse(data).getElementById("con02-4").getElementsByTag("select").get(0).getElementsByTag("option");
+        List<String> pages = Lists.newArrayListWithCapacity(50);
+        for(Element option:select){
+            pages.add(option.text()+""+"1231");
+            pages.add(option.text()+""+"0930");
+            pages.add(option.text()+""+"0630");
+            pages.add(option.text()+""+"0331");
+        }
+        Collections.reverse(pages);
+
+        for(String page:pages){
+            Date date = Utils.str2Date(page,"yyyyMMdd");
+            if(date.getTime() > Utils.str2Date(startDate,"yyyyMMdd").getTime() && date.getTime() < Utils.str2Date(stopDate,"yyyyMMdd").getTime()){
+                String url = String.format(DAILY_HFQ_PARAM_URL,symbol,Utils.formatDate(date,"yyyy"),getQuarter(date));
+                data = Downloader.download(url,"gb2312");
+                Elements tr = Jsoup.parse(data).getElementById("FundHoldSharesTable").getElementsByTag("tbody").get(0).getElementsByTag("tr");
+                for(int i = 1;i<tr.size();i++){
+                    Elements td = tr.get(i).getElementsByTag("td");
+                    Date stockDate = Utils.str2Date(td.get(0).text(),"yyyy-MM-dd");
+                    if(stockDate.getTime()>= Utils.str2Date(startDate,"yyyyMMdd").getTime() && stockDate.getTime() <= Utils.str2Date(stopDate,"yyyyMMdd").getTime()){
+                        StockData stockData = new StockData(symbol);
+
+                        stockData.date = Utils.str2Date(td.get(0).text(),"yyyy-MM-dd");
+                        stockData.put(StockConstants.OPEN,Double.parseDouble(td.get(1).text()));
+                        stockData.put(StockConstants.HIGH,Double.parseDouble(td.get(2).text()));
+                        stockData.put(CLOSE,Double.parseDouble(td.get(3).text()));
+                        stockData.put(StockConstants.LOW,Double.parseDouble(td.get(4).text()));
+                        stockData.put(StockConstants.VOLUME,Double.parseDouble(td.get(5).text())/100);  //单位：手
+                        stockData.put(StockConstants.AMOUNT,Double.parseDouble(td.get(6).text())/10000);//单位：万
+                        stockData.put(StockConstants.FACTOR,Double.parseDouble(td.get(7).text()));
+                        stockDataMap.put(td.get(0).text().replaceAll("-", ""), stockData);
+                    }
+                }
+            }
+        }
+        return stockDataMap;
+    }
+
+    /**
+     * 根据时间获取季度
+     * @param date
+     * @return
+     */
+    public static int getQuarter(Date date){
+        return (date.getMonth()/3)+1;
+    }
+
+    private static List<StockData> getDailyDataWithOutFQ(String symbol, String startDate, String stopDate) {
         String url = getPath(symbol,startDate,stopDate);
 
         List<StockData> stocks = Lists.newLinkedList();
@@ -59,6 +137,28 @@ public class DailyDataProvider {
         return Lists.reverse(stocks);
     }
 
+    public static List<StockData> get(String symbol, String startDate, String stopDate){
+        Map<String,StockData> stockDatas = qfqData(symbol, startDate, stopDate);
+
+        List<StockData> stockDataList = getDailyDataWithOutFQ(symbol, startDate, stopDate);
+        String date = Utils.formatDate(stockDataList.get(stockDataList.size() - 1).date, "yyyyMMdd");
+        double factor = stockDatas.get(date).get("factor");//复权因子
+        for(int i =0;i<stockDataList.size();i++){
+            StockData stockData = stockDataList.get(i);
+            date = Utils.formatDate(stockData.date,"yyyyMMdd");
+            StockData stockDataFQ = stockDatas.get(date);
+            stockData.put(OPEN,Utils.formatDouble(stockDataFQ.get(OPEN)/factor));
+            stockData.put(CLOSE,Utils.formatDouble(stockDataFQ.get(CLOSE)/factor));
+            stockData.put(HIGH,Utils.formatDouble(stockDataFQ.get(HIGH)/factor));
+            stockData.put(LOW,Utils.formatDouble(stockDataFQ.get(LOW)/factor));
+            if(i>0){
+                stockData.put(LAST_CLOSE,stockDataList.get(i-1).get(CLOSE));
+            }
+
+        }
+        return stockDataList;
+    }
+
     private static void changeUnit(StockData stockData) {
         stockData.put(VOLUME,stockData.get(VOLUME)/100);    //成交量,单位：手
         stockData.put(AMOUNT,stockData.get(AMOUNT)/10000);  //成交金额,单位：万
@@ -74,12 +174,16 @@ public class DailyDataProvider {
      * @return
      */
     public static String getPath(String symbol,String startDate,String stopDate) {
-        return String.format(dailyDataUrl, Symbol.getSymbol(symbol,dailyDataUrl), startDate, stopDate);
+        return String.format(DAILY_DATA_URL, Symbol.getSymbol(symbol, DAILY_DATA_URL), startDate, stopDate);
     }
 
     public static void main(String[] args) {
-        DateRange range = DateRange.getRange(10);
-        List<StockData> stockDataList = DailyDataProvider.get("600376", range.start(), range.stop());
-        stockDataList.forEach(stockData -> System.out.println(stockData));
+        DateRange range = DateRange.getRange(720);
+
+        List<StockData> stockDataList1 = DailyDataProvider.get("300101", range.start(), range.stop());
+        for(int i =0;i<stockDataList1.size();i++){
+            StockData stockData = stockDataList1.get(i);
+            System.out.println(stockData);
+        }
     }
 }

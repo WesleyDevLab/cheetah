@@ -15,7 +15,7 @@ public class StockConstants {
     public static String LOW = "low";                       //最低价
     public static String OPEN = "open";                     //开盘价
     public static String LAST_CLOSE = "lastClose";          //昨日收盘价
-    public static String CHANGE_AMOUNT = "changeAmount";    //涨跌额
+    public static String CHANGE_AMOUNT = "changeAmount";    //涨跌额   今天收盘价-昨天收盘价
     public static String CHANGE = "change";                 //涨跌幅
     public static String TURNOVER_RATE = "turnoverRate";    //换手率
     public static String VOLUME = "volume";                 //成交量，单位：手
@@ -23,6 +23,7 @@ public class StockConstants {
     public static String TOTAL_VALUE = "totalValue";        //总市值,单位:亿
     public static String MARKET_VALUE = "marketValue";      //流通市值,单位:亿
     public static String AMPLITUDE = "amplitude";           //振幅
+    public static String FACTOR = "factor";                 //复权因子
 
     public static List<String> DAILY = Lists.newArrayList(
             "close",            //最新价,收盘价
