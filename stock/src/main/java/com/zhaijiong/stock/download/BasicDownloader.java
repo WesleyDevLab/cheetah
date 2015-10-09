@@ -65,11 +65,13 @@ public class BasicDownloader {
 
     public static String download(String url,String encoding){
         InputStream inputStream = downloadStream(url);
-        try {
-            List<String> strings = IOUtils.readLines(inputStream, encoding);
-            return Joiner.on("\n").join(strings);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(inputStream!=null){
+            try {
+                List<String> strings = IOUtils.readLines(inputStream, encoding);
+                return Joiner.on("\n").join(strings);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return "";
     }
