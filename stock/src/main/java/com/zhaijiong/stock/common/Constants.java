@@ -9,6 +9,8 @@ public class Constants {
     public static final Charset UTF8 = Charset.forName("UTF-8");
 
     public static final String DATABASE_POOL_SIZE = "database.pool.size";
+    public static final String SCHEDULE_POOL_SIZE = "schedule.pool.size";
+    public static final String THREAD_POOL_SIZE = "thread.pool.size";
 
     public static String NETEASE_DATE_STYLE = "yyyy-MM-dd";
 
