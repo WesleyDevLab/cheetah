@@ -67,7 +67,8 @@ public class DailyDataProvider {
 
         for(String page:pages){
             Date date = Utils.str2Date(page,"yyyyMMdd");
-            if(date.getTime() > Utils.str2Date(startDate,"yyyyMMdd").getTime() && date.getTime() < Utils.str2Date(stopDate,"yyyyMMdd").getTime()){
+            //TODO date < stop
+            if(date.getTime() > Utils.str2Date(startDate,"yyyyMMdd").getTime() /*&& date.getTime() < Utils.str2Date(stopDate,"yyyyMMdd").getTime()*/){
                 String url = String.format(DAILY_HFQ_PARAM_URL,symbol,Utils.formatDate(date,"yyyy"),getQuarter(date));
                 data = Downloader.download(url,"gb2312");
                 Elements tr = Jsoup.parse(data).getElementById("FundHoldSharesTable").getElementsByTag("tbody").get(0).getElementsByTag("tr");
@@ -104,7 +105,6 @@ public class DailyDataProvider {
 
     private static List<StockData> getDailyDataWithOutFQ(String symbol, String startDate, String stopDate) {
         String url = getPath(symbol,startDate,stopDate);
-
         List<StockData> stocks = Lists.newLinkedList();
         try {
             String data = Downloader.download(url, "gb2312");
@@ -142,7 +142,7 @@ public class DailyDataProvider {
 
         List<StockData> stockDataList = getDailyDataWithOutFQ(symbol, startDate, stopDate);
         String date = Utils.formatDate(stockDataList.get(stockDataList.size() - 1).date, "yyyyMMdd");
-        double factor = stockDatas.get(date).get("factor");//复权因子
+        double factor = stockDatas.get(date).get(StockConstants.FACTOR);//复权因子
         for(int i =0;i<stockDataList.size();i++){
             StockData stockData = stockDataList.get(i);
             date = Utils.formatDate(stockData.date,"yyyyMMdd");
@@ -178,12 +178,11 @@ public class DailyDataProvider {
     }
 
     public static void main(String[] args) {
-        DateRange range = DateRange.getRange(720);
+        DateRange range = DateRange.getRange(5);
 
-        List<StockData> stockDataList1 = DailyDataProvider.get("300101", range.start(), range.stop());
-        for(int i =0;i<stockDataList1.size();i++){
-            StockData stockData = stockDataList1.get(i);
-            System.out.println(stockData);
+        Map<String, StockData> stockDataList1 = DailyDataProvider.qfqData("000008", range.start(), range.stop());
+        for(Map.Entry<String,StockData> stockDataEntry:stockDataList1.entrySet()){
+            System.out.println(stockDataEntry.getKey()+":"+stockDataEntry.getValue());
         }
     }
 }

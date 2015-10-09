@@ -3,9 +3,7 @@ package com.zhaijiong.stock.common;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.*;
 
 /**
  * author: xuqi.xq
@@ -20,7 +18,7 @@ public class ParallelProcesser {
 
     static ExecutorService threadPool;
 
-    static synchronized void init(int scheduledPoolSize,int threadPoolSize) {
+    public static synchronized void init(int scheduledPoolSize,int threadPoolSize) {
         if (executorService == null) {
             executorService = Executors.newScheduledThreadPool(scheduledPoolSize);
         }
@@ -30,11 +28,17 @@ public class ParallelProcesser {
         isInit = true;
     }
 
-    static void close() {
+    public static void close() {
         Utils.closeThreadPool(executorService);
+        Utils.closeThreadPool(threadPool);
+        isInit = false;
     }
 
-    static void run(ParallelTask task){
-        executorService.submit(task);
+    public static void process(Runnable task){
+        threadPool.execute(task);
+    }
+
+    public static void schedule(Runnable runnable, int start, int period){
+        executorService.scheduleAtFixedRate(runnable,start,period, TimeUnit.MINUTES);
     }
 }

@@ -1,9 +1,9 @@
 package com.zhaijiong.stock;
 
 import com.google.common.collect.Maps;
-import com.zhaijiong.stock.common.Conditions;
+import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Context;
-import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.common.ParallelProcesser;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import org.slf4j.Logger;
@@ -11,9 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,13 +18,13 @@ import java.util.concurrent.TimeUnit;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-9-23.
  */
-public abstract class DataCenter {
+public class DataCenter {
     private static Logger LOG = LoggerFactory.getLogger(DataCenter.class);
 
-    private ScheduledExecutorService servicePool;
-    private ExecutorService threadPool;
 
     private List<String> stockList;
+
+    private Context context;
     /**
      * 实时股票数据
      * key=symbol,例如,600123
@@ -36,26 +33,47 @@ public abstract class DataCenter {
     private Map<String,StockData> realtimeData;
     private Map<String,List<StockData>> dailyData;
 
-    public DataCenter(){
-        servicePool = Executors.newScheduledThreadPool(8);
-        threadPool = Executors.newFixedThreadPool(32);
+    public DataCenter(Context context){
+        this.context = context;
+        ParallelProcesser.init(
+                context.getInt(Constants.SCHEDULE_POOL_SIZE,8),
+                context.getInt(Constants.THREAD_POOL_SIZE,32)
+        );
     }
 
     public void close(){
-        Utils.closeThreadPool(servicePool);
-        Utils.closeThreadPool(threadPool);
+        ParallelProcesser.close();
     }
 
-    public void init(){
-        stockList = Provider.tradingStockList();
+    public void init(List<String> stockList){
+        this.stockList = stockList;
         realtimeData = Maps.newHashMapWithExpectedSize(stockList.size());
         dailyData = Maps.newHashMapWithExpectedSize(stockList.size());
+        ParallelProcesser.process(() -> refreshDailyData());
+        ParallelProcesser.schedule(() -> refreshRealTimeData(),0,3);
+//        while(!(stockList.size()==dailyData.size()&&stockList.size()==realtimeData.size())){
+//            LOG.info("loading...");
+//            LOG.info("stockList:" +stockList.size());
+//            LOG.info("dailyData:" +dailyData.size());
+//            LOG.info("realtimeData:" +realtimeData.size());
+//            try {
+//                TimeUnit.SECONDS.sleep(5);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
-    public void refresh(){
+    public void refreshDailyData(){
         for(String symbol:stockList){
-            threadPool.execute(() -> dailyData.put(symbol,Provider.dailyData(symbol)));
-            threadPool.execute(() -> realtimeData.put(symbol,Provider.realtimeData(symbol)));
+            ParallelProcesser.process(() -> dailyData.put(symbol,Provider.dailyData(symbol)));
+        }
+    }
+
+    public void refreshRealTimeData(){
+        LOG.info("refreshRealTimeData");
+        for(String symbol:stockList){
+            ParallelProcesser.process(() -> realtimeData.put(symbol,Provider.realtimeData(symbol)));
         }
     }
 
@@ -85,12 +103,35 @@ public abstract class DataCenter {
         return stockData;
     }
 
-    private StockData getRealTimeData(String symbol){
+    public List<StockData> getDailyData(String symbol){
+        List<StockData> stockDataList = dailyData.get(symbol);
+        if(stockDataList==null){
+            stockDataList = Provider.dailyData(symbol);
+            dailyData.put(symbol,stockDataList);
+        }
+        return stockDataList;
+    }
+
+    public StockData getRealTimeData(String symbol){
         StockData stockData = realtimeData.get(symbol);
         if(stockData==null){
             stockData = Provider.realtimeData(symbol);
             realtimeData.put(symbol,stockData);
         }
         return stockData;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Context context = new Context();
+        DataCenter dataCenter = new DataCenter(context);
+        List<String> stockList = Provider.tradingStockList();
+        dataCenter.init(stockList);
+        TimeUnit.SECONDS.sleep(10);
+        while(true){
+            System.out.println("dailyData:" +dataCenter.dailyData.size());
+            System.out.println("realtimeData:" +dataCenter.realtimeData.size());
+            System.out.println("-----------------");
+            TimeUnit.SECONDS.sleep(3);
+        }
     }
 }

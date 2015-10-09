@@ -33,7 +33,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> dailyData(String symbol){
-        DateRange range = DateRange.getRange(120);
+        DateRange range = DateRange.getRange(250);
         return DailyDataProvider.get(symbol, range.start(), range.stop());
     }
 
