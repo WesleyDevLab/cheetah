@@ -1,23 +1,20 @@
 package com.zhaijiong.stock;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
-import com.zhaijiong.stock.common.Constants;
-import com.zhaijiong.stock.common.Context;
-import com.zhaijiong.stock.common.ParallelProcesser;
+import com.zhaijiong.stock.common.*;
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.model.Tick;
 import com.zhaijiong.stock.provider.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
- * date: 15-9-23.
- */
+//TODO 未添加FinanceData
 public class DataCenter {
     private static Logger LOG = LoggerFactory.getLogger(DataCenter.class);
 
@@ -31,7 +28,18 @@ public class DataCenter {
      * value=股票实时数据
      */
     private Map<String,StockData> realtimeData;
+    /**
+     * 日线级别数据
+     * key=symbol
+     * value=每天一个StockData
+     */
     private Map<String,List<StockData>> dailyData;
+
+    private Map<String,List<StockData>> minute15Data;
+
+    private Map<String,List<StockData>> moneyFlowData;
+
+    private Map<String,Map<String,List<Tick>>> ticksData;
 
     public DataCenter(Context context){
         this.context = context;
@@ -47,21 +55,17 @@ public class DataCenter {
 
     public void init(List<String> stockList){
         this.stockList = stockList;
-        realtimeData = Maps.newHashMapWithExpectedSize(stockList.size());
-        dailyData = Maps.newHashMapWithExpectedSize(stockList.size());
-        ParallelProcesser.process(() -> refreshDailyData());
-        ParallelProcesser.schedule(() -> refreshRealTimeData(),0,3);
-//        while(!(stockList.size()==dailyData.size()&&stockList.size()==realtimeData.size())){
-//            LOG.info("loading...");
-//            LOG.info("stockList:" +stockList.size());
-//            LOG.info("dailyData:" +dailyData.size());
-//            LOG.info("realtimeData:" +realtimeData.size());
-//            try {
-//                TimeUnit.SECONDS.sleep(5);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        realtimeData = Maps.newConcurrentMap();
+        dailyData = Maps.newConcurrentMap();
+        minute15Data = Maps.newConcurrentMap();
+        moneyFlowData = Maps.newConcurrentMap();
+        ticksData = Maps.newConcurrentMap();
+
+//        refreshDailyData();
+        ParallelProcesser.schedule(() -> refreshRealTimeData(), 0, 5);
+        ParallelProcesser.schedule(() -> refreshMinutesData("15"),0,5);
+//        ParallelProcesser.schedule(() -> refreshMoneyFlowData(),0,5);
+//        ParallelProcesser.schedule(() -> refreshTicksData(),0,5);
     }
 
     public void refreshDailyData(){
@@ -74,6 +78,31 @@ public class DataCenter {
         LOG.info("refreshRealTimeData");
         for(String symbol:stockList){
             ParallelProcesser.process(() -> realtimeData.put(symbol,Provider.realtimeData(symbol)));
+        }
+    }
+
+    public void refreshMinutesData(String period){
+        for(String symbol:stockList){
+            ParallelProcesser.process(() -> minute15Data.put(symbol,Provider.minuteData(symbol,period)));
+        }
+    }
+
+    public void refreshMoneyFlowData(){
+        DateRange dateRange = DateRange.getRange(120);
+        for(String symbol:stockList){
+            ParallelProcesser.process(() -> moneyFlowData.put(symbol,Provider.moneyFlowData(symbol, dateRange.start(),dateRange.stop())));
+        }
+    }
+
+    public void refreshTicksData(){
+        DateRange dateRange = DateRange.getRange(20);
+        List<String> dateList = dateRange.getDateList();
+        for(String symbol:stockList){
+            Map<String,List<Tick>> map = Maps.newConcurrentMap();
+            for(String date:dateList){
+                ParallelProcesser.process(() -> map.put(date,Provider.tickData(symbol,date)));
+            }
+            ticksData.put(symbol,map);
         }
     }
 
@@ -121,7 +150,22 @@ public class DataCenter {
         return stockData;
     }
 
+    public List<StockData> getMinute15Data(String symbol){
+        List<StockData> stockDataList = minute15Data.get(symbol);
+        if(stockDataList==null){
+            stockDataList = Provider.minuteData(symbol,"15");
+            minute15Data.put(symbol,stockDataList);
+        }
+        return stockDataList;
+    }
+
+    public void printStockList(){
+        LOG.info(Utils.formatDate(new Date(),"yyyyMMdd HH:mm:ss")+"stockList count="+stockList.size());
+        stockList.forEach(symbol -> LOG.info(symbol));
+    }
+
     public static void main(String[] args) throws InterruptedException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         Context context = new Context();
         DataCenter dataCenter = new DataCenter(context);
         List<String> stockList = Provider.tradingStockList();
@@ -130,8 +174,12 @@ public class DataCenter {
         while(true){
             System.out.println("dailyData:" +dataCenter.dailyData.size());
             System.out.println("realtimeData:" +dataCenter.realtimeData.size());
-            System.out.println("-----------------");
+            System.out.println("minute15Data:" + dataCenter.minute15Data.size());
+            System.out.println("moneyFlowData:" + dataCenter.moneyFlowData.size());
+            System.out.println("ticksData:" + dataCenter.ticksData.size());
+            System.out.println("----------------- cost:"+stopwatch.elapsed(TimeUnit.SECONDS) + "s");
             TimeUnit.SECONDS.sleep(3);
+
         }
     }
 }
