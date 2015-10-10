@@ -1,11 +1,13 @@
 package com.zhaijiong.stock.common;
 
+import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 
 import java.util.Date;
+import java.util.List;
 
 /**
- * start:今天往前的n个工作日
+ * start:今天往前的n个交易日，步长为天
  * stop：明天，因为hbase的stoprow是开区间
  */
 public class DateRange {
@@ -72,5 +74,28 @@ public class DateRange {
 
     public Date stopDate(){
         return stopDate("yyyyMMdd");
+    }
+
+    /**
+     * 获取从开始时间到结束时间的交易日期
+     * @param format
+     * @return
+     */
+    public List<String> getDateList(String format){
+        List<String> dateList = Lists.newArrayListWithCapacity(dayCount+1);
+        DateTime tmpDate = new DateTime(startDate());
+        DateTime stop = new DateTime(stopDate());
+        while(tmpDate.toDate().getTime() <=stop.toDate().getTime()){
+            //只添加周一到周五
+            if(tmpDate.getDayOfWeek()>=1 && tmpDate.getDayOfWeek()<=5){
+                dateList.add(tmpDate.toString(format));
+            }
+            tmpDate = tmpDate.plusDays(1);
+        }
+        return dateList;
+    }
+
+    public List<String> getDateList(){
+        return getDateList("yyyyMMdd");
     }
 }
