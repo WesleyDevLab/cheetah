@@ -58,19 +58,15 @@ public class Provider {
     }
 
     /**
-     * 获取最新一笔股票分钟级别数据
+     * 获取最新10天股票分钟级别数据
      * @param symbol
      * @param type  参数值：5,15,30,60
      * @return
      */
-    public static StockData minuteData(String symbol,String type){
-        DateRange range = DateRange.getRange(10);
+    public static List<StockData> minuteData(String symbol,String type){
+        DateRange range = DateRange.getRange(30);//数据源不够30天
         List<StockData> stockDataList = minuteData(symbol,range.start(),range.stop(),type);
-        if(stockDataList.size()>=1){
-            return stockDataList.get(stockDataList.size()-1);
-        }else{
-            return new StockData(symbol);
-        }
+        return stockDataList;
     }
 
     /**
