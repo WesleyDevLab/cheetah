@@ -14,10 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-//TODO 未添加FinanceData
 public class DataCenter {
     private static Logger LOG = LoggerFactory.getLogger(DataCenter.class);
-
 
     private List<String> stockList;
 
@@ -133,14 +131,30 @@ public class DataCenter {
     }
 
     public List<StockData> getDailyData(String symbol){
+        return getDailyData(symbol,250);
+    }
+
+    /**
+     * 获取日线股票数据
+     * @param symbol    股票代码
+     * @param period    时间长度
+     * @return
+     */
+    public List<StockData> getDailyData(String symbol,int period){
+        DateRange dateRange = DateRange.getRange(period);
         List<StockData> stockDataList = dailyData.get(symbol);
-        if(stockDataList==null){
-            stockDataList = Provider.dailyData(symbol);
+        if(stockDataList ==null){
+            stockDataList = Provider.dailyData(symbol,dateRange.start(),dateRange.stop());
             dailyData.put(symbol,stockDataList);
         }
         return stockDataList;
     }
 
+    /**
+     * 获取股票实时数据
+     * @param symbol
+     * @return
+     */
     public StockData getRealTimeData(String symbol){
         StockData stockData = realtimeData.get(symbol);
         if(stockData==null){
@@ -150,6 +164,11 @@ public class DataCenter {
         return stockData;
     }
 
+    /**
+     * 获取股票15分钟k线数据
+     * @param symbol
+     * @return
+     */
     public List<StockData> getMinute15Data(String symbol){
         List<StockData> stockDataList = minute15Data.get(symbol);
         if(stockDataList==null){
@@ -159,6 +178,9 @@ public class DataCenter {
         return stockDataList;
     }
 
+    /**
+     * 打印当前数据中心管理的股票列表
+     */
     public void printStockList(){
         LOG.info(Utils.formatDate(new Date(),"yyyyMMdd HH:mm:ss")+"stockList count="+stockList.size());
         stockList.forEach(symbol -> LOG.info(symbol));
