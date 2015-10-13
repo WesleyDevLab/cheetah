@@ -141,20 +141,27 @@ public class DailyDataProvider {
         Map<String,StockData> stockDatas = qfqData(symbol, startDate, stopDate);
 
         List<StockData> stockDataList = getDailyDataWithOutFQ(symbol, startDate, stopDate);
-        String date = Utils.formatDate(stockDataList.get(stockDataList.size() - 1).date, "yyyyMMdd");
+//        String date = Utils.formatDate(stockDataList.get(stockDataList.size() - 1).date, "yyyyMMdd");
+        ArrayList<String> dateList = Lists.newArrayList(stockDatas.keySet());
+        Collections.sort(dateList);
+        String date = dateList.get(dateList.size()-1);
         double factor = stockDatas.get(date).get(StockConstants.FACTOR);//复权因子
         for(int i =0;i<stockDataList.size();i++){
             StockData stockData = stockDataList.get(i);
             date = Utils.formatDate(stockData.date,"yyyyMMdd");
             StockData stockDataFQ = stockDatas.get(date);
-            stockData.put(OPEN,Utils.formatDouble(stockDataFQ.get(OPEN)/factor));
-            stockData.put(CLOSE,Utils.formatDouble(stockDataFQ.get(CLOSE)/factor));
-            stockData.put(HIGH,Utils.formatDouble(stockDataFQ.get(HIGH)/factor));
-            stockData.put(LOW,Utils.formatDouble(stockDataFQ.get(LOW)/factor));
-            if(i>0){
-                stockData.put(LAST_CLOSE,stockDataList.get(i-1).get(CLOSE));
+            if(stockDataFQ!=null){
+                stockData.put(OPEN,Utils.formatDouble(stockDataFQ.get(OPEN)/factor));
+                stockData.put(CLOSE,Utils.formatDouble(stockDataFQ.get(CLOSE)/factor));
+                stockData.put(HIGH,Utils.formatDouble(stockDataFQ.get(HIGH)/factor));
+                stockData.put(LOW,Utils.formatDouble(stockDataFQ.get(LOW)/factor));
+                if(i>0){
+                    stockData.put(LAST_CLOSE,stockDataList.get(i-1).get(CLOSE));
+                }
+            }else{
+                //有时daily数据已经更新到最新，而复权数据还没有更新，这时去掉daily最新日期的数据，以复权数据源的日期数据为准
+                stockDataList.remove(i);
             }
-
         }
         return stockDataList;
     }
