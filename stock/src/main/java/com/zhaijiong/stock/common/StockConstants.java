@@ -25,6 +25,12 @@ public class StockConstants {
     public static String AMPLITUDE = "amplitude";           //振幅
     public static String FACTOR = "factor";                 //复权因子
 
+    //macd指标常量名称
+    public static String DIF = "dif";
+    public static String DEA = "dea";
+    public static String MACD = "macd";
+    public static String MACD_CROSS = "macd_cross";
+
     public static List<String> DAILY = Lists.newArrayList(
             "close",            //最新价,收盘价
             "high",             //最高价
