@@ -1,11 +1,6 @@
 package com.zhaijiong.stock.provider;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.tictactec.ta.lib.Core;
-import com.tictactec.ta.lib.MInteger;
-import com.tictactec.ta.lib.RetCode;
 import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.StockConstants;
@@ -17,7 +12,6 @@ import com.zhaijiong.stock.model.Tick;
 import com.zhaijiong.stock.tools.StockCategory;
 import com.zhaijiong.stock.tools.StockList;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -482,5 +476,45 @@ public class Provider {
             bollStockDatas.add(stockData);
         }
         return bollStockDatas;
+    }
+
+    public static List<StockData> computeDailyCloseMA(String symbol, int period){
+        List<StockData> dailyData = Provider.dailyData(symbol, period+60);
+        List<StockData> stockDataList = computeCloseMA(dailyData);
+        stockDataList = stockDataList.subList(60,stockDataList.size());
+        return stockDataList;
+    }
+
+    public static List<StockData> computeCloseMA(List<StockData> stockDataList){
+        List<StockData> maStockDatas = Lists.newArrayListWithCapacity(stockDataList.size());
+        double[] closes = getValues(stockDataList, StockConstants.CLOSE);
+        double[] ma5Arr = indicators.sma(closes, 5);
+        double[] ma10Arr = indicators.sma(closes, 10);
+        double[] ma15Arr = indicators.sma(closes, 15);
+        double[] ma20Arr = indicators.sma(closes, 20);
+        double[] ma30Arr = indicators.sma(closes, 30);
+        double[] ma60Arr = indicators.sma(closes, 60);
+        double[] ma120Arr = indicators.sma(closes, 120);
+        for (int i = 0; i < stockDataList.size(); i++) {
+            StockData stockData = stockDataList.get(i);
+            double ma5 = Utils.formatDouble(ma5Arr[i],"#.##");
+            double ma10 = Utils.formatDouble(ma10Arr[i],"#.##");
+            double ma15 = Utils.formatDouble(ma15Arr[i],"#.##");
+            double ma20 = Utils.formatDouble(ma20Arr[i],"#.##");
+            double ma30 = Utils.formatDouble(ma30Arr[i],"#.##");
+            double ma60 = Utils.formatDouble(ma60Arr[i],"#.##");
+            double ma120 = Utils.formatDouble(ma120Arr[i],"#.##");
+
+            stockData.put(StockConstants.CLOSE_MA5,ma5);
+            stockData.put(StockConstants.CLOSE_MA10,ma10);
+            stockData.put(StockConstants.CLOSE_MA15,ma15);
+            stockData.put(StockConstants.CLOSE_MA20,ma20);
+            stockData.put(StockConstants.CLOSE_MA30,ma30);
+            stockData.put(StockConstants.CLOSE_MA60,ma60);
+            stockData.put(StockConstants.CLOSE_MA120,ma120);
+
+            maStockDatas.add(stockData);
+        }
+        return maStockDatas;
     }
 }
