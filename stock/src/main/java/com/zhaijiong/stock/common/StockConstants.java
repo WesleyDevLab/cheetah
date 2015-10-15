@@ -31,6 +31,11 @@ public class StockConstants {
     public static String MACD = "macd";
     public static String MACD_CROSS = "macd_cross";
 
+    public static String UPPER = "upper";
+    public static String MID = "mid";
+    public static String LOWER = "lower";
+    public static String BOLL_SHRINK = "boll_shrink";
+
     public static List<String> DAILY = Lists.newArrayList(
             "close",            //最新价,收盘价
             "high",             //最高价

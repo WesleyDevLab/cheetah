@@ -17,6 +17,7 @@ import com.zhaijiong.stock.model.Tick;
 import com.zhaijiong.stock.tools.StockCategory;
 import com.zhaijiong.stock.tools.StockList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,8 @@ import java.util.Set;
  * date: 15-8-27.
  */
 public class Provider {
+
+    private static Indicators indicators = new Indicators();
 
     /**
      * 获取指定时间段内的日线股票数据
@@ -401,12 +404,8 @@ public class Provider {
      */
     public static List<StockData> computeMACD(List<StockData> stockDataList) {
         List<StockData> macdStockDataList = Lists.newArrayListWithCapacity(stockDataList.size());
-        Indicators indicators = new Indicators();
 
-        double[] closes = new double[stockDataList.size()];
-        for (int i = 0; i < stockDataList.size(); i++) {
-            closes[i] = stockDataList.get(i).get("close");
-        }
+        double[] closes = getValues(stockDataList,StockConstants.CLOSE);
         double[][] macd = indicators.macd(closes);
 
         for (int i = 0; i < stockDataList.size(); i++) {
@@ -433,6 +432,14 @@ public class Provider {
         return macdStockDataList;
     }
 
+    private static double[] getValues(List<StockData> stockDataList,String columnName) {
+        double[] closes = new double[stockDataList.size()];
+        for (int i = 0; i < stockDataList.size(); i++) {
+            closes[i] = stockDataList.get(i).get(columnName);
+        }
+        return closes;
+    }
+
     /**
      * 计算给定股票一段时间内的macd数据
      *
@@ -451,4 +458,29 @@ public class Provider {
         return Lists.newArrayList(stockDataList);
     }
 
+    public static List<StockData> computeDailyBoll(String symbol,int period){
+        List<StockData> dailyData = Provider.dailyData(symbol,period+60);
+        List<StockData> stockDataList = computeBoll(dailyData);
+        stockDataList = stockDataList.subList(60,stockDataList.size());
+        return stockDataList;
+    }
+
+    public static List<StockData> computeBoll(List<StockData> stockDataList){
+        List<StockData> bollStockDatas = Lists.newArrayListWithCapacity(stockDataList.size());
+        double[] closes = getValues(stockDataList, StockConstants.CLOSE);
+        double[][] bbands = indicators.bbands(closes);
+        for (int i = 0; i < stockDataList.size(); i++) {
+            StockData stockData = stockDataList.get(i);
+            double upper = Utils.formatDouble(bbands[0][i],"#.##");
+            double mid = Utils.formatDouble(bbands[1][i],"#.##");
+            double lower = Utils.formatDouble(bbands[2][i],"#.##");
+            double shrink = (upper-lower)/2;
+            System.out.println(Utils.formatDate(stockData.date,"MMdd") + " " + stockData.symbol + "\t" +upper + "\t" + mid + "\t"+ lower);
+            stockData.put(StockConstants.UPPER,upper);
+            stockData.put(StockConstants.MID,mid);
+            stockData.put(StockConstants.LOWER,lower);
+            bollStockDatas.add(stockData);
+        }
+        return bollStockDatas;
+    }
 }
