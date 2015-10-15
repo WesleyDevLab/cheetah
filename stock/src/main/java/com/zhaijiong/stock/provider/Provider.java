@@ -399,7 +399,7 @@ public class Provider {
     public static List<StockData> computeMACD(List<StockData> stockDataList) {
         List<StockData> macdStockDataList = Lists.newArrayListWithCapacity(stockDataList.size());
 
-        double[] closes = getValues(stockDataList,StockConstants.CLOSE);
+        double[] closes = getValues(stockDataList, StockConstants.CLOSE);
         double[][] macd = indicators.macd(closes);
 
         for (int i = 0; i < stockDataList.size(); i++) {
@@ -407,17 +407,17 @@ public class Provider {
             double dif = macd[0][i];
             double dea = macd[1][i];
             double macdRtn = (dif - dea) * 2;
-            stockData.put(StockConstants.DIF,Utils.formatDouble(macd[0][i],"#.##"));
-            stockData.put(StockConstants.DEA,Utils.formatDouble(macd[1][i],"#.##"));
-            stockData.put(StockConstants.MACD,Utils.formatDouble(macdRtn,"#.##"));
+            stockData.put(StockConstants.DIF, Utils.formatDouble(macd[0][i], "#.##"));
+            stockData.put(StockConstants.DEA, Utils.formatDouble(macd[1][i], "#.##"));
+            stockData.put(StockConstants.MACD, Utils.formatDouble(macdRtn, "#.##"));
             //判断是否金叉
-            if(i>=1){
-                double dif_old = macd[0][i-1];
-                double dea_old = macd[1][i-1];
-                if(dea_old > dif_old && dea < dif){//判断是否金叉
-                    stockData.put(StockConstants.MACD_CROSS,1d);
-                }else if(dea_old < dif_old && dea > dif){//判断是否死叉
-                    stockData.put(StockConstants.MACD_CROSS,0d);
+            if (i >= 1) {
+                double dif_old = macd[0][i - 1];
+                double dea_old = macd[1][i - 1];
+                if (dea_old > dif_old && dea < dif) {//判断是否金叉
+                    stockData.put(StockConstants.MACD_CROSS, 1d);
+                } else if (dea_old < dif_old && dea > dif) {//判断是否死叉
+                    stockData.put(StockConstants.MACD_CROSS, 0d);
                 }
             }
 
@@ -426,7 +426,7 @@ public class Provider {
         return macdStockDataList;
     }
 
-    private static double[] getValues(List<StockData> stockDataList,String columnName) {
+    private static double[] getValues(List<StockData> stockDataList, String columnName) {
         double[] closes = new double[stockDataList.size()];
         for (int i = 0; i < stockDataList.size(); i++) {
             closes[i] = stockDataList.get(i).get(columnName);
@@ -446,48 +446,48 @@ public class Provider {
          * 1. 测试发现周期过短，指标数值不准
          * 2. 初始值26天无数据
          */
-        List<StockData> dailyData = Provider.dailyData(symbol, period+60);
+        List<StockData> dailyData = Provider.dailyData(symbol, period + 60);
         List<StockData> stockDataList = computeMACD(dailyData);
-        stockDataList = stockDataList.subList(60,stockDataList.size());
+        stockDataList = stockDataList.subList(60, stockDataList.size());
         return Lists.newArrayList(stockDataList);
     }
 
-    public static List<StockData> computeDailyBoll(String symbol,int period){
-        List<StockData> dailyData = Provider.dailyData(symbol,period+60);
+    public static List<StockData> computeDailyBoll(String symbol, int period) {
+        List<StockData> dailyData = Provider.dailyData(symbol, period + 60);
         List<StockData> stockDataList = computeBoll(dailyData);
-        stockDataList = stockDataList.subList(60,stockDataList.size());
+        stockDataList = stockDataList.subList(60, stockDataList.size());
         return stockDataList;
     }
 
-    public static List<StockData> computeBoll(List<StockData> stockDataList){
+    public static List<StockData> computeBoll(List<StockData> stockDataList) {
         List<StockData> bollStockDatas = Lists.newArrayListWithCapacity(stockDataList.size());
         double[] closes = getValues(stockDataList, StockConstants.CLOSE);
         double[][] bbands = indicators.bbands(closes);
         for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
-            double upper = Utils.formatDouble(bbands[0][i],"#.##");
-            double mid = Utils.formatDouble(bbands[1][i],"#.##");
-            double lower = Utils.formatDouble(bbands[2][i],"#.##");
-            double shrink = (upper-lower)/2;
-            System.out.println(Utils.formatDate(stockData.date,"MMdd") + " " + stockData.symbol + "\t" +upper + "\t" + mid + "\t"+ lower);
-            stockData.put(StockConstants.UPPER,upper);
-            stockData.put(StockConstants.MID,mid);
-            stockData.put(StockConstants.LOWER,lower);
+            double upper = Utils.formatDouble(bbands[0][i], "#.##");
+            double mid = Utils.formatDouble(bbands[1][i], "#.##");
+            double lower = Utils.formatDouble(bbands[2][i], "#.##");
+            double shrink = (upper - lower) / 2;
+            System.out.println(Utils.formatDate(stockData.date, "MMdd") + " " + stockData.symbol + "\t" + upper + "\t" + mid + "\t" + lower);
+            stockData.put(StockConstants.UPPER, upper);
+            stockData.put(StockConstants.MID, mid);
+            stockData.put(StockConstants.LOWER, lower);
             bollStockDatas.add(stockData);
         }
         return bollStockDatas;
     }
 
-    public static List<StockData> computeDailyCloseMA(String symbol, int period){
-        List<StockData> dailyData = Provider.dailyData(symbol, period+60);
-        List<StockData> stockDataList = computeCloseMA(dailyData);
-        stockDataList = stockDataList.subList(60,stockDataList.size());
+    public static List<StockData> computeDailyMA(String symbol, int period, String columnName) {
+        List<StockData> dailyData = Provider.dailyData(symbol, period + 60);
+        List<StockData> stockDataList = computeMA(dailyData, columnName);
+        stockDataList = stockDataList.subList(60, stockDataList.size());
         return stockDataList;
     }
 
-    public static List<StockData> computeCloseMA(List<StockData> stockDataList){
+    public static List<StockData> computeMA(List<StockData> stockDataList, String columnName) {
         List<StockData> maStockDatas = Lists.newArrayListWithCapacity(stockDataList.size());
-        double[] closes = getValues(stockDataList, StockConstants.CLOSE);
+        double[] closes = getValues(stockDataList, columnName);
         double[] ma5Arr = indicators.sma(closes, 5);
         double[] ma10Arr = indicators.sma(closes, 10);
         double[] ma15Arr = indicators.sma(closes, 15);
@@ -497,24 +497,25 @@ public class Provider {
         double[] ma120Arr = indicators.sma(closes, 120);
         for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
-            double ma5 = Utils.formatDouble(ma5Arr[i],"#.##");
-            double ma10 = Utils.formatDouble(ma10Arr[i],"#.##");
-            double ma15 = Utils.formatDouble(ma15Arr[i],"#.##");
-            double ma20 = Utils.formatDouble(ma20Arr[i],"#.##");
-            double ma30 = Utils.formatDouble(ma30Arr[i],"#.##");
-            double ma60 = Utils.formatDouble(ma60Arr[i],"#.##");
-            double ma120 = Utils.formatDouble(ma120Arr[i],"#.##");
+            double ma5 = Utils.formatDouble(ma5Arr[i], "#.##");
+            double ma10 = Utils.formatDouble(ma10Arr[i], "#.##");
+            double ma15 = Utils.formatDouble(ma15Arr[i], "#.##");
+            double ma20 = Utils.formatDouble(ma20Arr[i], "#.##");
+            double ma30 = Utils.formatDouble(ma30Arr[i], "#.##");
+            double ma60 = Utils.formatDouble(ma60Arr[i], "#.##");
+            double ma120 = Utils.formatDouble(ma120Arr[i], "#.##");
 
-            stockData.put(StockConstants.CLOSE_MA5,ma5);
-            stockData.put(StockConstants.CLOSE_MA10,ma10);
-            stockData.put(StockConstants.CLOSE_MA15,ma15);
-            stockData.put(StockConstants.CLOSE_MA20,ma20);
-            stockData.put(StockConstants.CLOSE_MA30,ma30);
-            stockData.put(StockConstants.CLOSE_MA60,ma60);
-            stockData.put(StockConstants.CLOSE_MA120,ma120);
+            stockData.put(columnName + "_ma5", ma5);
+            stockData.put(columnName + "_ma10", ma10);
+            stockData.put(columnName + "_ma15", ma15);
+            stockData.put(columnName + "_ma20", ma20);
+            stockData.put(columnName + "_ma30", ma30);
+            stockData.put(columnName + "_ma60", ma60);
+            stockData.put(columnName + "_ma120", ma120);
 
             maStockDatas.add(stockData);
         }
         return maStockDatas;
     }
+
 }
