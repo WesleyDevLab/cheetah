@@ -2,7 +2,11 @@ package com.zhaijiong.stock.strategy.impl;
 
 import com.zhaijiong.stock.DataCenter;
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.strategy.BaseStrategy;
+import com.zhaijiong.stock.strategy.RiskStrategy;
+import com.zhaijiong.stock.strategy.Strategy;
+import com.zhaijiong.stock.strategy.risk.DefaultRiskStrategy;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +16,9 @@ import java.util.Map;
  * mail: xuqi.xq@alibaba-inc.com
  * date: 15-10-10.
  */
-public class Minute15MACDStrategy extends BaseStrategy{
+public class Minute15MACDStrategy extends BaseStrategy implements Strategy {
+
+    private RiskStrategy riskStrategy = new DefaultRiskStrategy();
 
     public Minute15MACDStrategy(DataCenter dataCenter) {
         super(dataCenter);
@@ -26,12 +32,16 @@ public class Minute15MACDStrategy extends BaseStrategy{
     @Override
     public boolean pick(String stock) {
         List<StockData> stockDataList = dataCenter.getDailyData(stock);
+        List<StockData> macdStockDataList = Provider.computeMACD(stockDataList);
+        for(int i=0;i<macdStockDataList.size();i++){
+
+        }
         return false;
     }
 
     @Override
     public Map<String, Double> risk(String stock) {
-        return null;
+        return riskStrategy.risk(stock);
     }
 
     @Override

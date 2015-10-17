@@ -7,6 +7,7 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.StockSlice;
+import com.zhaijiong.stock.provider.Provider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,27 +36,29 @@ public class IndicatorsTest {
 
     @Test
     public void testSma() throws Exception {
-        String startDate = "20150201";
-        String stopDate = "20150812";
-        String symbol = "601886";
-
-//        StockSlice stockSlice = stockDB.getStockSliceDaily(symbol, startDate, stopDate);
-        StockSlice stockSlice = stockDB.getStockSliceDaily(symbol, startDate, stopDate);
-        double[] closes = stockSlice.getValues("close");
+        List<StockData> stocks = Provider.dailyData("300217",40);
+        for(StockData stock:stocks){
+            System.out.println(stock.date+":"+stock);
+        }
+        double[] closes = new double[stocks.size()];
+        for (int i = 0; i < stocks.size(); i++) {
+            closes[i] = stocks.get(i).get("close");
+            System.out.println(Utils.formatDate(stocks.get(i).date, "yyyyMMdd") + ":" + closes[i]);
+        }
 
         double[] ma5 = indicators.sma(closes, 5);
         double[] ma10 = indicators.sma(closes, 10);
         double[] ma20 = indicators.sma(closes, 20);
         double[] ma30 = indicators.sma(closes, 30);
-        double[] ma60 = indicators.sma(closes, 60);
-        double[] ma120 = indicators.sma(closes, 120);
+//        double[] ma60 = indicators.sma(closes, 60);
+//        double[] ma120 = indicators.sma(closes, 120);
 
         System.out.println("ma5:" + ma5[closes.length - 1]);
         System.out.println("ma10:" + ma10[closes.length - 1]);
         System.out.println("ma20:" + ma20[closes.length - 1]);
         System.out.println("ma30:" + ma30[closes.length - 1]);
-        System.out.println("ma60:" + ma60[closes.length - 1]);
-        System.out.println("ma120:" + ma120[closes.length - 1]);
+//        System.out.println("ma60:" + ma60[closes.length - 1]);
+//        System.out.println("ma120:" + ma120[closes.length - 1]);
     }
 
     @Test
@@ -85,15 +88,17 @@ public class IndicatorsTest {
 
     @Test
     public void testMacd() throws Exception {
-        String startDate = "20150201";
-        String stopDate = "20150824";
-        String symbol = "600376";
-        StockSlice stockSlice = stockDB.getStockSliceDaily(symbol, startDate, stopDate);
-        List<StockData> stocks = stockSlice.getStocks();
+
+        List<StockData> stocks = Provider.dailyData("300217",40);
         for(StockData stock:stocks){
             System.out.println(stock.date+":"+stock);
         }
-        double[] closes = stockSlice.getValues("close");
+        double[] closes = new double[stocks.size()];
+        for (int i = 0; i < stocks.size(); i++) {
+            closes[i] = stocks.get(i).get("close");
+            System.out.println(Utils.formatDate(stocks.get(i).date, "yyyyMMdd") + ":" + closes[i]);
+        }
+
         for (double close : closes) {
             System.out.println(close);
         }

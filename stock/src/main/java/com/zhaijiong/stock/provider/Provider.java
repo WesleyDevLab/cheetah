@@ -11,6 +11,8 @@ import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.Tick;
 import com.zhaijiong.stock.tools.StockCategory;
 import com.zhaijiong.stock.tools.StockList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,8 @@ import java.util.Set;
  * date: 15-8-27.
  */
 public class Provider {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Provider.class);
 
     private static Indicators indicators = new Indicators();
 
@@ -448,7 +452,11 @@ public class Provider {
          */
         List<StockData> dailyData = Provider.dailyData(symbol, period + 60);
         List<StockData> stockDataList = computeMACD(dailyData);
-        stockDataList = stockDataList.subList(60, stockDataList.size());
+        if(stockDataList.size()>60){
+            stockDataList = stockDataList.subList(60, stockDataList.size());
+        }else{
+            return Lists.newArrayList();
+        }
         return Lists.newArrayList(stockDataList);
     }
 

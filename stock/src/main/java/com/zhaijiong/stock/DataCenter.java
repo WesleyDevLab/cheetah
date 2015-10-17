@@ -13,7 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
+//TODO 线程安全改造
+@SuppressWarnings("not thread safe")
 public class DataCenter {
     private static Logger LOG = LoggerFactory.getLogger(DataCenter.class);
 
@@ -143,7 +144,7 @@ public class DataCenter {
     public List<StockData> getDailyData(String symbol,int period){
         DateRange dateRange = DateRange.getRange(period);
         List<StockData> stockDataList = dailyData.get(symbol);
-        if(stockDataList ==null){
+        if(stockDataList==null){
             stockDataList = Provider.dailyData(symbol,dateRange.start(),dateRange.stop());
             dailyData.put(symbol,stockDataList);
         }

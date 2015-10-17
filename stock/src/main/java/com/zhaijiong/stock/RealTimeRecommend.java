@@ -10,7 +10,10 @@ import com.zhaijiong.stock.indicators.Indicators;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.DailyDataProvider;
 import com.zhaijiong.stock.provider.MinuteDataProvider;
+import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.provider.RealTimeDataProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -24,6 +27,8 @@ import java.util.concurrent.TimeUnit;
  * date: 15-8-24.
  */
 public class RealTimeRecommend {
+    private static Logger LOG = LoggerFactory.getLogger(RealTimeRecommend.class);
+
     private ExecutorService threadPool;
     private CountDownLatch counter;
 
@@ -83,7 +88,7 @@ public class RealTimeRecommend {
                 return;
             }
             if(close<=ma5){
-                return;
+//                return;
             }
             if(ma5<ma10){
 //                return;
@@ -97,7 +102,7 @@ public class RealTimeRecommend {
 
             StockData realTimeData = RealTimeDataProvider.get(symbol);
             if(realTimeData.get("PE")>200 || realTimeData.get("PE")<0){
-                return;
+//                return;
             }
             //流通市值大于200亿
             if(realTimeData.get("circulationMarketValue")>20000000000d){
@@ -105,7 +110,7 @@ public class RealTimeRecommend {
             }
 
             if(realTimeData.get("avgCost")<realTimeData.get("close")){
-                return;
+//                return;
             }
 
             double[][] macd = indicators.macd(closes);
@@ -116,7 +121,7 @@ public class RealTimeRecommend {
             double difOld = macd[0][values.size()-2];
             double deaOld = macd[1][values.size()-2];
             double macdRtnOld = (difOld - deaOld) * 2;
-            if(deaOld>difOld && dea<dif ){ //&& macdRtn>0 && macdRtn > macdRtnOld
+            if(/*deaOld>difOld &&*/ dea<dif ){ //&& macdRtn>0 && macdRtn > macdRtnOld
 //                System.out.println(symbol+":"+stockData);
                 System.out.println(symbol+":"+lastStatus);
             }
@@ -130,8 +135,7 @@ public class RealTimeRecommend {
 
     public void run(){
         Stopwatch stopwatch = Stopwatch.createStarted();
-        StockDB stockDB = new StockDB(context);
-        List<String> symbols = stockDB.getTradingStockSymbols();
+        List<String> symbols = Provider.tradingStockList();
         counter = new CountDownLatch(symbols.size());
         for(String symbol :symbols){
             threadPool.submit(new Analyzer(symbol));
