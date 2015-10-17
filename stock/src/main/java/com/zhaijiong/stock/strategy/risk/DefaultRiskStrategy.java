@@ -1,4 +1,4 @@
-package com.zhaijiong.stock.strategy.impl;
+package com.zhaijiong.stock.strategy.risk;
 
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.StockConstants;
