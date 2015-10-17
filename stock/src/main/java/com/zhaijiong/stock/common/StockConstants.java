@@ -25,17 +25,18 @@ public class StockConstants {
     public static String AMPLITUDE = "amplitude";           //振幅
     public static String FACTOR = "factor";                 //复权因子
 
-    //macd指标常量名称
+    public static String POSITION="position";
+    //macd指标
     public static String DIF = "dif";
     public static String DEA = "dea";
     public static String MACD = "macd";
     public static String MACD_CROSS = "macd_cross";
-
+    //布林线指标
     public static String UPPER = "upper";
     public static String MID = "mid";
     public static String LOWER = "lower";
     public static String BOLL_SHRINK = "boll_shrink";
-
+    //均线指标
     public static String CLOSE_MA5 = "close_ma5";
     public static String CLOSE_MA10 = "close_ma10";
     public static String CLOSE_MA15 = "close_ma15";

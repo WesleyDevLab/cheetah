@@ -2,6 +2,7 @@ package com.zhaijiong.stock.strategy.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.strategy.RiskStrategy;
 
@@ -56,7 +57,7 @@ public class KellyFormulaRiskStrategy implements RiskStrategy {
     @Override
     public Map<String, Double> risk(String stock) {
         Map<String, Double> risk = Maps.newHashMap();
-        risk.put("position", this.f);
+        risk.put(StockConstants.POSITION, this.f);
         return risk;
     }
 }
