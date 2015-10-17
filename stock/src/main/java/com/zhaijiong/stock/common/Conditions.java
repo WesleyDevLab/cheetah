@@ -14,9 +14,10 @@ import static com.zhaijiong.stock.common.Conditions.Operation.*;
  */
 public class Conditions {
     public enum Operation{
-        GT,LT,EQ
+        GT,LT,EQ,NGT,NLT
     }
 
+    //指标名称:操作类型(大于,小于,等于):比较值
     private Table<String,Operation,Double> conditions;
 
     public Conditions(){
@@ -46,6 +47,16 @@ public class Conditions {
                         break;
                     case EQ:
                         if(val!=cell.getValue().doubleValue()){
+                            return false;
+                        }
+                        break;
+                    case NGT:
+                        if(val>cell.getValue().doubleValue()){
+                            return false;
+                        }
+                        break;
+                    case NLT:
+                        if(val<cell.getValue().doubleValue()){
                             return false;
                         }
                         break;
