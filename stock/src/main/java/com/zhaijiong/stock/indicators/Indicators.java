@@ -35,6 +35,29 @@ public class Indicators {
         return output;
     }
 
+    public double[] ema(double[] prices, int ma) {
+
+        double[] tempOutPut = new double[prices.length];
+        double[] output = new double[prices.length];
+
+        MInteger begin = new MInteger();
+        MInteger length = new MInteger();
+        RetCode retCode = RetCode.InternalError;
+        begin.value = -1;
+        length.value = -1;
+
+        retCode = core.ema(0, prices.length - 1, prices, ma, begin, length, tempOutPut);
+
+        for (int i = 0; i < ma - 1; i++) {
+            output[i] = 0;
+        }
+        for (int i = ma - 1; 0 < i && i < (prices.length); i++) {
+            output[i] = tempOutPut[i - ma + 1];
+        }
+
+        return output;
+    }
+
     public double[][] macd(double[] prices, int optInFastPeriod, int optInSlowPeriod, int optInSignalPeriod) {
         double[] tempoutput1 = new double[prices.length];
         double[] tempoutput2 = new double[prices.length];
