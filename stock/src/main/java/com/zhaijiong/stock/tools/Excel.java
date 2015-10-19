@@ -20,7 +20,8 @@ import java.util.Map;
 public class Excel {
     private String filePath;
     private HSSFWorkbook workbook;
-    private int rowNum = 0;
+    private int rowNum = 1;
+    private List<String> headers;
 
     public Excel(String filePath){
         this.filePath = filePath;
@@ -44,6 +45,15 @@ public class Excel {
             sheet = workbook.createSheet(name);
         }
         return sheet;
+    }
+
+    public void setHeader(String sheetName,List<String> columnNames){
+        headers = columnNames;
+        HSSFSheet sheet = getSheet(sheetName);
+        HSSFRow row = sheet.createRow(0);
+        for(int i=0;i<columnNames.size();i++){
+            row.createCell(i).setCellValue(columnNames.get(i));
+        }
     }
 
     public void writeRow(String sheetName,List<String> fields){

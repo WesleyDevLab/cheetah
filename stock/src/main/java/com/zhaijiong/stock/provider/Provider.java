@@ -403,7 +403,7 @@ public class Provider {
     public static List<StockData> computeMACD(List<StockData> stockDataList) {
         List<StockData> macdStockDataList = Lists.newArrayListWithCapacity(stockDataList.size());
 
-        double[] closes = getValues(stockDataList, StockConstants.CLOSE);
+        double[] closes = Utils.getArrayFrom(stockDataList, StockConstants.CLOSE);
         double[][] macd = indicators.macd(closes);
 
         for (int i = 0; i < stockDataList.size(); i++) {
@@ -428,14 +428,6 @@ public class Provider {
             macdStockDataList.add(stockData);
         }
         return macdStockDataList;
-    }
-
-    private static double[] getValues(List<StockData> stockDataList, String columnName) {
-        double[] closes = new double[stockDataList.size()];
-        for (int i = 0; i < stockDataList.size(); i++) {
-            closes[i] = stockDataList.get(i).get(columnName);
-        }
-        return closes;
     }
 
     /**
@@ -469,7 +461,7 @@ public class Provider {
 
     public static List<StockData> computeBoll(List<StockData> stockDataList) {
         List<StockData> bollStockDatas = Lists.newArrayListWithCapacity(stockDataList.size());
-        double[] closes = getValues(stockDataList, StockConstants.CLOSE);
+        double[] closes = Utils.getArrayFrom(stockDataList, StockConstants.CLOSE);
         double[][] bbands = indicators.bbands(closes);
         for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
@@ -495,7 +487,7 @@ public class Provider {
 
     public static List<StockData> computeMA(List<StockData> stockDataList, String columnName) {
         List<StockData> maStockDatas = Lists.newArrayListWithCapacity(stockDataList.size());
-        double[] closes = getValues(stockDataList, columnName);
+        double[] closes = Utils.getArrayFrom(stockDataList, columnName);
         double[] ma5Arr = indicators.sma(closes, 5);
         double[] ma10Arr = indicators.sma(closes, 10);
         double[] ma15Arr = indicators.sma(closes, 15);

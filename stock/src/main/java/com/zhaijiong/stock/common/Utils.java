@@ -2,6 +2,7 @@ package com.zhaijiong.stock.common;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.zhaijiong.stock.model.StockData;
@@ -365,5 +366,30 @@ public class Utils {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static List tailList(List list,int tail){
+        int size = list.size();
+        return Lists.newArrayList(list.subList(size - tail, size));
+    }
+
+    public static List headList(List list,int head){
+        return Lists.newArrayList(list.subList(0,head));
+    }
+
+    public static double[] tailArray(double[] array,int tail){
+        return Arrays.copyOfRange(array, array.length - tail, array.length);
+    }
+
+    public static double[] headArray(double[] array,int head){
+        return Arrays.copyOfRange(array,0,head);
+    }
+
+    public static double[] getArrayFrom(List<StockData> stockDataList, String columnName) {
+        double[] closes = new double[stockDataList.size()];
+        for (int i = 0; i < stockDataList.size(); i++) {
+            closes[i] = stockDataList.get(i).get(columnName);
+        }
+        return closes;
     }
 }

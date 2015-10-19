@@ -154,21 +154,22 @@ public class Dashboard {
     public static void main(String[] args) throws IOException, InterruptedException {
 //        reporter.start(3, TimeUnit.SECONDS);
         Dashboard dashboard = new Dashboard();
-        dashboard.overview();
+//        dashboard.overview();
 //        reporter.report();
 
         List<String> symbols = Lists.newArrayList(
                 "601886",
                 "600376",
-                "600232",
+                "300241",
                 "300217",
-                "600270"
+                "600270",
+                "300327"
 
         );
 
-//        while(true){
-//            dashboard.list(symbols);
-//            TimeUnit.SECONDS.sleep(30);
-//        }
+        while(true){
+            dashboard.list(symbols);
+            TimeUnit.SECONDS.sleep(30);
+        }
     }
 }
