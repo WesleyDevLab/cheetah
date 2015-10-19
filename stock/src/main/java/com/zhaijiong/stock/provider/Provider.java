@@ -526,4 +526,12 @@ public class Provider {
         return maStockDatas;
     }
 
+    public static List<StockData> computeDailyAll(String symbol, int period){
+        List<StockData> stockDataList = Provider.dailyData(symbol, period + 60);
+        stockDataList = computeMACD(stockDataList);
+        stockDataList = computeMA(stockDataList,"close");
+        stockDataList = computeMA(stockDataList,"volume");
+        stockDataList = computeBoll(stockDataList);
+        return stockDataList;
+    }
 }
