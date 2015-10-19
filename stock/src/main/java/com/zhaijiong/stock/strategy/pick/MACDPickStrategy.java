@@ -17,20 +17,23 @@ import java.util.List;
  */
 public class MACDPickStrategy extends BaseStrategy implements PickStrategy{
 
+    private int dayCount = 3;
+    private int minute15Count = 3;
+
     /**
      * 策略判断步骤说明:
-     * 1.判断日线级别macd最近5天是否处于金叉状态,并且红柱持续放大
-     * 2.判断最近8根15分钟数据是否处于金叉状态
+     * 1.判断日线级别macd最近n天是否处于金叉状态,并且红柱持续放大
+     * 2.判断最近n根15分钟数据是否处于金叉状态
      * @param stock
      * @return
      */
     @Override
     public boolean pick(String stock) {
         List<StockData> stockDataList = Provider.computeDailyMACD(stock, 250);
-        if(isGoldenCrossIn(stockDataList,3)){
+        if(isGoldenCrossIn(stockDataList,dayCount)){
             List<StockData> minute15Data = Provider.minuteData(stock,"15");
             List<StockData> macdStockDataList = Provider.computeMACD(minute15Data);
-            if(isGoldenCrossIn(macdStockDataList,3)){
+            if(isGoldenCrossIn(macdStockDataList,minute15Count)){
                 return true;
             }
         }
