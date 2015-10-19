@@ -50,15 +50,20 @@ public class BasicDownloader {
     }
 
     public static InputStream downloadStream(String url) {
-        try {
-            HttpResponse<String> response = Unirest.get(url).asString();
-            if(response.getStatus()==200){
-                return response.getRawBody();
-            }else{
-                LOG.warn("status="+response.getStatus()+",url="+url);
+        int retry = 0;
+        while(retry<=RETRY_COUNT){
+            try {
+                HttpResponse<String> response = Unirest.get(url).asString();
+                if(response.getStatus()==200){
+                    return response.getRawBody();
+                }else{
+                    LOG.warn("status="+response.getStatus()+",url="+url);
+                }
+                retry++;
+            } catch (UnirestException e) {
+                retry++;
+                LOG.error("fail to download from " + url);
             }
-        } catch (UnirestException e) {
-            LOG.error("fail to download from " + url);
         }
         return null;
     }
