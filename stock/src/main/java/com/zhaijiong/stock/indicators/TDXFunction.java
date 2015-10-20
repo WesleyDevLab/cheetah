@@ -70,7 +70,7 @@ public class TDXFunction {
      * @param lineB
      * @return
      */
-    public double[] cross(double[] lineA,double[] lineB){
+    public double[] crossPoint(double[] lineA, double[] lineB){
         if(lineA != null && lineB !=null & lineA.length!=lineB.length && lineA.length!=0){
             return new double[0];
         }
@@ -86,5 +86,34 @@ public class TDXFunction {
             }
         }
         return output;
+    }
+
+    /**
+     * 判断a和b是否在最后一个周期内相交
+     * @param lineA
+     * @param lineB
+     * @return
+     */
+    public boolean cross(double[] lineA,double[] lineB){
+        if(lineA != null && lineB !=null & lineA.length!=lineB.length && lineA.length!=0){
+            return false;
+        }
+        if(lineA[lineA.length-2] < lineB[lineB.length-2] && lineA[lineA.length-1] > lineB[lineB.length-1]){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean crossBetween(double[] lineA,double[] lineB,int period){
+        if(lineA != null && lineB !=null & lineA.length!=lineB.length && lineA.length!=0){
+            return false;
+        }
+        int length = lineA.length;
+        for(int i=length-period;i<length;i++){
+            if(lineA[i-1]<lineB[i-1] && lineA[i]> lineB[i]){
+                return true;
+            }
+        }
+        return false;
     }
 }
