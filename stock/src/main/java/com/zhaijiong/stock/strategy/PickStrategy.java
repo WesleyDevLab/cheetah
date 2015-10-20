@@ -1,16 +1,20 @@
 package com.zhaijiong.stock.strategy;
 
+import com.zhaijiong.stock.model.StockData;
+
+import java.util.List;
+
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-9-28.
  */
 public interface PickStrategy {
 
     /**
      * 选股策略
-     * @param stock
+     * @param stockDataList
      * @return
      */
-    boolean pick(String stock);
+    boolean pick(String symbol,List<StockData> stockDataList);
 }

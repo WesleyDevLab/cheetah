@@ -30,8 +30,7 @@ public class Minute15MACDStrategy extends BaseStrategy implements Strategy {
     }
 
     @Override
-    public boolean pick(String stock) {
-        List<StockData> stockDataList = dataCenter.getDailyData(stock);
+    public boolean pick(String symbol,List<StockData> stockDataList) {
         List<StockData> macdStockDataList = Provider.computeMACD(stockDataList);
         for(int i=0;i<macdStockDataList.size();i++){
 
