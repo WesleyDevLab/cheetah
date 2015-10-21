@@ -6,6 +6,7 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.DailyDataProvider;
+import com.zhaijiong.stock.provider.Provider;
 import org.junit.Test;
 
 import java.util.List;
@@ -72,10 +73,27 @@ public class TDXFunctionTest {
         double[] ma5 = indicators.sma(prices, 5);
         double[] ma10 = indicators.sma(prices, 10);
 
-        double[] cross = function.cross(ma5, ma10);
+        double[] cross = function.crossPoint(ma5, ma10);
         for(int i =0;i<cross.length;i++){
             System.out.println(stocks.get(i).date+":"+stocks.get(i).get("close"));
-            System.out.println("ma5:"+ Utils.formatDouble(ma5[i])+",ma10:"+Utils.formatDouble(ma10[i])+",cross:"+Utils.formatDouble(cross[i]));
+            System.out.println("ma5:"+ Utils.formatDouble(ma5[i])+",ma10:"+Utils.formatDouble(ma10[i])+",crossPoint:"+Utils.formatDouble(cross[i]));
         }
+    }
+
+    @Test
+    public void testCrossBetween(){
+        TDXFunction tdxFunction = new TDXFunction();
+        List<StockData> stockDataList = Provider.dailyData("300217");
+        stockDataList = Provider.computeMA(stockDataList,"close");
+        double[] ma5 = Utils.getArrayFrom(stockDataList,"close_ma5");
+        double[] ma20 = Utils.getArrayFrom(stockDataList,"close_ma20");
+        double[] ma60 = Utils.getArrayFrom(stockDataList,"close_ma60");
+        boolean cross1 = tdxFunction.crossBetween(ma5, ma60, 3);
+        System.out.println(cross1);
+        boolean cross2 = tdxFunction.crossBetween(ma5, ma60, 4);
+        System.out.println(cross2);
+        boolean cross3 = tdxFunction.crossBetween(ma5, ma20, 30);
+        System.out.println(cross3);
+
     }
 }

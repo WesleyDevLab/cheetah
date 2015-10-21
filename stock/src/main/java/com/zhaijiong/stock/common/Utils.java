@@ -2,7 +2,9 @@ package com.zhaijiong.stock.common;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.BoundType;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.zhaijiong.stock.model.StockData;
