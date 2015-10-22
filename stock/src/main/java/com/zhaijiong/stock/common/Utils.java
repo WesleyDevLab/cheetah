@@ -395,6 +395,12 @@ public class Utils {
         return closes;
     }
 
+    /**
+     * 判断当前时间是否是交易时间段
+     * 上午：09:30-11:30
+     * 下午：13:00-15:00
+     * @return
+     */
     public static boolean isTradingTime(){
         DateTime dateTime = new DateTime();
         LocalTime now = dateTime.toLocalTime();
