@@ -168,7 +168,7 @@ public class Dashboard {
 
         );
 
-        while(true){
+        while(Utils.isTradingTime()){
             dashboard.list(symbols);
             TimeUnit.SECONDS.sleep(30);
         }

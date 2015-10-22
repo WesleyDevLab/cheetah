@@ -2,14 +2,14 @@ package com.zhaijiong.stock.common;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.BoundType;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Range;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.zhaijiong.stock.model.StockData;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
+import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.yaml.snakeyaml.Yaml;
@@ -393,5 +393,18 @@ public class Utils {
             closes[i] = stockDataList.get(i).get(columnName);
         }
         return closes;
+    }
+
+    public static boolean isTradingTime(){
+        DateTime dateTime = new DateTime();
+        LocalTime now = dateTime.toLocalTime();
+        LocalTime start = new LocalTime(9,30,0,0);
+        LocalTime mid1 = new LocalTime(11,30,0,0);
+        LocalTime mid2 = new LocalTime(13,0,0,0);
+        LocalTime end = new LocalTime(15,0,0,0);
+        if((now.isAfter(start) && now.isBefore(mid1))||(now.isAfter(mid2) && now.isBefore(end))){
+            return true;
+        }
+        return false;
     }
 }
