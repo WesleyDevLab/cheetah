@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-9-1.
  */
 public class Dashboard {

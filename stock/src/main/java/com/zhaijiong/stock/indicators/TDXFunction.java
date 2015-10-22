@@ -5,8 +5,8 @@ import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.RetCode;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-8-12.
  */
 public class TDXFunction {

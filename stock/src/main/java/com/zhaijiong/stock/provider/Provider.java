@@ -26,8 +26,8 @@ import java.util.Set;
  * 外盘,单位:手
  * 内盘,单位:手
  * <p>
- * author: xuqi.xq
- * mail: xuqi.xq@gmail.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-8-27.
  */
 public class Provider {

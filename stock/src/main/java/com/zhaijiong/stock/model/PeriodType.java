@@ -1,8 +1,8 @@
 package com.zhaijiong.stock.model;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-8-9.
  */
 public enum PeriodType {

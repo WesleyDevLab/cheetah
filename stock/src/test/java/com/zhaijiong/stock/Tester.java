@@ -4,8 +4,8 @@ import com.zhaijiong.stock.download.Downloader;
 import org.junit.Test;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-8-24.
  */
 public class Tester {

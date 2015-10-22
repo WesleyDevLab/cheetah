@@ -1,8 +1,8 @@
 package com.zhaijiong.stock.model;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-9-3.
  */
 public class Tick {

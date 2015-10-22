@@ -13,8 +13,8 @@ import java.util.List;
 import static com.zhaijiong.stock.common.Constants.TABLE_STOCK_DAILY;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-8-6.
  */
 public class DailyDataDownloadJob extends JobBase {

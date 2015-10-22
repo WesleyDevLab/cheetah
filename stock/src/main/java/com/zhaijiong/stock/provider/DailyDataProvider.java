@@ -22,7 +22,8 @@ import java.util.*;
 import static com.zhaijiong.stock.common.StockConstants.*;
 
 /**
- * author: xuqi.xq
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-8-4.
  * 注意：复权只对开盘价，收盘价，最高价，最低价复权
  * 昨日收盘价，

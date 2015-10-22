@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * author: xuqi.xq
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-9-22.
  * 分析师研究报告数据，数据来源
  *  http://data.eastmoney.com/report/

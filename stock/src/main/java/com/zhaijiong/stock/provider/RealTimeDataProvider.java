@@ -21,7 +21,7 @@ import static com.zhaijiong.stock.common.StockConstants.*;
 import static com.zhaijiong.stock.common.StockConstants.MARKET_VALUE;
 
 /**
- * author: xuqi.xq
+ * author: eryk
  * mail: xuqi86@gmail.com
  * date: 15-8-30.
  */

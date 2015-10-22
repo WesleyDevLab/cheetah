@@ -9,7 +9,8 @@ import java.util.Set;
 import static com.zhaijiong.stock.common.Conditions.Operation.*;
 
 /**
- * author: xuqi.xq
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-9-28.
  */
 public class Conditions {

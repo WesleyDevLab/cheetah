@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * author: xuqi.xq
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-8-30.
  * 财务报表数据
  */

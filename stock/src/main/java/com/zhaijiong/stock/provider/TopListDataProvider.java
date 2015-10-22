@@ -19,8 +19,8 @@ import java.util.List;
  * 数据来源
  *      http://data.eastmoney.com/stock/stockstatistic.html
  *      http://vip.stock.finance.sina.com.cn/q/go.php/vInvestConsult/kind/lhb/index.phtml
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-9-16.
  */
 public class TopListDataProvider {

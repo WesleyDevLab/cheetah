@@ -6,8 +6,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import java.io.InputStream;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-8-31.
  */
 public class AjaxDownloader{

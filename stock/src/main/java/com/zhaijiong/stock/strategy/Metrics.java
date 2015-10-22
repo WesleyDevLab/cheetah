@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@gmail.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-10-10.
  */
 public class Metrics {

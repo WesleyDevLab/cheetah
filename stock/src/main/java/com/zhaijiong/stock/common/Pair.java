@@ -1,8 +1,8 @@
 package com.zhaijiong.stock.common;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-8-5.
  */
 public class Pair<K,V> {

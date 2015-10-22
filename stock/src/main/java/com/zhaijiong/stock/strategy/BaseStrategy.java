@@ -2,14 +2,13 @@ package com.zhaijiong.stock.strategy;
 
 import com.zhaijiong.stock.DataCenter;
 
-import java.util.List;
-import java.util.Map;
-
 public abstract class BaseStrategy{
 
     public DataCenter dataCenter;
 
     public Metrics metrics;
+
+    public IBroker broker;
 
     public BaseStrategy(DataCenter dataCenter){
         this.dataCenter = dataCenter;

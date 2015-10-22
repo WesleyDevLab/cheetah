@@ -3,8 +3,8 @@ package com.zhaijiong.stock.model;
 import org.apache.hadoop.hbase.util.Bytes;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-8-19.
  */
 public enum ArticleType {
