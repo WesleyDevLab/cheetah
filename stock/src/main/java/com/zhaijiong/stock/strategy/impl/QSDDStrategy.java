@@ -6,7 +6,7 @@ import com.zhaijiong.stock.indicators.Indicators;
 import com.zhaijiong.stock.indicators.TDXFunction;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
-import com.zhaijiong.stock.strategy.BaseStrategy;
+import com.zhaijiong.stock.strategy.BaseBroker;
 import com.zhaijiong.stock.strategy.Strategy;
 
 import java.util.Arrays;
@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
  * mail: xuqi86@gmail.com
  * date: 15-10-20.
  */
-public class QSDDStrategy extends BaseStrategy implements Strategy {
+public class QSDDStrategy implements Strategy {
     TDXFunction tdxFunction = new TDXFunction();
     Indicators indicators = new Indicators();
 

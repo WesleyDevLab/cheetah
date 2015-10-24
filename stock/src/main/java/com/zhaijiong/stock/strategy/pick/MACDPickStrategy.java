@@ -1,11 +1,10 @@
 package com.zhaijiong.stock.strategy.pick;
 
-import com.zhaijiong.stock.DataCenter;
 import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
-import com.zhaijiong.stock.strategy.BaseStrategy;
+import com.zhaijiong.stock.strategy.BaseBroker;
 import com.zhaijiong.stock.strategy.PickStrategy;
 
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.concurrent.Executors;
  * date: 15-10-18.
  * 结合日线和15分钟k线选股
  */
-public class MACDPickStrategy extends BaseStrategy implements PickStrategy {
+public class MACDPickStrategy implements PickStrategy {
 
     private int timeRange = 5;
 
@@ -64,7 +63,7 @@ public class MACDPickStrategy extends BaseStrategy implements PickStrategy {
 
         for (String symbol : stockList) {
             pool.execute(() -> {
-                List<StockData> stockDataList = Provider.computeDailyMACD(symbol,250);
+                List<StockData> stockDataList = Provider.computeDailyMACD(symbol, 250);
                 if (strategy.pick(symbol,stockDataList)) {
                     List<StockData> minuteStockDataList = Provider.minuteData(symbol, "15");
                     stockDataList = Provider.computeMACD(minuteStockDataList);
