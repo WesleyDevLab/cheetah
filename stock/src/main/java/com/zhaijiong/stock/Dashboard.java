@@ -2,6 +2,7 @@ package com.zhaijiong.stock;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.RealTimeDataProvider;
@@ -152,25 +153,19 @@ public class Dashboard {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        Context context = new Context();
+        List<String> symbols = context.getList("dashboard");
 //        reporter.start(3, TimeUnit.SECONDS);
         Dashboard dashboard = new Dashboard();
 //        dashboard.overview();
 //        reporter.report();
 
-        List<String> symbols = Lists.newArrayList(
-                "601886",
-                "600376",
-                "300241",
-                "300217",
-                "600270",
-                "300327",
-                "600887"
 
-        );
-
-        while(Utils.isTradingTime()){
-            dashboard.list(symbols);
-            TimeUnit.SECONDS.sleep(30);
+        while(true){
+            if(Utils.isTradingTime()){
+                dashboard.list(symbols);
+                TimeUnit.SECONDS.sleep(30);
+            }
         }
     }
 }

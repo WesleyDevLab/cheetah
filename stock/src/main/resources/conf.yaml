@@ -1,6 +1,16 @@
 hbase.zookeeper.quorum: 112.124.60.26:2181
 zookeeper.znode.parent: /hbase
 database.pool.size: 20
+
+dashboard:
+  - 601886
+  - 600376
+  - 300241
+  - 300217
+  - 600270
+  - 300327
+  - 600887
+
 # cron格式
 # Seconds Minutes Hours DayOfMonth Month DayOfWeek Year
 #   ,-*     ,-*    ,-*    ,-*?/LW   ,-*   ,-*?/L#   ,-*
