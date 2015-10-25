@@ -13,6 +13,11 @@
     </modules>
 
     <properties>
+        <jdk>1.8</jdk>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+
         <maven.test.skip>true</maven.test.skip>
         <org.springframework.version>4.2.2.RELEASE</org.springframework.version>
     </properties>
@@ -104,6 +109,5 @@
         </dependency>
 
     </dependencies>
-
 
 </project>

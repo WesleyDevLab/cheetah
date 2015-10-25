@@ -1,4 +1,4 @@
-package com.zhaijiong.stock.model;
+package com.zhaijiong.stock.tools;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 

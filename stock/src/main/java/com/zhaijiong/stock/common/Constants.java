@@ -11,6 +11,7 @@ public class Constants {
     public static final String DATABASE_POOL_SIZE = "database.pool.size";
     public static final String SCHEDULE_POOL_SIZE = "schedule.pool.size";
     public static final String THREAD_POOL_SIZE = "thread.pool.size";
+    public static final String BROKER_POOL_SIZE = "broker.pool.size";
 
     public static String NETEASE_DATE_STYLE = "yyyy-MM-dd";
 

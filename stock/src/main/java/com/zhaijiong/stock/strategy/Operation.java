@@ -1,5 +1,6 @@
-package com.zhaijiong.stock.model;
+package com.zhaijiong.stock.strategy;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -9,13 +10,13 @@ import java.util.Date;
  */
 public class Operation {
     private String symbol;
-    private Date date;
+    private LocalDateTime date;
     private double price;
     private double volume;
     private String type;
     private double fees;
 
-    public Operation(String symbol, Date date, double price, double volume, String type) {
+    public Operation(String symbol, LocalDateTime date, double price, double volume, String type) {
         this.symbol = symbol;
         this.date = date;
         this.price = price;
@@ -24,7 +25,7 @@ public class Operation {
         this.fees = 0.0;
     }
 
-    public Operation(String symbol, Date date, double price, double volume, String type, double fees) {
+    public Operation(String symbol, LocalDateTime date, double price, double volume, String type, double fees) {
         this.symbol = symbol;
         this.date = date;
         this.price = price;
@@ -37,7 +38,7 @@ public class Operation {
         return symbol;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
