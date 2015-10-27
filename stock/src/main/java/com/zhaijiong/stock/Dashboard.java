@@ -12,6 +12,7 @@ import com.zhaijiong.stock.tools.tableformat.TableFormatter;
 import org.HdrHistogram.ConcurrentDoubleHistogram;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -163,6 +164,7 @@ public class Dashboard {
 
         while(true){
             if(Utils.isTradingTime()){
+                System.out.println(Utils.formatDate(new Date(),"yyyyMMdd HH:mm:ss"));
                 dashboard.list(symbols);
                 TimeUnit.SECONDS.sleep(30);
             }

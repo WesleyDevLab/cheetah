@@ -5,13 +5,14 @@ broker.pool.size: 10
 broker.check.interval: 5
 
 dashboard:
-  - 601886
-  - 600376
-  - 300241
-  - 300217
-  - 600270
-  - 300327
-  - 600887
+  - "601886"
+  - "600376"
+  - "300241"
+  - "300217"
+  - "600270"
+  - "300327"
+  - "600887"
+  - "600030"
 
 # cron格式
 # Seconds Minutes Hours DayOfMonth Month DayOfWeek Year

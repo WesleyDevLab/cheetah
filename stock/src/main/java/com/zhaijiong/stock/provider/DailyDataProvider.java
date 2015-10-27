@@ -96,7 +96,7 @@ public class DailyDataProvider {
                 }
             }
         } catch (Exception e) {
-            LOG.error("fail to get from url " + hfqURL);
+            LOG.error("fail to get from url " + hfqURL,e);
         }
 
         return stockDataMap;
