@@ -45,7 +45,15 @@ public class Provider {
      * @return
      */
     public static List<StockData> dailyData(String symbol, String startDate, String stopDate) {
-        return DailyDataProvider.get(symbol, startDate, stopDate);
+        return DailyDataProvider.getFQ(symbol, startDate, stopDate);
+    }
+
+    public static List<StockData> dailyData(String symbol,String startDate,String stopDate,boolean isFQ){
+        if(isFQ){
+            return DailyDataProvider.getFQ(symbol,startDate,stopDate);
+        }else{
+            return DailyDataProvider.get(symbol,startDate,stopDate);
+        }
     }
 
     /**
@@ -55,8 +63,18 @@ public class Provider {
      * @return
      */
     public static List<StockData> dailyData(String symbol) {
+        return dailyData(symbol,true);
+    }
+
+    /**
+     * 获取日线级别最近250天历史数据
+     *
+     * @param symbol
+     * @return
+     */
+    public static List<StockData> dailyData(String symbol,boolean isFQ) {
         DateRange range = DateRange.getRange(250);
-        return dailyData(symbol, range.start(), range.stop());
+        return dailyData(symbol, range.start(), range.stop(),isFQ);
     }
 
     /**
@@ -67,8 +85,19 @@ public class Provider {
      * @return
      */
     public static List<StockData> dailyData(String symbol, int period) {
+        return dailyData(symbol,period,true);
+    }
+
+    /**
+     * 获取指定天数内的日线股票数据
+     *
+     * @param symbol 股票代码，例如：600001
+     * @param period 时间长度，最近多少个交易日内的股票数据，单位：天
+     * @return
+     */
+    public static List<StockData> dailyData(String symbol, int period,boolean isFQ) {
         DateRange dateRange = DateRange.getRange(period);
-        return dailyData(symbol, dateRange.start(), dateRange.stop());
+        return dailyData(symbol, dateRange.start(), dateRange.stop(),isFQ);
     }
 
     /**
