@@ -147,6 +147,55 @@ public class Indicators {
         return bbands(prices, 20, 2.0, 2.0);
     }
 
+    public double[][] kdj(double[] high,double[] low,double[]close){
+        int length = high.length;
+        double outSlowK[] = new double[high.length];
+        double outSlowD[] = new double[high.length];
+        double outSlowJ[] = new double[high.length];
+        double[] RSV = new double[high.length];
+
+        for(int i=0;i<length;i++){
+            if(i>=8){
+                int start = i-8;
+                double high9 = Double.MIN_VALUE;
+                double low9 = Double.MAX_VALUE;
+                while(start<=i){
+                    if(high[start]>high9){
+                        high9 = high[start];
+                    }
+                    if(low[start]<low9){
+                        low9 = low[start];
+                    }
+                    start++;
+                }
+                RSV[i] = (close[i] - low9) / (high9-low9) * 100;
+            }else{
+                RSV[i] = 0d;
+            }
+        }
+
+        for(int i =0;i<length;i++){
+            if(i>1){
+                outSlowK[i] = 2/3d * outSlowK[i-1] + 1/3d * RSV[i];
+                outSlowD[i] = 2/3d * outSlowD[i-1] + 1/3d * outSlowK[i];
+                outSlowJ[i] = 3* outSlowK[i] - 2* outSlowD[i];
+
+                if(outSlowJ[i]>100){
+                    outSlowJ[i]=100;
+                }else if(outSlowJ[i]<0){
+                    outSlowJ[i]=0;
+                }
+            }else{
+                outSlowK[i] = 50;
+                outSlowD[i] = 50;
+                outSlowJ[i] = 50;
+            }
+        }
+
+        double[][] result = {outSlowK,outSlowD,outSlowJ};
+        return result;
+    }
+
     // 6,12,24
     public double[] rsi(double[] prices, int period) {
 
