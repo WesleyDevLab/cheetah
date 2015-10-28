@@ -146,7 +146,25 @@ public class DailyDataProvider {
         return Lists.reverse(stocks);
     }
 
-    public static List<StockData> get(String symbol, String startDate, String stopDate) {
+    /**
+     * 获取未复权数据
+     * @param symbol
+     * @param startDate
+     * @param stopDate
+     * @return
+     */
+    public static List<StockData> get(String symbol,String startDate,String stopDate){
+        return getDailyDataWithOutFQ(symbol, startDate, stopDate);
+    }
+
+    /**
+     * 获取前复权数据
+     * @param symbol
+     * @param startDate
+     * @param stopDate
+     * @return
+     */
+    public static List<StockData> getFQ(String symbol, String startDate, String stopDate) {
         Map<String, StockData> stockDatas = qfqData(symbol, startDate, stopDate);
 
         List<StockData> stockDataList = getDailyDataWithOutFQ(symbol, startDate, stopDate);
