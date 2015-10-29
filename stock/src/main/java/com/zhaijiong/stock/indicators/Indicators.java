@@ -103,7 +103,7 @@ public class Indicators {
         return macd(prices, 12, 26, 9);
     }
 
-    public double[][] bbands(double[] prices, int optInTimePeriod, double optInNbDevUp, double optInNbDevDn) {
+    public double[][] boll(double[] prices, int optInTimePeriod, double optInNbDevUp, double optInNbDevDn) {
         MAType optInMAType = MAType.Sma;
 
         double[] tempoutput1 = new double[prices.length];
@@ -143,10 +143,17 @@ public class Indicators {
         return output;
     }
 
-    public double[][] bbands(double[] prices) {
-        return bbands(prices, 20, 2.0, 2.0);
+    public double[][] boll(double[] prices) {
+        return boll(prices, 20, 2.0, 2.0);
     }
 
+    /**
+     * kdj指标,默认参数9,3,3
+     * @param high
+     * @param low
+     * @param close
+     * @return
+     */
     public double[][] kdj(double[] high,double[] low,double[]close){
         int length = high.length;
         double outSlowK[] = new double[high.length];

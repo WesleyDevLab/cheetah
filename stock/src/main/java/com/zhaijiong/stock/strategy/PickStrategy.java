@@ -13,8 +13,7 @@ public interface PickStrategy {
 
     /**
      * 选股策略
-     * @param stockDataList
      * @return
      */
-    boolean pick(String symbol,List<StockData> stockDataList);
+    boolean pick(String symbol);
 }

@@ -491,7 +491,7 @@ public class Provider {
     public static List<StockData> computeBoll(List<StockData> stockDataList) {
         List<StockData> bollStockDatas = Lists.newArrayListWithCapacity(stockDataList.size());
         double[] closes = Utils.getArrayFrom(stockDataList, StockConstants.CLOSE);
-        double[][] bbands = indicators.bbands(closes);
+        double[][] bbands = indicators.boll(closes);
         for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
             double upper = Utils.formatDouble(bbands[0][i], "#.##");

@@ -58,7 +58,7 @@ public class IndicatorsComputeJob extends JobBase {
                 put.add(TABLE_CF_DATA,"macd_dea".getBytes(), Bytes.toBytes(dea));
                 put.add(TABLE_CF_DATA,"macd_macd".getBytes(), Bytes.toBytes(macdRtn));
 
-                double[][] bbands = indicators.bbands(closes);
+                double[][] bbands = indicators.boll(closes);
 
                 put.add(TABLE_CF_DATA,"boll_upper".getBytes(), Bytes.toBytes(bbands[0][closes.length - 1]));
                 put.add(TABLE_CF_DATA,"boll_mid".getBytes(), Bytes.toBytes(bbands[1][closes.length - 1]));
