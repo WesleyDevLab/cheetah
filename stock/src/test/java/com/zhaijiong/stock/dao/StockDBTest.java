@@ -56,7 +56,7 @@ public class StockDBTest {
         String symbol = "600376";
 
         DailyDataProvider collecter = new DailyDataProvider();
-        List<StockData> stocks = collecter.get(symbol, start, stop);
+        List<StockData> stocks = collecter.getFQ(symbol, start, stop);
 
         StockDB stockDB = new StockDB(context);
         stockDB.saveStockDailyData(stocks);

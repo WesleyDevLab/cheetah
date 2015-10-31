@@ -75,26 +75,6 @@ public class QSDDStrategy implements Strategy {
         return result;
     }
 
-    @Override
-    public Map<String, Double> buy(String symbol, List<StockData> stockDataList) {
-        return null;
-    }
-
-    @Override
-    public boolean pick(String symbol, List<StockData> stockDataList) {
-        return false;
-    }
-
-    @Override
-    public Map<String, Double> risk(String symbol, List<StockData> stockDataList) {
-        return null;
-    }
-
-    @Override
-    public Map<String, Double> sell(String symbol, List<StockData> stockDataList) {
-        return null;
-    }
-
     public static void main(String[] args) throws InterruptedException {
         List<String> stockList = Provider.tradingStockList();
 
@@ -123,5 +103,25 @@ public class QSDDStrategy implements Strategy {
         }
         countDownLatch.await();
         Utils.closeThreadPool(pool);
+    }
+
+    @Override
+    public double buy(String symbol) {
+        return 0;
+    }
+
+    @Override
+    public boolean isPicked(String symbol) {
+        return false;
+    }
+
+    @Override
+    public Map<String, Double> risk(String symbol) {
+        return null;
+    }
+
+    @Override
+    public double sell(String symbol) {
+        return 0;
     }
 }

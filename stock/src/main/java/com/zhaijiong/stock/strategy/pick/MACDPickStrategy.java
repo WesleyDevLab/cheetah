@@ -2,13 +2,12 @@ package com.zhaijiong.stock.strategy.pick;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
-import com.zhaijiong.stock.strategy.PickStrategy;
+import com.zhaijiong.stock.strategy.BuyStrategy;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -22,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * date: 15-10-18.
  * 结合日线和15分钟k线选股
  */
-public class MACDPickStrategy implements PickStrategy {
+public class MACDPickStrategy implements BuyStrategy {
 
     private int timeRange = 5;
     private PeriodType type;
@@ -30,6 +29,19 @@ public class MACDPickStrategy implements PickStrategy {
     public MACDPickStrategy(int timeRange,PeriodType type){
         this.timeRange = timeRange;
         this.type = type;
+    }
+
+    @Override
+    public double buy(String symbol){
+        List<StockData> stockDataList = getStockDataByType(symbol);
+        int count = stockDataList.size();
+        for (int i = count - 1; i > 0; i--) {
+            StockData stockData = stockDataList.get(i);
+            Double cross = stockData.get(StockConstants.MACD_CROSS);
+            if (cross != null && count - i <= timeRange && cross == 1)
+                return stockData.get("close");
+        }
+        return -1;
     }
 
     /**
@@ -40,7 +52,16 @@ public class MACDPickStrategy implements PickStrategy {
      * @return
      */
     @Override
-    public boolean pick(String symbol) {
+    public boolean isPicked(String symbol) {
+        List<StockData> stockDataList = getStockDataByType(symbol);
+
+        if (isGoldenCrossIn(stockDataList, timeRange)) {
+            return true;
+        }
+        return false;
+    }
+
+    private List<StockData> getStockDataByType(String symbol) {
         List<StockData> stockDataList;
         switch (type){
             case FIVE_MIN:
@@ -61,11 +82,7 @@ public class MACDPickStrategy implements PickStrategy {
             default:
                 stockDataList = Lists.newArrayList(Provider.dailyData(symbol,false));
         }
-
-        if (isGoldenCrossIn(stockDataList, timeRange)) {
-            return true;
-        }
-        return false;
+        return stockDataList;
     }
 
     /**
@@ -87,8 +104,8 @@ public class MACDPickStrategy implements PickStrategy {
 
     public static void main(String[] args) throws InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        MACDPickStrategy dayMacdStrategy = new MACDPickStrategy(7,PeriodType.DAY);
-        MACDPickStrategy minute15MacdStrategy = new MACDPickStrategy(8,PeriodType.FIFTEEN_MIN);
+        MACDPickStrategy dayMacdStrategy = new MACDPickStrategy(15,PeriodType.DAY);
+//        MACDPickStrategy minute15MacdStrategy = new MACDPickStrategy(16,PeriodType.FIFTEEN_MIN);
         MACDPickStrategy minute5MacdStrategy = new MACDPickStrategy(16,PeriodType.FIVE_MIN);
 
         List<String> stockList = Provider.tradingStockList();
@@ -97,13 +114,13 @@ public class MACDPickStrategy implements PickStrategy {
 
         for (String symbol : stockList) {
             pool.execute(() -> {
-                if (dayMacdStrategy.pick(symbol)) {
-                    if (minute15MacdStrategy.pick(symbol)) {
-                        if(minute5MacdStrategy.pick(symbol)){
+//                if (dayMacdStrategy.isPicked(symbol)) {
+//                    if (minute15MacdStrategy.isPicked(symbol)) {
+                        if(minute5MacdStrategy.isPicked(symbol)){
                             System.out.println(symbol);
                         }
-                    }
-                }
+//                    }
+//                }
                 countDownLatch.countDown();
             });
         }

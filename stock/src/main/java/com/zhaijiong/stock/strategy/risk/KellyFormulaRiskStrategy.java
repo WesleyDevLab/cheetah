@@ -57,7 +57,7 @@ public class KellyFormulaRiskStrategy implements RiskStrategy {
     }
 
     @Override
-    public Map<String, Double> risk(String stock,List<StockData> stockDataList) {
+    public Map<String, Double> risk(String stock) {
         Map<String, Double> risk = Maps.newHashMap();
         risk.put(StockConstants.POSITION, this.f);
         return risk;

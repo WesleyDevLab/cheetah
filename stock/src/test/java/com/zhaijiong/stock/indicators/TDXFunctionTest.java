@@ -39,7 +39,7 @@ public class TDXFunctionTest {
     @Test
     public void testllv(){
         DateRange range = DateRange.getRange(9);
-        List<StockData> stocks = DailyDataProvider.get("600376", range.start(), range.stop());
+        List<StockData> stocks = DailyDataProvider.getFQ("600376", range.start(), range.stop());
 
         double[] prices = new double[stocks.size()];
         int size = stocks.size();

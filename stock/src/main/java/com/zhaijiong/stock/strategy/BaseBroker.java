@@ -4,11 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zhaijiong.stock.DataCenter;
+import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.tools.Sleeper;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -30,7 +30,7 @@ public class BaseBroker implements IBroker{
     protected DataCenter dataCenter;
     protected List<String> tradingStockList;
     protected ScheduledExecutorService executorService;
-    protected int checkInterval = 10;
+    protected int checkInterval = 60 * 1000;    //单位是毫秒
     protected volatile boolean isTrading;   //当前是否是交易时间
     protected volatile boolean isWorking = false;   //是否继续执行策略
 
@@ -42,24 +42,35 @@ public class BaseBroker implements IBroker{
     //关注已经购买的股票
     protected Set<String> symbolSet = Sets.newConcurrentHashSet();
 
-    public BaseBroker(){}
-
     public BaseBroker(Context context,DataCenter dataCenter,Strategy strategy){
         this.dataCenter = dataCenter;
         this.strategy = strategy;
         this.account = new Account();
         tradingStockList = Provider.tradingStockList();
-        executorService = Executors.newScheduledThreadPool(context.getInt(Constants.BROKER_POOL_SIZE,1));
-
+        executorService = Executors.newScheduledThreadPool(context.getInt(Constants.BROKER_POOL_SIZE, 1));
+        this.checkInterval = context.getInt(Constants.BROKER_CHECK_INTERVAL,300*1000);
         isWorking = true;
     }
 
     @Override
     public void start() {
+        LOG.info(String.format("broker [%s] is working",name));
         while(isWorking){
             if(isTrading()){
-
+                for(String symbol:tradingStockList){
+                    if(strategy.isPicked(symbol)){
+                        double buy = strategy.buy(symbol);
+                        Operation operation = new Operation(symbol,strategy.getTimeStamp(),buy,1000,"buy");
+                        List<Operation> operationList = operations.get(symbol);
+                        if(operationList==null){
+                            operationList = Lists.newArrayList();
+                        }
+                        operationList.add(operation);
+                        operations.put(symbol,operationList);
+                    }
+                }
             }
+            Sleeper.sleep(checkInterval);
         }
     }
 

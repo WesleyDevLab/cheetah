@@ -125,7 +125,7 @@ public class IndicatorsTest {
         }
 
         Indicators indicators = new Indicators();
-        double[][] bbands = indicators.bbands(closes);
+        double[][] bbands = indicators.boll(closes);
 
         System.out.println(bbands[0][closes.length-1]);
         System.out.println(bbands[1][closes.length-1]);
@@ -134,15 +134,14 @@ public class IndicatorsTest {
 
     @Test
     public void testRsi() throws IOException {
-        String startDate = "20150201";
-        String stopDate = "20150812";
-        String symbol = "601886";
-        StockSlice stockSlice = stockDB.getStockSliceDaily(symbol, startDate, stopDate);
+
+        String symbol = "600270";
+        List<StockData> stockSlice = Provider.dailyData(symbol, false);
 //        List<StockDailyData> stocks = stockSlice.getStocks();
 //        for(Stock stock:stocks){
 //            System.out.println(stock);
 //        }
-        double[] closes = stockSlice.getValues("close");
+        double[] closes = Utils.getArrayFrom(stockSlice,"close");
         for (double close : closes) {
             System.out.println(close);
         }
@@ -175,7 +174,7 @@ public class IndicatorsTest {
         System.out.println("DEA=" + Utils.formatDouble(dea,"#0.00"));
         System.out.println("MACD=" + Utils.formatDouble(macdRtn, "#0.00"));
 
-        double[][] bbands = indicators.bbands(closes);
+        double[][] bbands = indicators.boll(closes);
         System.out.println("upper="+Utils.formatDouble(bbands[0][closes.length - 1], "#0.00"));
         System.out.println("mid="+Utils.formatDouble(bbands[1][closes.length-1],"#0.00"));
         System.out.println("lower"+Utils.formatDouble(bbands[2][closes.length - 1], "#0.00"));
@@ -209,5 +208,22 @@ public class IndicatorsTest {
         System.out.println("closes_120day:"+Utils.formatDouble(closes_120day[closes.length-1],"#0.00"));
 
         System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testKDJ(){
+        List<StockData> stockDataList = Provider.dailyData("600270", false);
+        double[] high = Utils.getArrayFrom(stockDataList, "high");
+        double[] low = Utils.getArrayFrom(stockDataList, "low");
+        double[] close = Utils.getArrayFrom(stockDataList,"close");
+
+//        for(int i =0;i<stockDataList.size();i++){
+//            System.out.println(high[i]+" "+low[i]+ " "+close[i] + stockDataList.get(i));
+//        }
+
+        double[][] kdj = indicators.kdj(high, low, close);
+        for(int i =0;i<stockDataList.size();i++){
+            System.out.println(kdj[0][i]+"\t"+kdj[1][i]+"\t"+kdj[2][i]);
+        }
     }
 }
