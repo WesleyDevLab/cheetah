@@ -12,5 +12,5 @@ import java.util.Map;
  */
 public interface RiskStrategy {
 
-    Map<String,Double> risk(String symbol, List<StockData> stockDataList);
+    Map<String,Double> risk(String symbol);
 }

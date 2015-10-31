@@ -13,8 +13,9 @@ import java.util.Map;
 public interface SellStrategy {
     /**
      * 卖出价格
-     * @param stockDataList
      * @return
      */
-    Map<String,Double> sell(String symbol, List<StockData> stockDataList);
+    double sell(String symbol);
+
+    public boolean isDroped(String symbol);
 }

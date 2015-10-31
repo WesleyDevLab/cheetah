@@ -1,8 +1,6 @@
 package com.zhaijiong.stock.strategy;
 
-import com.zhaijiong.stock.model.StockData;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,8 +11,9 @@ import java.util.Map;
 public interface BuyStrategy {
     /**
      * 买入价格
-     * @param stockDataList
      * @return
      */
-    Map<String,Double> buy(String symbol, List<StockData> stockDataList);
+    double buy(String symbol);
+
+    boolean isPicked(String symbol);
 }
