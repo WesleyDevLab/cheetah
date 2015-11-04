@@ -156,7 +156,7 @@ public class StockList {
 
         List<String> tradingStockList = getTradingStockList();
         CountDownLatch countDownLatch = new CountDownLatch(tradingStockList.size());
-        List<String> stocks = Lists.newLinkedList();
+        List<String> stocks = Collections.synchronizedList(new LinkedList<String>());
         for(String stock:tradingStockList){
             service.execute(() -> {
                 StockData stockData = RealTimeDataProvider.get(stock);
