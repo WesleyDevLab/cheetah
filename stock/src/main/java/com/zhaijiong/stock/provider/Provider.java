@@ -302,7 +302,7 @@ public class Provider {
      * @param conditions
      * @return
      */
-    public static List<String> tradingStockListWith(Conditions conditions) {
+    public static List<String> tradingStockList(Conditions conditions) {
         return StockList.getTradingStockList(conditions);
     }
 
