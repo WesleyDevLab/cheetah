@@ -14,7 +14,7 @@ public class Execution {
     private LocalDateTime date;
     private double price;
     private double volume;
-    private String type;
+    private String type;    //buy,sell
     private double fees;
 
     public Execution(String symbol,LocalDateTime date,double price,String type){

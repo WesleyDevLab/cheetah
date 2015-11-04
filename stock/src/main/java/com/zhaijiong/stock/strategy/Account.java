@@ -19,7 +19,7 @@ public class Account {
 
     private Record status = new Record(LocalDateTime.MIN,INIT_FUND);
 
-    private TreeMap<LocalDateTime,Record> records = new TreeMap<>();    //记录各个时间点账户状态
+    private TreeMap<LocalDateTime,Record> records = new TreeMap<LocalDateTime,Record>();    //记录各个时间点账户状态
 
     private LocalDateTime ts;//最后更新record的时间点
 
@@ -63,7 +63,6 @@ public class Account {
         public double close;       //当前价
         public double buyAmount;   //今买数量
         public double sellAmount;  //今卖数量
-
     }
 
     public Account(String name, LocalDateTime startDate, double initial){
@@ -74,6 +73,10 @@ public class Account {
 
     public Account(){
         this(DEFAULT_NAME, LocalDateTime.MIN, 0.0);
+    }
+
+    public Account(String name){
+        this(name, LocalDateTime.MIN, 0.0);
     }
 
     public void record(LocalDateTime ts, double earn){
