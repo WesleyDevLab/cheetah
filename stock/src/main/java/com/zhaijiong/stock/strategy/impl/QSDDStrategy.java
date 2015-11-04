@@ -6,9 +6,9 @@ import com.zhaijiong.stock.indicators.Indicators;
 import com.zhaijiong.stock.indicators.TDXFunction;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
-import com.zhaijiong.stock.strategy.BaseBroker;
 import com.zhaijiong.stock.strategy.Strategy;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -123,5 +123,15 @@ public class QSDDStrategy implements Strategy {
     @Override
     public double sell(String symbol) {
         return 0;
+    }
+
+    @Override
+    public boolean isDroped(String symbol) {
+        return false;
+    }
+
+    @Override
+    public LocalDateTime getTimeStamp() {
+        return null;
     }
 }

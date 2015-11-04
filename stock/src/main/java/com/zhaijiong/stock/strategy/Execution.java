@@ -1,5 +1,6 @@
 package com.zhaijiong.stock.strategy;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -8,7 +9,7 @@ import java.util.Date;
  * mail: xuqi86@gmail.com
  * date: 15-10-21.
  */
-public class Operation {
+public class Execution {
     private String symbol;
     private LocalDateTime date;
     private double price;
@@ -16,16 +17,15 @@ public class Operation {
     private String type;
     private double fees;
 
-    public Operation(String symbol, LocalDateTime date, double price, double volume, String type) {
-        this.symbol = symbol;
-        this.date = date;
-        this.price = price;
-        this.volume = volume;
-        this.type = type;
-        this.fees = 0.0;
+    public Execution(String symbol,LocalDateTime date,double price,String type){
+        this(symbol,date,price,1,type);
     }
 
-    public Operation(String symbol, LocalDateTime date, double price, double volume, String type, double fees) {
+    public Execution(String symbol, LocalDateTime date, double price, double volume, String type) {
+        this(symbol,date,price,volume,type,0);
+    }
+
+    public Execution(String symbol, LocalDateTime date, double price, double volume, String type, double fees) {
         this.symbol = symbol;
         this.date = date;
         this.price = price;

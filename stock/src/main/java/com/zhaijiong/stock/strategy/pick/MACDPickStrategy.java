@@ -2,6 +2,7 @@ package com.zhaijiong.stock.strategy.pick;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.PeriodType;
@@ -54,7 +55,7 @@ public class MACDPickStrategy implements BuyStrategy {
     @Override
     public boolean isPicked(String symbol) {
         List<StockData> stockDataList = getStockDataByType(symbol);
-
+        stockDataList = Provider.computeMACD(stockDataList);
         if (isGoldenCrossIn(stockDataList, timeRange)) {
             return true;
         }
@@ -104,23 +105,26 @@ public class MACDPickStrategy implements BuyStrategy {
 
     public static void main(String[] args) throws InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        MACDPickStrategy dayMacdStrategy = new MACDPickStrategy(15,PeriodType.DAY);
-//        MACDPickStrategy minute15MacdStrategy = new MACDPickStrategy(16,PeriodType.FIFTEEN_MIN);
-        MACDPickStrategy minute5MacdStrategy = new MACDPickStrategy(16,PeriodType.FIVE_MIN);
+        MACDPickStrategy dayMacdStrategy = new MACDPickStrategy(3,PeriodType.DAY);
+        MACDPickStrategy minute15MacdStrategy = new MACDPickStrategy(4,PeriodType.FIFTEEN_MIN);
+        MACDPickStrategy minute5MacdStrategy = new MACDPickStrategy(8,PeriodType.FIVE_MIN);
 
-        List<String> stockList = Provider.tradingStockList();
+        Conditions conditions = new Conditions();
+        conditions.addCondition("close", Conditions.Operation.LT,15d);
+        List<String> stockList = Provider.tradingStockList(conditions);
+
         ExecutorService pool = Executors.newFixedThreadPool(32);
         CountDownLatch countDownLatch = new CountDownLatch(stockList.size());
 
         for (String symbol : stockList) {
             pool.execute(() -> {
-//                if (dayMacdStrategy.isPicked(symbol)) {
-//                    if (minute15MacdStrategy.isPicked(symbol)) {
-                        if(minute5MacdStrategy.isPicked(symbol)){
+                if (dayMacdStrategy.isPicked(symbol)) {
+                    if (minute15MacdStrategy.isPicked(symbol)) {
+//                        if(minute5MacdStrategy.isPicked(symbol)){
                             System.out.println(symbol);
-                        }
-//                    }
-//                }
+//                        }
+                    }
+                }
                 countDownLatch.countDown();
             });
         }
