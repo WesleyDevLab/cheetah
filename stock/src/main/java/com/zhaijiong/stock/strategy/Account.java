@@ -50,7 +50,7 @@ public class Account {
     }
 
     //证券名称，证券数量，可卖数量，成本价，浮动盈亏，盈亏比例，最新市值，当前价，今买数量，今卖数量
-    private class Position{
+    public class Position{
         public String stockName;   //证券名称
         public LocalDateTime ts;    //更新时间戳
         public String symbol;      //证券代码
@@ -63,6 +63,22 @@ public class Account {
         public double close;       //当前价
         public double buyAmount;   //今买数量
         public double sellAmount;  //今卖数量
+
+        public Position(){}
+
+        public Position(String symbol,LocalDateTime ts,int amount,double price,double close){
+            this.symbol = symbol;
+            this.ts = ts;
+            this.amount = amount;
+            this.canSell = amount;
+            this.costPrice = price;
+            this.floatPnl = amount*(price-close);
+            this.pnlRatio = 0;
+            this.latestValue = amount * price;
+            this.close = close;
+            this.buyAmount = amount;
+            this.sellAmount = 0;
+        }
     }
 
     public Account(String name, LocalDateTime startDate, double initial){
@@ -95,6 +111,10 @@ public class Account {
 
     public Map<String, Position> getPositions() {
         return positions;
+    }
+
+    public void setPositions(Map<String,Position> positions){
+        this.positions = positions;
     }
 
 }

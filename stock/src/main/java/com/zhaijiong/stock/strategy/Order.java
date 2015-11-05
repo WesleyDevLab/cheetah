@@ -1,5 +1,7 @@
 package com.zhaijiong.stock.strategy;
 
+import com.google.common.base.Preconditions;
+
 /**
  * author: eryk
  * mail: xuqi86@gmail.com
@@ -11,6 +13,7 @@ public class Order {
     private int status = 0; //0:未成交，1:成交
 
     public Order(String traderId, Execution execution) {
+        Preconditions.checkNotNull(traderId,"trader id must be set");
         this.traderId = traderId;
         this.execution = execution;
     }

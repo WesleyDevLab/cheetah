@@ -22,7 +22,7 @@ public interface IBroker {
     /**
      * 执行交易策略
      */
-    public void execute(Operation operation);
+    public void execute(Execution execution);
 
     /**
      * 按照交易策略买入股票
