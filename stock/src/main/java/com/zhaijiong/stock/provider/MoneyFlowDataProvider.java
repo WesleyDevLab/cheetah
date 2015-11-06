@@ -100,7 +100,15 @@ public class MoneyFlowDataProvider {
                     if (columns[i].contains("%")) {
                         val = Double.parseDouble(columns[i].replace("%", ""));
                     } else {
-                        val = Utils.getAmount(columns[i]);
+                        if(columns[i].contains("万")){
+                            val = Utils.getAmount(columns[i].replaceAll("万",""));
+                        }else if(columns[i].contains("亿")){
+                            val = Utils.getAmount(columns[i].replaceAll("亿",""))*10000;
+                        }else if(columns[i].equals("-")){
+                            val = 0;
+                        }else{
+                            val = Utils.getAmount(columns[i]);
+                        }
                     }
                     stockData.put(StockConstants.MONEYFLOW_HIS.get(i), val);
                 }
@@ -269,7 +277,7 @@ public class MoneyFlowDataProvider {
 
     private static List<String[]> collectHis(String symbol) {
         String url = String.format(moneyFlowHisURL, symbol);
-        String data = Downloader.download(url);
+        String data = Downloader.download(url,"gb2312");
         Elements doc = Jsoup.parse(data).getElementById("dt_1").getElementsByTag("tbody").get(0).getElementsByTag("tr");
 
         List<String[]> stockDataList = Lists.newLinkedList();
