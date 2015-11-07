@@ -2,14 +2,9 @@ package com.zhaijiong.stock.tools;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
-import com.google.common.util.concurrent.*;
+import com.google.common.collect.*;
 import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.RealTimeDataProvider;
 import org.jsoup.Jsoup;
@@ -21,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -155,16 +149,20 @@ public class StockList {
         return getTradingStockList(getList());
     }
 
-    public static List<String> getTradingStockList(Conditions condition){
+    public static List<String> getTradingStockList(Conditions conditions){
+        return getStockListWithConditions(getTradingStockList(), conditions);
+    }
+
+    public static List<String> getStockListWithConditions(List<String> stockList, Conditions conditions){
         ExecutorService service = Executors.newFixedThreadPool(10);
 
-        List<String> tradingStockList = getTradingStockList();
+        List<String> tradingStockList = stockList;
         CountDownLatch countDownLatch = new CountDownLatch(tradingStockList.size());
         List<String> stocks = Collections.synchronizedList(new LinkedList<String>());
         for(String stock:tradingStockList){
             service.execute(() -> {
                 StockData stockData = RealTimeDataProvider.get(stock);
-                if(condition.check(stockData)){
+                if(conditions.check(stockData)){
                     stocks.add(stock);
                 }
                 countDownLatch.countDown();
@@ -193,6 +191,17 @@ public class StockList {
         }
 
         return marginTradingStockList;
+    }
+
+    public static List<String> getMarginTradingStockList(List<String> list){
+        Set<String> marginTradingSet = Sets.newHashSet(getMarginTradingStockList());
+        Collection<String> results = Collections2.filter(list, new Predicate<String>() {
+            @Override
+            public boolean apply(String symbol) {
+                return marginTradingSet.contains(symbol);
+            }
+        });
+        return Lists.newArrayList(results);
     }
 
     /**

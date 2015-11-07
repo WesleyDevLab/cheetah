@@ -104,7 +104,7 @@ public class TickDataProvider {
 
 //        String date = "2015-09-02";
 //
-//        List<String> stockList = StockMap.getTradingStockList();
+//        List<String> stockList = StockMap.getStockListWithConditions();
 //        for(String symbol : stockList){
 //            StockData stockData = RealTimeDataProvider.get(symbol);
 //            if(stockData.get("change")< -9.5){

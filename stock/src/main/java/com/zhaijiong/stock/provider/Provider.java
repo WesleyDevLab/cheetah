@@ -297,13 +297,38 @@ public class Provider {
     }
 
     /**
-     * 按照条件过滤
+     * 按照条件过滤,获取交易中的股票列表
      *
      * @param conditions
      * @return
      */
     public static List<String> tradingStockList(Conditions conditions) {
         return StockList.getTradingStockList(conditions);
+    }
+
+    public static List<String> tradingStockList(List<String> stockList){
+        return StockList.getTradingStockList(stockList);
+    }
+
+    public static List<String> getStockListWithConditions(List<String> stockList, Conditions conditions){
+        return StockList.getStockListWithConditions(stockList, conditions);
+    }
+
+    /**
+     * 获取参数列表中可融资股票列表
+     * @param stockList
+     * @return
+     */
+    public static List<String> marginTradingStockList(List<String> stockList){
+        return StockList.getMarginTradingStockList(stockList);
+    }
+
+    /**
+     * 获取融资融券股票列表
+     * @return
+     */
+    public static List<String> marginTradingStockList(){
+        return StockList.getMarginTradingStockList();
     }
 
     /**
