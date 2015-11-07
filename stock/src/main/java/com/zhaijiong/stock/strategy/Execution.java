@@ -14,18 +14,22 @@ public class Execution {
     private LocalDateTime date;
     private double price;
     private double volume;
-    private String type;    //buy,sell
+    private Type type;    //buy,sell
     private double fees;
 
-    public Execution(String symbol,LocalDateTime date,double price,String type){
+    public enum Type{
+        BUY,SELL
+    }
+
+    public Execution(String symbol,LocalDateTime date,double price,Type type){
         this(symbol,date,price,1,type);
     }
 
-    public Execution(String symbol, LocalDateTime date, double price, double volume, String type) {
+    public Execution(String symbol, LocalDateTime date, double price, double volume, Type type) {
         this(symbol,date,price,volume,type,0);
     }
 
-    public Execution(String symbol, LocalDateTime date, double price, double volume, String type, double fees) {
+    public Execution(String symbol, LocalDateTime date, double price, double volume, Type type, double fees) {
         this.symbol = symbol;
         this.date = date;
         this.price = price;
@@ -50,7 +54,7 @@ public class Execution {
         return volume;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
