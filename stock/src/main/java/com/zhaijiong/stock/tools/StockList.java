@@ -28,6 +28,8 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.zhaijiong.stock.download.Downloader.download;
+
 /**
  * key:symbol
  * value:stock name
@@ -38,6 +40,8 @@ public class StockList {
     private static String stockURL = "http://quote.eastmoney.com/stocklist.html";
 
     private static String stockDetailURL = "http://hqchart.eastmoney.com/hq20/js/%s.js?%s";
+
+    private static String marginTradingURL = "http://app.finance.ifeng.com/hq/trade/rzrq_list.php?type=day";
 
     private static int RETRY_TIMES = 3;
     private static int SLEEP_INTERVAL_MS = 3000;
@@ -102,7 +106,7 @@ public class StockList {
     public static String getStockStatus(String symbol) throws IOException {
         Random random = new Random();
         String url = String.format(stockDetailURL, symbol, random.nextInt(999999));
-        String content = Downloader.download(url);
+        String content = download(url);
         if(Strings.isNullOrEmpty(content)){
             return "delisted"; //退市
         }else{
@@ -173,6 +177,22 @@ public class StockList {
         }
         Utils.closeThreadPool(service);
         return stocks;
+    }
+
+    /**
+     * 融资融券股票列表
+     * @return
+     */
+    public static List<String> getMarginTradingStockList(){
+        List<String> marginTradingStockList = Lists.newLinkedList();
+        String data = download(marginTradingURL);
+        Elements element = Jsoup.parse(data).select("div[class=tab01]").get(0).getElementsByTag("table").get(0).getElementsByTag("tr");
+        for(int i=1;i<element.size();i++){
+            String symbol = element.get(i).getElementsByTag("td").get(0).text();
+            marginTradingStockList.add(symbol);
+        }
+
+        return marginTradingStockList;
     }
 
     /**
