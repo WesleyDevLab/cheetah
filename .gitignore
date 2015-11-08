@@ -17,3 +17,4 @@ target
 lib
 *.tar.gz
 logs
+test

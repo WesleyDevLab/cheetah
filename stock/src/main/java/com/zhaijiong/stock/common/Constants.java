@@ -14,6 +14,8 @@ public class Constants {
     public static final String BROKER_POOL_SIZE = "broker.pool.size";
     public static final String BROKER_CHECK_INTERVAL = "broker.check.interval";
 
+    public static final String TRADER_ACCOUNT_ID = "trader.account.id";
+
     public static String NETEASE_DATE_STYLE = "yyyy-MM-dd";
 
     public static String IFENG_DATE_STYLE = "yyyy-MM-dd";
