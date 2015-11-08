@@ -15,5 +15,5 @@ public interface BuyStrategy {
      */
     double buy(String symbol);
 
-    boolean isPicked(String symbol);
+    boolean isBuy(String symbol);
 }

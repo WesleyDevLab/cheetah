@@ -70,6 +70,14 @@ public class Context {
         return Utils.getStrOrEmpty(conf,key);
     }
 
+    public String getStr(String key,String defaultVal){
+        String val = getStr(key);
+        if(Strings.isNullOrEmpty(val)){
+            return defaultVal;
+        }
+        return val;
+    }
+
     public Integer getInt(String key,Integer defaultVal){
         if(Strings.isNullOrEmpty(getStr(key))){
             return defaultVal;

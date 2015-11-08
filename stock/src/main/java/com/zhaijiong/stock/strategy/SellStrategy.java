@@ -17,5 +17,5 @@ public interface SellStrategy {
      */
     double sell(String symbol);
 
-    public boolean isDroped(String symbol);
+    public boolean isSell(String symbol);
 }

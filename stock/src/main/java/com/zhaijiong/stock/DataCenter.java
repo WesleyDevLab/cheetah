@@ -9,6 +9,7 @@ import com.zhaijiong.stock.provider.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,8 @@ public class DataCenter {
     private static Logger LOG = LoggerFactory.getLogger(DataCenter.class);
 
     private List<String> stockList;
+    //TODO 设计时间戳更新策略
+    private LocalDateTime timeStamp;
 
     private Context context;
     /**
@@ -46,6 +49,15 @@ public class DataCenter {
                 context.getInt(Constants.SCHEDULE_POOL_SIZE,8),
                 context.getInt(Constants.THREAD_POOL_SIZE,32)
         );
+        timeStamp = LocalDateTime.now();
+    }
+
+    public LocalDateTime getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(LocalDateTime timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public void close(){

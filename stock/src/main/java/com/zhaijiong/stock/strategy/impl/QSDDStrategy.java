@@ -111,7 +111,7 @@ public class QSDDStrategy implements Strategy {
     }
 
     @Override
-    public boolean isPicked(String symbol) {
+    public boolean isBuy(String symbol) {
         return false;
     }
 
@@ -126,7 +126,7 @@ public class QSDDStrategy implements Strategy {
     }
 
     @Override
-    public boolean isDroped(String symbol) {
+    public boolean isSell(String symbol) {
         return false;
     }
 

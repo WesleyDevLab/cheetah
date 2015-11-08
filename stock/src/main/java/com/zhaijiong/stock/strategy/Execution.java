@@ -10,6 +10,7 @@ import java.util.Date;
  * date: 15-10-21.
  */
 public class Execution {
+    private String stockname;
     private String symbol;
     private LocalDateTime date;
     private double price;

@@ -9,7 +9,9 @@ import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.strategy.BuyStrategy;
+import com.zhaijiong.stock.tools.Sleeper;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -53,7 +55,7 @@ public class MACDPickStrategy implements BuyStrategy {
      * @return
      */
     @Override
-    public boolean isPicked(String symbol) {
+    public boolean isBuy(String symbol) {
         List<StockData> stockDataList = getStockDataByType(symbol);
         stockDataList = Provider.computeMACD(stockDataList);
         if (isGoldenCrossIn(stockDataList, timeRange)) {
@@ -104,32 +106,41 @@ public class MACDPickStrategy implements BuyStrategy {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        Stopwatch stopwatch = Stopwatch.createStarted();
+
         MACDPickStrategy dayMacdStrategy = new MACDPickStrategy(3,PeriodType.DAY);
-        MACDPickStrategy minute15MacdStrategy = new MACDPickStrategy(4,PeriodType.FIFTEEN_MIN);
-        MACDPickStrategy minute5MacdStrategy = new MACDPickStrategy(8,PeriodType.FIVE_MIN);
+        MACDPickStrategy minute15MacdStrategy = new MACDPickStrategy(3,PeriodType.FIFTEEN_MIN);
+        MACDPickStrategy minute5MacdStrategy = new MACDPickStrategy(3,PeriodType.FIVE_MIN);
 
         Conditions conditions = new Conditions();
-        conditions.addCondition("close", Conditions.Operation.LT,15d);
-        List<String> stockList = Provider.tradingStockList(conditions);
+        conditions.addCondition("close", Conditions.Operation.LT,30d);
+        List<String> stockList = Provider.getStockListWithConditions(Provider.tradingStockList(Provider.marginTradingStockList()),conditions);
 
         ExecutorService pool = Executors.newFixedThreadPool(32);
-        CountDownLatch countDownLatch = new CountDownLatch(stockList.size());
+        while(true){
+            if(Utils.isTradingTime()){
+                Stopwatch stopwatch = Stopwatch.createStarted();
+                System.out.println(Utils.formatDate(new Date(),"yyyyMMdd HH:mm:ss"));
+                CountDownLatch countDownLatch = new CountDownLatch(stockList.size());
 
-        for (String symbol : stockList) {
-            pool.execute(() -> {
-                if (dayMacdStrategy.isPicked(symbol)) {
-                    if (minute15MacdStrategy.isPicked(symbol)) {
-//                        if(minute5MacdStrategy.isPicked(symbol)){
-                            System.out.println(symbol);
-//                        }
-                    }
+                for (String symbol : stockList) {
+                    pool.execute(() -> {
+                        if (dayMacdStrategy.isBuy(symbol)) {
+                            if (minute15MacdStrategy.isBuy(symbol)) {
+                                if(minute5MacdStrategy.isBuy(symbol)){
+                                    System.out.println(Provider.realtimeData(symbol));
+                                }
+                            }
+                        }
+                        countDownLatch.countDown();
+                    });
                 }
-                countDownLatch.countDown();
-            });
+                countDownLatch.await();
+                System.out.println("cost:"+stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            }
+            Sleeper.sleep(300*1000);
         }
-        countDownLatch.await();
-        Utils.closeThreadPool(pool);
-        System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+
+//        Utils.closeThreadPool(pool);
+
     }
 }
