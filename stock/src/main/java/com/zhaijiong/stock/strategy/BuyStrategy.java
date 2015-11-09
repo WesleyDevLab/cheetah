@@ -1,6 +1,9 @@
 package com.zhaijiong.stock.strategy;
 
 
+import com.zhaijiong.stock.model.StockData;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,5 +18,9 @@ public interface BuyStrategy {
      */
     double buy(String symbol);
 
+    double buy(List<StockData> stockDataList);
+
     boolean isBuy(String symbol);
+
+    boolean isBuy(List<StockData> stockDataList);
 }

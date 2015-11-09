@@ -17,5 +17,9 @@ public interface SellStrategy {
      */
     double sell(String symbol);
 
+    double sell(List<StockData> stockDataList);
+
     public boolean isSell(String symbol);
+
+    boolean isSell(List<StockData> stockDataList);
 }

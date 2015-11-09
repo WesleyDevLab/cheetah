@@ -1,4 +1,4 @@
-package com.zhaijiong.stock.strategy.pick;
+package com.zhaijiong.stock.strategy.buy;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
@@ -22,14 +22,17 @@ import java.util.concurrent.TimeUnit;
  * author: eryk
  * mail: xuqi86@gmail.com
  * date: 15-10-18.
- * 结合日线和15分钟k线选股
+ *
+ * 策略判断步骤说明:
+ * 1.判断日线级别macd最近n天是否处于金叉状态,并且红柱持续放大
+ * 2.判断最近n根15分钟数据是否处于金叉状态
  */
-public class MACDPickStrategy implements BuyStrategy {
+public class MACDBuyStrategy implements BuyStrategy {
 
     private int timeRange = 5;
     private PeriodType type;
 
-    public MACDPickStrategy(int timeRange,PeriodType type){
+    public MACDBuyStrategy(int timeRange, PeriodType type){
         this.timeRange = timeRange;
         this.type = type;
     }
@@ -37,7 +40,13 @@ public class MACDPickStrategy implements BuyStrategy {
     @Override
     public double buy(String symbol){
         List<StockData> stockDataList = getStockDataByType(symbol);
+        return buy(stockDataList);
+    }
+
+    @Override
+    public double buy(List<StockData> stockDataList){
         int count = stockDataList.size();
+        stockDataList = Provider.computeMACD(stockDataList);
         for (int i = count - 1; i > 0; i--) {
             StockData stockData = stockDataList.get(i);
             Double cross = stockData.get(StockConstants.MACD_CROSS);
@@ -47,16 +56,15 @@ public class MACDPickStrategy implements BuyStrategy {
         return -1;
     }
 
-    /**
-     * 策略判断步骤说明:
-     * 1.判断日线级别macd最近n天是否处于金叉状态,并且红柱持续放大
-     * 2.判断最近n根15分钟数据是否处于金叉状态
-     *
-     * @return
-     */
+
     @Override
     public boolean isBuy(String symbol) {
         List<StockData> stockDataList = getStockDataByType(symbol);
+        return isBuy(stockDataList);
+    }
+
+    @Override
+    public boolean isBuy(List<StockData> stockDataList){
         stockDataList = Provider.computeMACD(stockDataList);
         if (isGoldenCrossIn(stockDataList, timeRange)) {
             return true;
@@ -107,9 +115,9 @@ public class MACDPickStrategy implements BuyStrategy {
 
     public static void main(String[] args) throws InterruptedException {
 
-        MACDPickStrategy dayMacdStrategy = new MACDPickStrategy(3,PeriodType.DAY);
-        MACDPickStrategy minute15MacdStrategy = new MACDPickStrategy(3,PeriodType.FIFTEEN_MIN);
-        MACDPickStrategy minute5MacdStrategy = new MACDPickStrategy(3,PeriodType.FIVE_MIN);
+        MACDBuyStrategy dayMacdStrategy = new MACDBuyStrategy(3,PeriodType.DAY);
+        MACDBuyStrategy minute15MacdStrategy = new MACDBuyStrategy(3,PeriodType.FIFTEEN_MIN);
+        MACDBuyStrategy minute5MacdStrategy = new MACDBuyStrategy(3,PeriodType.FIVE_MIN);
 
         Conditions conditions = new Conditions();
         conditions.addCondition("close", Conditions.Operation.LT,30d);
