@@ -13,16 +13,18 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class DefaultBroker implements Runnable{
     protected static Logger LOG = LoggerFactory.getLogger(DefaultBroker.class);
 
-    protected Map<String,Account> accountMap = Maps.newConcurrentMap();
+    protected Map<String,Account> accounts = Maps.newConcurrentMap();
     protected DataCenter dataCenter;
+    private Context context;
     protected ScheduledExecutorService executorService;
-    protected int checkInterval = 1000;    //单位是毫秒
+    protected int checkInterval;    //单位是毫秒
     protected volatile boolean isTrading = false;   //当前是否是交易时间
     protected volatile boolean isWorking = false;   //是否继续执行策略
     protected BlockingQueue<Order> requests = new LinkedBlockingQueue<Order>();
@@ -32,15 +34,39 @@ public class DefaultBroker implements Runnable{
      */
     protected Map<String,List<Execution>> operations = Maps.newConcurrentMap();
 
-    public DefaultBroker(Context context, DataCenter dataCenter){
+    public DefaultBroker(Context context){
+        this.context = context;
+    }
+
+    public void init(DataCenter dataCenter){
         this.dataCenter = dataCenter;
-        this.accountMap = Maps.newConcurrentMap();
-        this.checkInterval = context.getInt(Constants.BROKER_CHECK_INTERVAL,1000);
+        executorService = Executors.newScheduledThreadPool(10);
+        this.checkInterval = context.getInt(Constants.BROKER_CHECK_INTERVAL, 1000);
         isWorking = true;
     }
 
-    public Account getAccount(String traderId){
-        return accountMap.get(traderId);
+    /**
+     * trader在启动时需要注册在broker中
+     * @param traderID
+     */
+    public void registerAccount(String traderID){
+        Account account = accounts.get(traderID);
+        if(account==null){
+            account = new Account(traderID);
+            accounts.put(traderID, account);
+            LOG.info("register Account="+traderID);
+        }else{
+            LOG.warn(String.format("Account [%s] is registered. Account=%s",traderID,account));
+        }
+    }
+
+    public Account getAccount(String traderID){
+        Account account = accounts.get(traderID);
+        if(account==null){
+            account = new Account(traderID);
+            accounts.put(traderID, account);
+        }
+        return account;
     }
 
     public DataCenter getDataCenter(){
@@ -99,34 +125,34 @@ public class DefaultBroker implements Runnable{
             //更新traderId的股票仓位
             String symbol = execution.getSymbol();
             Account account = getAccount(traderId);
+            if(account ==null){
+                account = new Account(traderId);
+            }
             Map<String, Account.Position> positions = account.getPositions();
             if(positions==null){
                 positions = Maps.newHashMap();
             }
             //trader通过broker来获取postions，在下单前要保证下单数据合理
             Account.Position position = positions.get(symbol);
+            if(position==null){
+                position = account.new Position();
+                position.symbol = symbol;
+                position.ts = order.getExecution().getDate();
+            }
             //如果是买入操作，直接增加相应traderId的股票持仓量
-            if(execution.getType().equals("buy")){
-                if(position==null){
-                    position = account.new Position();
-                    position.symbol = symbol;
-                }
-            }else if(execution.getType().equals("sell")){//如果是卖出操作，则检查当前持仓量
-
+            if(execution.getType().compareTo(Execution.Type.BUY)==0){
+                position.amount += 1;
+                position.buyAmount +=1;
+                position.canSell +=1;
+                position.costPrice = execution.getPrice();
+                position.floatPnl = 0;
+            }else if(execution.getType().compareTo(Execution.Type.SELL)==0){//如果是卖出操作，则检查当前持仓量
+                position.amount += 1;
             }
             positions.put(symbol, position);
             account.setPositions(positions);
 
-            //交易后更新股票账户
-            if(account ==null){
-                account = new Account(traderId);
-            }
-            if(execution.getType().equals("buy")){
-
-            }else if(execution.getType().equals("sell")){
-
-            }
-            accountMap.put(traderId, account);
+            accounts.put(traderId, account);
             order.done();
         }
         Utils.closeThreadPool(executorService);
