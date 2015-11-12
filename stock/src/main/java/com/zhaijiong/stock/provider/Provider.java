@@ -101,6 +101,35 @@ public class Provider {
     }
 
     /**
+     * 获取指数日线数据
+     * 上证综指:0000001
+     * 深证成指:1399001
+     * 深证综指:1399106
+     * 沪深300:0000300
+     * 创业板指:1399006
+     * 创业板综:1399102
+     * 中小板指:1399005
+     * 中小板综:1399101
+     * @param symbol
+     * @param startDate
+     * @param stopDate
+     * @return
+     */
+    public static List<StockData> dailyDataZS(String symbol,String startDate,String stopDate){
+        return DailyDataProvider.getZS(symbol,startDate,stopDate);
+    }
+
+    public static List<StockData> dailyDataZS(String symbol,int period){
+        DateRange dateRange = DateRange.getRange(period);
+        return dailyDataZS(symbol,dateRange.start(),dateRange.stop());
+    }
+
+    public static List<StockData> dailyDataZS(String symbol){
+        DateRange dateRange = DateRange.getRange(250);
+        return dailyDataZS(symbol,dateRange.start(),dateRange.stop());
+    }
+
+    /**
      * 获取实时数据股票数据
      *
      * @param symbol

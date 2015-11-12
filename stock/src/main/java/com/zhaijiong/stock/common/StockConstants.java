@@ -61,6 +61,8 @@ public class StockConstants {
             "amplitude"         //振幅
     );
 
+    public static int DAILY_SIZE = 15;
+
 
     public static List<String> REALTIME = Lists.newArrayList(
             "marketType",           //0     市场类型,沪市:1,深市:2

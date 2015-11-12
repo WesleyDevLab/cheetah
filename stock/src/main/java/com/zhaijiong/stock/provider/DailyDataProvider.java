@@ -112,8 +112,7 @@ public class DailyDataProvider {
         return (date.getMonth() / 3) + 1;
     }
 
-    private static List<StockData> getDailyDataWithOutFQ(String symbol, String startDate, String stopDate) {
-        String url = getPath(symbol, startDate, stopDate);
+    private static List<StockData> getDailyDataWithURL(String symbol,String url){
         List<StockData> stocks = Lists.newLinkedList();
         try {
             String data = Downloader.download(url, "gb2312");
@@ -121,20 +120,23 @@ public class DailyDataProvider {
 
             for (int i = 1; i < lines.length; i++) {    //第一行是标题，跳过
                 String[] line = lines[i].split(",");
-                if (line.length == 15 && !lines[i].contains("None")) {
+                //股票数据15列，指数数据13列，少最后两列
+                if ((line.length == 15 || line.length == 13) && !lines[i].contains("None")) {
                     try {
                         StockData stock = new StockData(line[1].replace("'", ""));
 
                         stock.date = Utils.str2Date(line[0], Constants.NETEASE_DATE_STYLE);
                         stock.name = line[2];
                         for (int j = 0; j < DAILY.size() - 1; j++) {
-                            stock.put(DAILY.get(j), Utils.str2Double(line[j + 3]));
+                            if(line.length>j+3){
+                                stock.put(DAILY.get(j), Utils.str2Double(line[j + 3]));
+                            }
                         }
                         stock.put("amplitude", Utils.formatDouble((stock.get("high") - stock.get("low")) / stock.get("lastClose")));
                         changeUnit(stock);
                         stocks.add(stock);
                     } catch (Exception e) {
-                        LOG.warn(String.format("stock %s convert error", symbol) + lines[i]);
+                        LOG.warn(String.format("stock %s convert error %s", symbol,lines[i]),e);
                     }
                 }
             }
@@ -144,6 +146,36 @@ public class DailyDataProvider {
         }
         //按照时间从最早到最新
         return Lists.reverse(stocks);
+    }
+
+    private static List<StockData> getDailyDataWithOutFQ(String symbol, String startDate, String stopDate) {
+        String url = getPath(symbol, startDate, stopDate);
+        return getDailyDataWithURL(symbol,url);
+    }
+
+    /**
+     * 获取指数日线数据
+     * 上证综指:0000001
+     * 深证成指:1399001
+     * 深证综指:1399106
+     * 沪深300:0000300
+     * 创业板指:1399006
+     * 创业板综:1399102
+     * 中小板指:1399005
+     * 中小板综:1399101
+     * @param symbol
+     * @param startDate
+     * @param stopDate
+     * @return
+     */
+    public static List<StockData> getZS(String symbol,String startDate,String stopDate){
+        String url;
+        if(symbol.startsWith("3")){
+            url = getPath(symbol,startDate,stopDate);
+        }else{
+            url = String.format(DAILY_DATA_URL,"0"+symbol,startDate,stopDate);
+        }
+        return getDailyDataWithURL(symbol,url);
     }
 
     /**
@@ -198,8 +230,13 @@ public class DailyDataProvider {
     private static void changeUnit(StockData stockData) {
         stockData.put(VOLUME, stockData.get(VOLUME) / 100);    //成交量,单位：手
         stockData.put(AMOUNT, stockData.get(AMOUNT) / 10000);  //成交金额,单位：万
-        stockData.put(TOTAL_VALUE, stockData.get(TOTAL_VALUE) / 100000000);    //总市值,单位:亿
-        stockData.put(MARKET_VALUE, stockData.get(MARKET_VALUE) / 100000000);   //流通市值,单位:亿
+        //指数数据没有下面两项
+        if(stockData.get(TOTAL_VALUE)!=null){
+            stockData.put(TOTAL_VALUE, stockData.get(TOTAL_VALUE) / 100000000);    //总市值,单位:亿
+        }
+        if(stockData.get(MARKET_VALUE)!=null){
+            stockData.put(MARKET_VALUE, stockData.get(MARKET_VALUE) / 100000000);   //流通市值,单位:亿
+        }
     }
 
     /**
