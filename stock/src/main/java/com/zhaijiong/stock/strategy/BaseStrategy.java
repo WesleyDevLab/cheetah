@@ -16,12 +16,25 @@ public class BaseStrategy implements Strategy{
     private SellStrategy sellStrategy;
     private RiskStrategy riskStrategy;
 
-    public BaseStrategy(){}
+    private String DEFAULT_NAME = "base";
+    private String name;
+
+    public BaseStrategy(){
+        this.name = DEFAULT_NAME;
+    }
 
     public BaseStrategy(BuyStrategy buyStrategy,SellStrategy sellStrategy,RiskStrategy riskStrategy){
         this.buyStrategy = buyStrategy;
         this.sellStrategy = sellStrategy;
         this.riskStrategy = riskStrategy;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return this.name;
     }
 
     public BuyStrategy getBuyStrategy() {

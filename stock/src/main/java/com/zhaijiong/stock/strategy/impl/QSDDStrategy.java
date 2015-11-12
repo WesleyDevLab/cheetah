@@ -111,7 +111,17 @@ public class QSDDStrategy implements Strategy {
     }
 
     @Override
+    public double buy(List<StockData> stockDataList) {
+        return 0;
+    }
+
+    @Override
     public boolean isBuy(String symbol) {
+        return false;
+    }
+
+    @Override
+    public boolean isBuy(List<StockData> stockDataList) {
         return false;
     }
 
@@ -126,7 +136,17 @@ public class QSDDStrategy implements Strategy {
     }
 
     @Override
+    public double sell(List<StockData> stockDataList) {
+        return 0;
+    }
+
+    @Override
     public boolean isSell(String symbol) {
+        return false;
+    }
+
+    @Override
+    public boolean isSell(List<StockData> stockDataList) {
         return false;
     }
 
