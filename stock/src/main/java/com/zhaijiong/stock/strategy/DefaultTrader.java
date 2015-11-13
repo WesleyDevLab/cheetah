@@ -96,7 +96,7 @@ public class DefaultTrader {
      * 从broker中获取traderID的最新account状态
      * @return
      */
-    public Account getAccount(){
+    public Account2 getAccount(){
         return broker.getAccount(getTraderId());
     }
 

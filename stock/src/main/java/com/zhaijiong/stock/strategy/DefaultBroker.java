@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class DefaultBroker implements Runnable{
     protected static Logger LOG = LoggerFactory.getLogger(DefaultBroker.class);
 
-    protected Map<String,Account> accounts = Maps.newConcurrentMap();
+    protected Map<String,Account2> accounts = Maps.newConcurrentMap();
     protected DataCenter dataCenter;
     private Context context;
     protected ScheduledExecutorService executorService;
@@ -50,23 +50,23 @@ public class DefaultBroker implements Runnable{
      * @param traderID
      */
     public void registerAccount(String traderID){
-        Account account = accounts.get(traderID);
-        if(account==null){
-            account = new Account(traderID);
-            accounts.put(traderID, account);
+        Account2 account2 = accounts.get(traderID);
+        if(account2 ==null){
+            account2 = new Account2(traderID);
+            accounts.put(traderID, account2);
             LOG.info("register Account="+traderID);
         }else{
-            LOG.warn(String.format("Account [%s] is registered. Account=%s",traderID,account));
+            LOG.warn(String.format("Account [%s] is registered. Account=%s",traderID, account2));
         }
     }
 
-    public Account getAccount(String traderID){
-        Account account = accounts.get(traderID);
-        if(account==null){
-            account = new Account(traderID);
-            accounts.put(traderID, account);
+    public Account2 getAccount(String traderID){
+        Account2 account2 = accounts.get(traderID);
+        if(account2 ==null){
+            account2 = new Account2(traderID);
+            accounts.put(traderID, account2);
         }
-        return account;
+        return account2;
     }
 
     public DataCenter getDataCenter(){
@@ -78,8 +78,8 @@ public class DefaultBroker implements Runnable{
      * @param traderId
      * @return
      */
-    public Map<String,Account.Position> getPositions(String traderId){
-        Map<String, Account.Position> positions = Maps.newHashMap(getAccount(traderId).getPositions());
+    public Map<String,Account2.Position> getPositions(String traderId){
+        Map<String, Account2.Position> positions = Maps.newHashMap(getAccount(traderId).getPositions());
         return positions;
     }
 
@@ -124,18 +124,18 @@ public class DefaultBroker implements Runnable{
 
             //更新traderId的股票仓位
             String symbol = execution.getSymbol();
-            Account account = getAccount(traderId);
-            if(account ==null){
-                account = new Account(traderId);
+            Account2 account2 = getAccount(traderId);
+            if(account2 ==null){
+                account2 = new Account2(traderId);
             }
-            Map<String, Account.Position> positions = account.getPositions();
+            Map<String, Account2.Position> positions = account2.getPositions();
             if(positions==null){
                 positions = Maps.newHashMap();
             }
             //trader通过broker来获取postions，在下单前要保证下单数据合理
-            Account.Position position = positions.get(symbol);
+            Account2.Position position = positions.get(symbol);
             if(position==null){
-                position = account.new Position();
+                position = account2.new Position();
                 position.symbol = symbol;
                 position.ts = order.getExecution().getDate();
             }
@@ -150,9 +150,9 @@ public class DefaultBroker implements Runnable{
                 position.amount += 1;
             }
             positions.put(symbol, position);
-            account.setPositions(positions);
+            account2.setPositions(positions);
 
-            accounts.put(traderId, account);
+            accounts.put(traderId, account2);
             order.done();
         }
         Utils.closeThreadPool(executorService);
