@@ -2,8 +2,8 @@ package com.zhaijiong.stock.strategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.zhaijiong.stock.common.Utils;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
  * date: 15-11-13.
  */
 public class Account implements Cloneable{
-    public long timeStamp = 0;   //时间戳
+    public Date date;   //时间戳
     private Map<String,Position> positions = Maps.newConcurrentMap();   //股票持仓情况
 
     public double start = 100000;   //起始资产
@@ -112,18 +112,22 @@ public class Account implements Cloneable{
     public void saveStatus(Date date) {
         try {
             Account account = (Account) this.clone();
-            account.timeStamp = date.getTime();
+            account.date = date;
             status.add(account);
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
     }
 
+    public boolean isHold(String symbol){
+        return this.positions.containsKey(symbol);
+    }
+
     @Override
     public String toString() {
         return "Account{" +
                 "accuracy=" + accuracy +
-                ", timeStamp=" + timeStamp +
+                ", date=" + Utils.formatDate(date,"yyyy-MM-dd") +
                 ", start=" + start +
                 ", end=" + end +
                 ", pnl=" + pnl +
@@ -140,5 +144,141 @@ public class Account implements Cloneable{
                 ", earnOperate=" + earnOperate +
                 ", lossOperate=" + lossOperate +
                 '}';
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public double getStart() {
+        return start;
+    }
+
+    public void setStart(double start) {
+        this.start = start;
+    }
+
+    public double getEnd() {
+        return end;
+    }
+
+    public void setEnd(double end) {
+        this.end = end;
+    }
+
+    public double getPnl() {
+        return pnl;
+    }
+
+    public void setPnl(double pnl) {
+        this.pnl = pnl;
+    }
+
+    public double getPnlRate() {
+        return pnlRate;
+    }
+
+    public void setPnlRate(double pnlRate) {
+        this.pnlRate = pnlRate;
+    }
+
+    public double getMaxLossPerOp() {
+        return maxLossPerOp;
+    }
+
+    public void setMaxLossPerOp(double maxLossPerOp) {
+        this.maxLossPerOp = maxLossPerOp;
+    }
+
+    public double getMaxEarnPerOp() {
+        return maxEarnPerOp;
+    }
+
+    public void setMaxEarnPerOp(double maxEarnPerOp) {
+        this.maxEarnPerOp = maxEarnPerOp;
+    }
+
+    public double getMeanEarnPerOp() {
+        return meanEarnPerOp;
+    }
+
+    public void setMeanEarnPerOp(double meanEarnPerOp) {
+        this.meanEarnPerOp = meanEarnPerOp;
+    }
+
+    public double getBenchmarkBenfit() {
+        return benchmarkBenfit;
+    }
+
+    public void setBenchmarkBenfit(double benchmarkBenfit) {
+        this.benchmarkBenfit = benchmarkBenfit;
+    }
+
+    public double getBenchmarkBenfitPercent() {
+        return benchmarkBenfitPercent;
+    }
+
+    public void setBenchmarkBenfitPercent(double benchmarkBenfitPercent) {
+        this.benchmarkBenfitPercent = benchmarkBenfitPercent;
+    }
+
+    public double getMax() {
+        return max;
+    }
+
+    public void setMax(double max) {
+        this.max = max;
+    }
+
+    public double getMin() {
+        return min;
+    }
+
+    public void setMin(double min) {
+        this.min = min;
+    }
+
+    public double getDrawdown() {
+        return drawdown;
+    }
+
+    public void setDrawdown(double drawdown) {
+        this.drawdown = drawdown;
+    }
+
+    public int getTotalOperate() {
+        return totalOperate;
+    }
+
+    public void setTotalOperate(int totalOperate) {
+        this.totalOperate = totalOperate;
+    }
+
+    public int getEarnOperate() {
+        return earnOperate;
+    }
+
+    public void setEarnOperate(int earnOperate) {
+        this.earnOperate = earnOperate;
+    }
+
+    public int getLossOperate() {
+        return lossOperate;
+    }
+
+    public void setLossOperate(int lossOperate) {
+        this.lossOperate = lossOperate;
+    }
+
+    public double getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(double accuracy) {
+        this.accuracy = accuracy;
     }
 }
