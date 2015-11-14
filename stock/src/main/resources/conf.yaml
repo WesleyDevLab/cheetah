@@ -5,6 +5,8 @@ broker.pool.size: 10
 broker.check.interval: 5
 
 trader.account.id: cheetah
+trader.execl.base.dir: "/home/eryk"
+trader.trading.day.count: 1000
 
 dashboard:
   - "601886"

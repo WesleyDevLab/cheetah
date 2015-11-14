@@ -18,3 +18,4 @@ lib
 *.tar.gz
 logs
 test
+*xls

@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.zhaijiong.stock.common.Constants.*;
+
 /**
  * author: eryk
  * mail: xuqi86@gmail.com
@@ -34,7 +36,7 @@ public class BackTestTrader {
     private ExecutorService executorService;
     //存储每个股票的交易状态
     private Map<String, Account> accountMap = Maps.newConcurrentMap();
-
+    private String excelBaseDir = "";
 
     private Context context;
     private BaseStrategy strategy;
@@ -43,8 +45,9 @@ public class BackTestTrader {
         this.context = context;
         this.strategy = strategy;
 
-        this.tradingDayCount = context.getInt(Constants.TRADER_TRADING_DAY_COUNT,DEFAULT_TRADING_DAY_COUNT);
-        this.executorService = Executors.newFixedThreadPool(context.getInt(Constants.TRADER_POOL_SIZE,DEFAULT_TRADER_POOL_SIZE));
+        this.tradingDayCount = context.getInt(TRADER_TRADING_DAY_COUNT,DEFAULT_TRADING_DAY_COUNT);
+        this.excelBaseDir = context.getStr(TRADER_EXCEL_BASE_DIR);
+        this.executorService = Executors.newFixedThreadPool(context.getInt(TRADER_POOL_SIZE,DEFAULT_TRADER_POOL_SIZE));
     }
 
     public void cleanup(){
@@ -88,17 +91,15 @@ public class BackTestTrader {
                 }
             }
         }
-        export(account);
+        export(symbol,account);
         accountMap.put(symbol,account);
     }
 
-    public void export(Account account){
+    public void export(String symbol,Account account){
         List accounts = account.getStatus();
         ExcelExportHelper excelExportHelper = new ExcelExportHelper();
-        String[] header = {"交易时间","起始资产","期末资产","交易盈亏","收益率","最大单笔盈利","最大单笔亏损","平均每笔盈利","基准收益额","基准收益百分比","最大资产","最小资产","最大回撤","交易次数","盈利次数","亏损次数","操作正确率"};
-        String[] properties = {"date","start","end","pnl","pnlRate","maxEarnPerOp","maxLossPerOp","meanEarnPerOp","benchmarkBenfit","benchmarkBenfitPercent","max","min","drawdown","totalOperate","earnOperate","lossOperate","accuracy"};
-        HSSFWorkbook excel = excelExportHelper.exportExcel(header, properties, accounts, "account");
-        excelExportHelper.saveExcel(excel,"/home/eryk","export");
+        HSSFWorkbook excel = excelExportHelper.exportExcel(EXCEL_HEADER, EXCEL_COLUMN, accounts, "account");
+        excelExportHelper.saveExcel(excel,excelBaseDir,symbol);
     }
 
     public void print(){

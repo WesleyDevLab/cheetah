@@ -3,6 +3,8 @@ package com.zhaijiong.stock.strategy;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.tools.SharpeRatio;
+import com.zhaijiong.stock.tools.SortinoRatio;
 
 import java.util.Date;
 import java.util.List;
@@ -40,6 +42,9 @@ public class Account implements Cloneable{
     public int earnOperate = 0;   //总盈利次数
     public int lossOperate = 0; //总亏损交易次数
     public double accuracy = 0;  //操作正确率=总盈利次数/总交易次数
+
+    public double sharpe = 0;   //夏普率
+    public double sortino = 0;  //所提诺比率
 
     private List<Account> status = Lists.newLinkedList();
 
@@ -106,7 +111,17 @@ public class Account implements Cloneable{
         this.accuracy = Double.parseDouble(String.valueOf(this.earnOperate)) / this.totalOperate;
         this.meanEarnPerOp = this.pnl / this.totalOperate;
         this.drawdown = this.max - this.min;
+        computeRate(getStatus(),0.03);
         this.positions.remove(symbol);
+    }
+
+    private void computeRate(List<Account> status, double rf) {
+        List<Double> returns = Lists.newLinkedList();
+        for(Account account :status){
+            returns.add(account.pnlRate);
+        }
+        this.sharpe = SharpeRatio.value(returns,rf);
+        this.sortino = SortinoRatio.value(returns,rf);
     }
 
     public void saveStatus(Date date) {
@@ -128,6 +143,7 @@ public class Account implements Cloneable{
         return "Account{" +
                 "accuracy=" + accuracy +
                 ", date=" + Utils.formatDate(date,"yyyy-MM-dd") +
+                ", sharpe=" + sharpe +
                 ", start=" + start +
                 ", end=" + end +
                 ", pnl=" + pnl +
@@ -280,5 +296,21 @@ public class Account implements Cloneable{
 
     public void setAccuracy(double accuracy) {
         this.accuracy = accuracy;
+    }
+
+    public double getSharpe() {
+        return sharpe;
+    }
+
+    public void setSharpe(double sharpe) {
+        this.sharpe = sharpe;
+    }
+
+    public double getSortino() {
+        return sortino;
+    }
+
+    public void setSortino(double sortino) {
+        this.sortino = sortino;
     }
 }
