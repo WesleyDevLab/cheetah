@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.tools.Sleeper;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -359,14 +360,13 @@ public class Utils {
     }
 
     public static void closeThreadPool(ExecutorService threadPool){
+        if(threadPool==null){
+            return;
+        }
         threadPool.shutdown();
         while(!threadPool.isTerminated()){
             threadPool.shutdownNow();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Sleeper.sleep(1000);
         }
     }
 

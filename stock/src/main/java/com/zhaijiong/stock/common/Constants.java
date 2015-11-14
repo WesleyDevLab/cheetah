@@ -11,10 +11,13 @@ public class Constants {
     public static final String DATABASE_POOL_SIZE = "database.pool.size";
     public static final String SCHEDULE_POOL_SIZE = "schedule.pool.size";
     public static final String THREAD_POOL_SIZE = "thread.pool.size";
+
     public static final String BROKER_POOL_SIZE = "broker.pool.size";
     public static final String BROKER_CHECK_INTERVAL = "broker.check.interval";
 
     public static final String TRADER_ACCOUNT_ID = "trader.account.id";
+    public static final String TRADER_TRADING_DAY_COUNT = "trader.trading.day.count";
+    public static final String TRADER_POOL_SIZE = "trader.pool.size";
 
     public static String NETEASE_DATE_STYLE = "yyyy-MM-dd";
 
