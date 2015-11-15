@@ -104,21 +104,24 @@ public class BackTestTrader {
         accountMap.put(symbol,account);
     }
 
+    /**
+     * 输出当前股票的所有卖出情况以账户状态
+     * @param symbol
+     * @param account
+     */
     public void export(String symbol,Account account){
         List accounts = account.getStatus();
         ExcelExportHelper excelExportHelper = new ExcelExportHelper();
         HSSFWorkbook excel = excelExportHelper.exportExcel(EXCEL_HEADER, EXCEL_COLUMN, accounts, "account");
+        //TODO 添加sheet，增加汇总信息
         excelExportHelper.saveExcel(excel,excelBaseDir,symbol);
     }
 
     public void print(){
         for(Map.Entry<String,Account> stock:accountMap.entrySet()){
-            System.out.println(stock.getKey()+":"+stock.getValue());
-            List<Account> accounts = stock.getValue().getStatus();
-            for(Account account:accounts){
-                System.out.println(account);
-            }
+            //输出每个股票当前状态
         }
+        //输入所有股票的平均状态
     }
 
 }

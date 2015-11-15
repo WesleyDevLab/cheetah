@@ -6,6 +6,7 @@ import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.strategy.buy.MACDBuyStrategy;
 import com.zhaijiong.stock.strategy.sell.MACDSellStrategy;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +28,11 @@ public class BackTestTraderTest {
         MACDSellStrategy macdSellStrategy = new MACDSellStrategy(1, PeriodType.DAY);
         strategy.setSellStrategy(macdSellStrategy);
         backTestTrader = new BackTestTrader(context,strategy);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        backTestTrader.cleanup();
     }
 
     @Test
