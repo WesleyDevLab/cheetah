@@ -62,11 +62,6 @@ public class BaseStrategy implements Strategy{
     }
 
     @Override
-    public LocalDateTime getTimeStamp() {
-        return LocalDateTime.now();
-    }
-
-    @Override
     public double buy(String symbol) {
         return buyStrategy.buy(symbol);
     }

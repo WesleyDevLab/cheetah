@@ -107,7 +107,7 @@ public class BackTestTrader {
             System.out.println(stock.getKey()+":"+stock.getValue());
             List<Account> accounts = stock.getValue().getStatus();
             for(Account account:accounts){
-                System.out.println(Utils.formatDate(account.date,"yyyyMMdd")+account);
+                System.out.println(account);
             }
         }
     }

@@ -9,5 +9,4 @@ import java.time.LocalDateTime;
  */
 public interface Strategy extends BuyStrategy,SellStrategy,RiskStrategy{
 
-    public LocalDateTime getTimeStamp();
 }

@@ -141,24 +141,25 @@ public class Account implements Cloneable{
     @Override
     public String toString() {
         return "Account{" +
-                "accuracy=" + accuracy +
-                ", date=" + Utils.formatDate(date,"yyyy-MM-dd") +
-                ", sharpe=" + sharpe +
+                "date=" + Utils.formatDate(date,"yyyyMMdd") +
                 ", start=" + start +
                 ", end=" + end +
                 ", pnl=" + pnl +
                 ", pnlRate=" + pnlRate +
                 ", maxEarnPerOp=" + maxEarnPerOp +
-                ", maxLossPerOp=" + maxLossPerOp +
                 ", meanEarnPerOp=" + meanEarnPerOp +
+                ", maxLossPerOp=" + maxLossPerOp +
                 ", benchmarkBenfit=" + benchmarkBenfit +
                 ", benchmarkBenfitPercent=" + benchmarkBenfitPercent +
                 ", max=" + max +
                 ", min=" + min +
                 ", drawdown=" + drawdown +
-                ", totalOperate=" + totalOperate +
                 ", earnOperate=" + earnOperate +
+                ", totalOperate=" + totalOperate +
                 ", lossOperate=" + lossOperate +
+                ", accuracy=" + accuracy +
+                ", sharpe=" + sharpe +
+                ", sortino=" + sortino +
                 '}';
     }
 
