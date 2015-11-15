@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -55,13 +56,22 @@ public class BackTestTrader {
     }
 
     public void test(List<String> symbols) {
+        CountDownLatch countDownLatch = new CountDownLatch(symbols.size());
         for (String symbol : symbols) {
-            LOG.info(String.format("start test %s with strategy %s", symbol, strategy.getName()));
-            try {
-                test(symbol);
-            } catch (Exception e) {
-                LOG.error(String.format("fail to test symbol %s", symbol), e);
-            }
+            executorService.execute(() -> {
+                LOG.info(String.format("start test %s with strategy %s", symbol, strategy.getName()));
+                try {
+                    test(symbol);
+                    countDownLatch.countDown();
+                } catch (Exception e) {
+                    LOG.error(String.format("fail to test symbol %s", symbol), e);
+                }
+            });
+        }
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -83,7 +93,6 @@ public class BackTestTrader {
                     account.benchmarkBenfitPercent = (stockStopPrice - stockStartPrice) / stockStartPrice;
                     account.saveStatus(date);
                 }
-//              else if(tmpList.get(i-1).get("close")-price<0 && Math.abs(tmpList.get(i-1).get("close")-price)>price*0.05){
             } else {
                 if (strategy.isBuy(tmpList)) {
                     double price = strategy.buy(tmpList);
@@ -112,17 +121,4 @@ public class BackTestTrader {
         }
     }
 
-    public static void main(String[] args) {
-        Context context = new Context();
-        BaseStrategy strategy = new BaseStrategy();
-        MACDBuyStrategy macdBuyStrategy = new MACDBuyStrategy(1, PeriodType.DAY);
-        strategy.setBuyStrategy(macdBuyStrategy);
-        MACDSellStrategy macdSellStrategy = new MACDSellStrategy(1, PeriodType.DAY);
-        strategy.setSellStrategy(macdSellStrategy);
-        BackTestTrader backTestTrader = new BackTestTrader(context,strategy);
-//        List<String> stockDatalist = Provider.stockList();
-//        backTestTrader.test(stockDatalist);
-        backTestTrader.test("600030");
-        backTestTrader.print();
-    }
 }
