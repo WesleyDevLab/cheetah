@@ -13,8 +13,6 @@ import org.junit.Test;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
-
 public class BackTestTraderTest {
 
     private BackTestTrader backTestTrader;
@@ -22,7 +20,7 @@ public class BackTestTraderTest {
     @Before
     public void setUp() throws Exception {
         Context context = new Context();
-        BaseStrategy strategy = new BaseStrategy();
+        DefaultStrategy strategy = new DefaultStrategy();
         MACDBuyStrategy macdBuyStrategy = new MACDBuyStrategy(1, PeriodType.DAY);
         strategy.setBuyStrategy(macdBuyStrategy);
         MACDSellStrategy macdSellStrategy = new MACDSellStrategy(1, PeriodType.DAY);

@@ -2,37 +2,35 @@ package com.zhaijiong.stock.strategy;
 
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.strategy.buy.BuyStrategy;
-import com.zhaijiong.stock.strategy.risk.RiskStrategy;
 import com.zhaijiong.stock.strategy.sell.SellStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * author: eryk
  * mail: xuqi86@gmail.com
  * date: 15-11-9.
  */
-public class BaseStrategy implements Strategy {
-    private BuyStrategy buyStrategy;
-    private SellStrategy sellStrategy;
-    private RiskStrategy riskStrategy;
+public class DefaultStrategy implements Strategy {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultStrategy.class);
 
-    private String DEFAULT_NAME = "base";
-    private String name;
+    private final String name;
+    private final BuyStrategy buyStrategy;
+    private final SellStrategy sellStrategy;
 
-    public BaseStrategy(){
-        this.name = DEFAULT_NAME;
+    private static final String DEFAULT_NAME = "default_strategy";
+
+    public DefaultStrategy(BuyStrategy buyStrategy, SellStrategy sellStrategy){
+        this(DEFAULT_NAME,buyStrategy,sellStrategy);
     }
 
-    public BaseStrategy(BuyStrategy buyStrategy,SellStrategy sellStrategy,RiskStrategy riskStrategy){
+    public DefaultStrategy(String name, BuyStrategy buyStrategy, SellStrategy sellStrategy){
+        this.name = name;
+        LOG.info(String.format("strategy name is [%s]",name));
         this.buyStrategy = buyStrategy;
         this.sellStrategy = sellStrategy;
-        this.riskStrategy = riskStrategy;
-    }
-
-    public void setName(String name){
-        this.name = name;
     }
 
     public String getName(){
@@ -43,24 +41,8 @@ public class BaseStrategy implements Strategy {
         return buyStrategy;
     }
 
-    public void setBuyStrategy(BuyStrategy buyStrategy) {
-        this.buyStrategy = buyStrategy;
-    }
-
     public SellStrategy getSellStrategy() {
         return sellStrategy;
-    }
-
-    public void setSellStrategy(SellStrategy sellStrategy) {
-        this.sellStrategy = sellStrategy;
-    }
-
-    public RiskStrategy getRiskStrategy() {
-        return riskStrategy;
-    }
-
-    public void setRiskStrategy(RiskStrategy riskStrategy) {
-        this.riskStrategy = riskStrategy;
     }
 
     @Override
@@ -81,11 +63,6 @@ public class BaseStrategy implements Strategy {
     @Override
     public boolean isBuy(List<StockData> stockDataList) {
         return buyStrategy.isBuy(stockDataList);
-    }
-
-    @Override
-    public Map<String, Double> risk(String symbol) {
-        return riskStrategy.risk(symbol);
     }
 
     @Override

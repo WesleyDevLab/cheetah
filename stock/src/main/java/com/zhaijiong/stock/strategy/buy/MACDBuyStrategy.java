@@ -8,6 +8,7 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.strategy.StrategyUtils;
 import com.zhaijiong.stock.tools.Sleeper;
 
 import java.util.Date;
@@ -65,7 +66,7 @@ public class MACDBuyStrategy implements BuyStrategy {
     @Override
     public boolean isBuy(List<StockData> stockDataList){
         stockDataList = Provider.computeMACD(stockDataList);
-        if (isGoldenCrossIn(stockDataList, timeRange)) {
+        if (StrategyUtils.isMACDGoldenCrossIn(stockDataList, timeRange)) {
             return true;
         }
         return false;
@@ -95,22 +96,7 @@ public class MACDBuyStrategy implements BuyStrategy {
         return stockDataList;
     }
 
-    /**
-     * 判断最近n个时间周期内是否出现金叉
-     *
-     * @param period
-     * @return 如果是返回true
-     */
-    public boolean isGoldenCrossIn(List<StockData> stockDataList, int period) {
-        int count = stockDataList.size();
-        for (int i = count - 1; i > 0; i--) {
-            StockData stockData = stockDataList.get(i);
-            Double cross = stockData.get(StockConstants.MACD_CROSS);
-            if (cross != null && count - i <= period && cross == 1)
-                return true;
-        }
-        return false;
-    }
+
 
     public static void main(String[] args) throws InterruptedException {
 

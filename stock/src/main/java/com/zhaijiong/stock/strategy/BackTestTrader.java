@@ -2,14 +2,10 @@ package com.zhaijiong.stock.strategy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
-import com.zhaijiong.stock.strategy.buy.MACDBuyStrategy;
-import com.zhaijiong.stock.strategy.sell.MACDSellStrategy;
 import com.zhaijiong.stock.tools.ExcelExportHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
@@ -41,20 +37,20 @@ public class BackTestTrader {
     private String excelBaseDir = "";
 
     private Context context;
-    private BaseStrategy strategy;
+    private DefaultStrategy strategy;
 
-    public BackTestTrader(Context context, BaseStrategy strategy) {
+    public BackTestTrader(Context context, DefaultStrategy strategy) {
         this.context = context;
         this.strategy = strategy;
 
-        this.tradingDayCount = context.getInt(TRADER_TRADING_DAY_COUNT,DEFAULT_TRADING_DAY_COUNT);
-        this.excelBaseDir = context.getStr(TRADER_EXCEL_BASE_DIR);
-        this.executorService = Executors.newFixedThreadPool(context.getInt(TRADER_POOL_SIZE,DEFAULT_TRADER_POOL_SIZE));
+        this.tradingDayCount = this.context.getInt(TRADER_TRADING_DAY_COUNT,DEFAULT_TRADING_DAY_COUNT);
+        this.excelBaseDir = this.context.getStr(TRADER_EXCEL_BASE_DIR);
+        this.executorService = Executors.newFixedThreadPool(this.context.getInt(TRADER_POOL_SIZE,DEFAULT_TRADER_POOL_SIZE));
 
         LOG.info("startup:");
         LOG.info("\t"+TRADER_TRADING_DAY_COUNT+":"+tradingDayCount);
         LOG.info("\t"+TRADER_EXCEL_BASE_DIR+":"+excelBaseDir);
-        LOG.info("\t"+TRADER_POOL_SIZE+":"+context.getInt(TRADER_POOL_SIZE,DEFAULT_TRADER_POOL_SIZE));
+        LOG.info("\t"+TRADER_POOL_SIZE+":"+this.context.getInt(TRADER_POOL_SIZE,DEFAULT_TRADER_POOL_SIZE));
     }
 
     public void cleanup(){

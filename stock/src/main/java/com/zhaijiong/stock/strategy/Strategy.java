@@ -9,6 +9,6 @@ import com.zhaijiong.stock.strategy.risk.RiskStrategy;
  * mail: xuqi86@gmail.com
  * date: 15-9-28.
  */
-public interface Strategy extends BuyStrategy,SellStrategy,RiskStrategy {
+public interface Strategy extends BuyStrategy,SellStrategy {
 
 }
