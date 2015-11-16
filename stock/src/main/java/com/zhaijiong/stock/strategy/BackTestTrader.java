@@ -1,5 +1,6 @@
 package com.zhaijiong.stock.strategy;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Context;
@@ -49,9 +50,16 @@ public class BackTestTrader {
         this.tradingDayCount = context.getInt(TRADER_TRADING_DAY_COUNT,DEFAULT_TRADING_DAY_COUNT);
         this.excelBaseDir = context.getStr(TRADER_EXCEL_BASE_DIR);
         this.executorService = Executors.newFixedThreadPool(context.getInt(TRADER_POOL_SIZE,DEFAULT_TRADER_POOL_SIZE));
+
+        LOG.info("startup:");
+        LOG.info("\t"+TRADER_TRADING_DAY_COUNT+":"+tradingDayCount);
+        LOG.info("\t"+TRADER_EXCEL_BASE_DIR+":"+excelBaseDir);
+        LOG.info("\t"+TRADER_POOL_SIZE+":"+context.getInt(TRADER_POOL_SIZE,DEFAULT_TRADER_POOL_SIZE));
     }
 
     public void cleanup(){
+        LOG.info("cleanup:");
+        LOG.info("total account:"+accountMap.size());
         Utils.closeThreadPool(executorService);
     }
 
@@ -118,10 +126,15 @@ public class BackTestTrader {
     }
 
     public void print(){
-        for(Map.Entry<String,Account> stock:accountMap.entrySet()){
-            //输出每个股票当前状态
+        List accountList = Lists.newLinkedList();
+        for(Map.Entry<String,Account> accountEntry:accountMap.entrySet()){
+            LOG.info("summary add stock:"+accountEntry.getKey());
+            accountList.add(accountEntry.getValue());
         }
-        //输入所有股票的平均状态
+        ExcelExportHelper excelExportHelper = new ExcelExportHelper();
+        HSSFWorkbook excel = excelExportHelper.exportExcel(EXCEL_HEADER, EXCEL_COLUMN, accountList, "total");
+        excelExportHelper.saveExcel(excel,excelBaseDir,"summary");
+        //TODO 输入所有股票的平均状态
     }
 
 }

@@ -8,7 +8,6 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
-import com.zhaijiong.stock.strategy.BuyStrategy;
 import com.zhaijiong.stock.tools.Sleeper;
 
 import java.util.Date;
@@ -143,7 +142,7 @@ public class MACDBuyStrategy implements BuyStrategy {
                     });
                 }
                 countDownLatch.await();
-                System.out.println("cost:"+stopwatch.elapsed(TimeUnit.MILLISECONDS));
+                System.out.println("cost:"+stopwatch.elapsed(TimeUnit.MILLISECONDS)+"ms");
             }
             Sleeper.sleep(300*1000);
         }

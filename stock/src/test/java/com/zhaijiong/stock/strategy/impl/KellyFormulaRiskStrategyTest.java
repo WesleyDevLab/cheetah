@@ -1,7 +1,6 @@
 package com.zhaijiong.stock.strategy.impl;
 
-import com.google.common.collect.Lists;
-import com.zhaijiong.stock.strategy.RiskStrategy;
+import com.zhaijiong.stock.strategy.risk.RiskStrategy;
 import com.zhaijiong.stock.strategy.risk.KellyFormulaRiskStrategy;
 import org.junit.Assert;
 import org.junit.Test;

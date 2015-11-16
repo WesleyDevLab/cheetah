@@ -63,7 +63,7 @@ public class Constants {
 
     public static final byte[] TABLE_CF_ARTICLE = "a".getBytes();
 
-    public static final String[] EXCEL_HEADER = {"交易时间","起始资产","期末资产","交易盈亏","收益率","夏普比率","所提诺比率","操作正确率","最大单笔盈利","最大单笔亏损","平均每笔盈利","基准收益额","基准收益率","最大资产","最小资产","最大回撤","交易次数","盈利次数","亏损次数"};
+    public static final String[] EXCEL_HEADER = {"交易时间","起始资产","期末资产","交易盈亏","收益率","夏普比率","索提诺比率","操作正确率","最大单笔盈利","最大单笔亏损","平均每笔盈利","基准收益额","基准收益率","最大资产","最小资产","最大回撤","交易次数","盈利次数","亏损次数"};
 
     public static final String[] EXCEL_COLUMN = {"date","start","end","pnl","pnlRate","sharpe","sortino","accuracy","maxEarnPerOp","maxLossPerOp","meanEarnPerOp","benchmarkBenfit","benchmarkBenfitPercent","max","min","drawdown","totalOperate","earnOperate","lossOperate"};
 

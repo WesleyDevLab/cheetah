@@ -1,8 +1,10 @@
 package com.zhaijiong.stock.strategy;
 
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.strategy.buy.BuyStrategy;
+import com.zhaijiong.stock.strategy.risk.RiskStrategy;
+import com.zhaijiong.stock.strategy.sell.SellStrategy;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +13,7 @@ import java.util.Map;
  * mail: xuqi86@gmail.com
  * date: 15-11-9.
  */
-public class BaseStrategy implements Strategy{
+public class BaseStrategy implements Strategy {
     private BuyStrategy buyStrategy;
     private SellStrategy sellStrategy;
     private RiskStrategy riskStrategy;

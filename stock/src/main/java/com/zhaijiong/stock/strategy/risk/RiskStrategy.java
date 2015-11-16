@@ -1,4 +1,4 @@
-package com.zhaijiong.stock.strategy;
+package com.zhaijiong.stock.strategy.risk;
 
 import com.zhaijiong.stock.model.StockData;
 

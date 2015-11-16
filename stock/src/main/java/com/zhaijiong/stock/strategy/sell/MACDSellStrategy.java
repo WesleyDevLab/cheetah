@@ -5,7 +5,6 @@ import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
-import com.zhaijiong.stock.strategy.SellStrategy;
 import com.zhaijiong.stock.tools.StockList;
 
 import java.util.List;

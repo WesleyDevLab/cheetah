@@ -2,10 +2,7 @@ package com.zhaijiong.stock.strategy.risk;
 
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.StockConstants;
-import com.zhaijiong.stock.model.StockData;
-import com.zhaijiong.stock.strategy.RiskStrategy;
 
-import java.util.List;
 import java.util.Map;
 
 /**
