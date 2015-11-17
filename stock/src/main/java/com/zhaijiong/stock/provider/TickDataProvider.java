@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public class TickDataProvider {
     private static final Logger LOG = LoggerFactory.getLogger(TickDataProvider.class);
-
+    //http://vip.stock.finance.sina.com.cn/quotes_service/view/vMS_tradehistory.php?symbol=sh600199&date=2015-11-16
     private static String tickHisDataURL = "http://market.finance.sina.com.cn/downxls.php?date=%s&symbol=%s";
 
     private static String tickRTDataURL = "http://vip.stock.finance.sina.com.cn/quotes_service/view/CN_TransListV2.php?num=10000&symbol=%s&rn=%s";
@@ -47,7 +47,7 @@ public class TickDataProvider {
             for(int i = 1;i<lines.size();i++){
                 String[] fields = lines.get(i).split("\t", 6);
                 Tick tick = new Tick();
-                tick.date = fields[0];
+                tick.date = Utils.str2Date(date + fields[0],"yyyy-MM-ddHH:mm:ss");
                 tick.price = Utils.getDouble(fields[1]);
                 tick.volume = Utils.getDouble(fields[3]);
                 tick.amount = Utils.getDouble(fields[4]);
@@ -73,7 +73,7 @@ public class TickDataProvider {
             if(!Strings.isNullOrEmpty(line)){
                 String[] fields = line.split(",",4);
                 Tick tick = new Tick();
-                tick.date = fields[0];
+                tick.date =  Utils.str2Date(Utils.getNow("yyyyMMdd") + fields[0],"yyyyMMddHH:mm:ss");
                 tick.volume = Utils.getDouble(fields[1])/100;
                 tick.price = Utils.getDouble(fields[2]);
                 tick.amount = Utils.formatDouble(tick.volume * tick.price * 100,"#.##");
@@ -95,7 +95,7 @@ public class TickDataProvider {
     }
 
     public static void main(String[] args) throws IOException {
-        List<Tick> ticks = get("600376");
+        List<Tick> ticks = get("600376","2015-11-16");
         for(Tick tick:ticks){
             System.out.println(tick);
         }

@@ -6,6 +6,7 @@ package com.zhaijiong.stock.model;
  * date: 15-8-9.
  */
 public enum PeriodType {
+    ONE_MIN("1"),
     FIVE_MIN("5"),
     FIFTEEN_MIN("15"),
     THIRTY_MIN("30"),

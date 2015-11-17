@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.Tick;
 import com.zhaijiong.stock.provider.Provider;
@@ -155,7 +156,7 @@ public class ProviderTest {
         for (int i = 1; i < ticks.size(); i++) {
             Tick tick = ticks.get(i);
 
-            if (tick.type == Tick.Type.BUY && tick.volume > avgVolume * 20 && !tick.date.contains("15:00:") && !tick.date.contains("09:30:")) {
+            if (tick.type == Tick.Type.BUY && tick.volume > avgVolume * 20 && !Utils.formatDate(tick.date,"HH:mm:dd").contains("15:00:") && !Utils.formatDate(tick.date,"HH:mm:dd").contains("09:30:")) {
                 System.out.println(ticks.get(i));
                 count++;
             }
@@ -179,7 +180,7 @@ public class ProviderTest {
         for (int i = 1; i < ticks.size(); i++) {
             Tick tick = ticks.get(i);
 
-            if (tick.type == Tick.Type.BUY && tick.volume > avgVolume * 20 && !tick.date.contains("15:00:") && !tick.date.contains("09:30:")) {
+            if (tick.type == Tick.Type.BUY && tick.volume > avgVolume * 20 && !Utils.formatDate(tick.date,"HH:mm:dd").contains("15:00:") && !Utils.formatDate(tick.date,"HH:mm:dd").contains("09:30:")) {
                 System.out.println(ticks.get(i));
                 count++;
             }
@@ -245,5 +246,10 @@ public class ProviderTest {
             System.out.println(stockData);
         }
         System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testComputeBar(){
+        Provider.computeBar("600199","20151117", PeriodType.FIFTEEN_MIN);
     }
 }

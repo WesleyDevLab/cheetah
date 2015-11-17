@@ -1,5 +1,7 @@
 package com.zhaijiong.stock.model;
 
+import java.util.Date;
+
 /**
  * author: eryk
  * mail: xuqi86@gmail.com
@@ -7,14 +9,10 @@ package com.zhaijiong.stock.model;
  */
 public class Tick {
 
-    public String date;     //时间，格式是HH:mm:ss
-
+    public Date date;     //时间，格式是HH:mm:ss
     public double price;    //成交价格  单位：元
-
     public double volume;   //成交量   单位：手
-
     public double amount;   //成交额
-
     public Type type;
 
     public enum Type{

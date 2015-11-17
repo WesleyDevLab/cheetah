@@ -96,7 +96,7 @@ public class XuleiTest {
                     for (int i = 1; i < ticks.size(); i++) {
                         Tick tick = ticks.get(i);
 
-                        if (tick.type == Tick.Type.BUY && tick.volume > avgVolume * 50 && !tick.date.contains("15:00:") && !tick.date.contains("09:30:")) {
+                        if (tick.type == Tick.Type.BUY && tick.volume > avgVolume * 50 && !Utils.formatDate(tick.date,"HH:mm:dd").contains("15:00:") && !Utils.formatDate(tick.date,"HH:mm:dd").contains("09:30:")) {
 //                                System.out.println(ticks.get(i));
                             tickCount++;
                         }

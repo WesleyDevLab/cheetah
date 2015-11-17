@@ -6,17 +6,13 @@ import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.indicators.Indicators;
-import com.zhaijiong.stock.model.StockBlock;
-import com.zhaijiong.stock.model.StockData;
-import com.zhaijiong.stock.model.Tick;
+import com.zhaijiong.stock.model.*;
 import com.zhaijiong.stock.tools.StockCategory;
 import com.zhaijiong.stock.tools.StockList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 成交量,单位：手
@@ -608,5 +604,25 @@ public class Provider {
         stockDataList = computeMA(stockDataList,"volume");
         stockDataList = computeBoll(stockDataList);
         return stockDataList;
+    }
+
+    /**
+     * 根据逐笔数据计算不同分钟级别k线数据
+     * 注意：tick数据为天级别，所以此方法只能计算分钟级别的k线数据
+     * @param symbol
+     * @param date
+     * @param type  分钟周期
+     * @return
+     */
+    public static List<Bar> computeBar(String symbol,String date,PeriodType type){
+        List<Tick> ticks = tickData(symbol, date);
+        LinkedList<Bar> barList = Lists.newLinkedList();
+        Bar bar = new Bar();
+        for(Tick tick :ticks){
+
+            System.out.println(tick);
+        }
+
+        return Lists.newArrayList();
     }
 }
