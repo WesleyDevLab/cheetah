@@ -55,7 +55,7 @@ public class RealTimeDataProvider {
             return new StockData();
         }
         List<String> columns = map.get("Value");
-        if (columns.size() != 50) {
+        if (columns.size() != 51) {
             return new StockData();
         }
 
@@ -93,6 +93,7 @@ public class RealTimeDataProvider {
 
     public static String getPath(String symbol) {
         Date date = new Date();
+        System.out.println(String.format(realTimeDateURL, Symbol.getSymbol(symbol, realTimeDateURL), date.getTime()));
         return String.format(realTimeDateURL, Symbol.getSymbol(symbol, realTimeDateURL), date.getTime());
     }
 

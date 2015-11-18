@@ -2,8 +2,10 @@ package com.zhaijiong.stock.provider;
 
 import com.google.common.base.Stopwatch;
 import com.zhaijiong.stock.common.Conditions;
+import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.model.Bar;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.model.Tick;
@@ -17,9 +19,9 @@ public class ProviderTest {
 
     @Test
     public void testRealtimeData() throws Exception {
-        StockData values = Provider.realtimeData("601886");
+        StockData values = Provider.realtimeData("600199");
         System.out.println(Utils.formatDate(values.date, "yyyy-MM-dd HH:mm:ss"));
-        Utils.printMap(values);
+        System.out.println(values);
     }
 
     @Test
@@ -250,6 +252,9 @@ public class ProviderTest {
 
     @Test
     public void testComputeBar(){
-        Provider.computeBar("600199","20151117", PeriodType.FIFTEEN_MIN);
+        List<Bar> bars = Provider.computeBar("600199", "20151117", PeriodType.FIFTEEN_MIN);
+        for(Bar bar:bars){
+            System.out.println(bar);
+        }
     }
 }

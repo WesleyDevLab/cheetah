@@ -114,7 +114,8 @@ public class StockConstants {
             "totalValue",           //46    总市值,单位:亿
             "",                     //47    未知
             "",                     //48    未知
-            "date"                  //49    时间
+            "date",                 //49    时间
+            ""                      //50    未知
     );
 
     public static List<String> MONEYFLOW = Lists.newArrayList(

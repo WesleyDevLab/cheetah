@@ -29,6 +29,8 @@ import java.util.regex.Pattern;
  */
 public class MoneyFlowDataProvider {
     private static final Logger LOG = LoggerFactory.getLogger(MoneyFlowDataProvider.class);
+    //TODO 全部历史资金流向
+    //http://quotes.money.163.com/trade/lszjlx_600199.html#01b08
 
     //第二个为6位随机数
     private static String moneyFlowURL = "http://hqchart.eastmoney.com/hq20/js/%s.js?%s";
