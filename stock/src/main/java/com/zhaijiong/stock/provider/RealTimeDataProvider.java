@@ -56,6 +56,7 @@ public class RealTimeDataProvider {
         }
         List<String> columns = map.get("Value");
         if (columns.size() != 51) {
+            LOG.warn(String.format("stock [%s] data is not format",symbol));
             return new StockData();
         }
 
@@ -93,7 +94,6 @@ public class RealTimeDataProvider {
 
     public static String getPath(String symbol) {
         Date date = new Date();
-        System.out.println(String.format(realTimeDateURL, Symbol.getSymbol(symbol, realTimeDateURL), date.getTime()));
         return String.format(realTimeDateURL, Symbol.getSymbol(symbol, realTimeDateURL), date.getTime());
     }
 
