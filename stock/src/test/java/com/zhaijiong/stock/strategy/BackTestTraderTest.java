@@ -1,6 +1,7 @@
 package com.zhaijiong.stock.strategy;
 
 import com.google.common.base.Stopwatch;
+import com.zhaijiong.stock.BackTestTrader;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.provider.Provider;
@@ -20,11 +21,9 @@ public class BackTestTraderTest {
     @Before
     public void setUp() throws Exception {
         Context context = new Context();
-        DefaultStrategy strategy = new DefaultStrategy();
         MACDBuyStrategy macdBuyStrategy = new MACDBuyStrategy(1, PeriodType.DAY);
-        strategy.setBuyStrategy(macdBuyStrategy);
         MACDSellStrategy macdSellStrategy = new MACDSellStrategy(1, PeriodType.DAY);
-        strategy.setSellStrategy(macdSellStrategy);
+        DefaultStrategy strategy = new DefaultStrategy(macdBuyStrategy,macdSellStrategy);
         backTestTrader = new BackTestTrader(context,strategy);
     }
 

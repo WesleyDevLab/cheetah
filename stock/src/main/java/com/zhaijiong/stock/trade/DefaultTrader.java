@@ -1,4 +1,4 @@
-package com.zhaijiong.stock.strategy;
+package com.zhaijiong.stock.trade;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -8,6 +8,8 @@ import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.strategy.Account2;
+import com.zhaijiong.stock.strategy.Strategy;
 import com.zhaijiong.stock.tools.Sleeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.zhaijiong.stock.strategy;
+package com.zhaijiong.stock.trade;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

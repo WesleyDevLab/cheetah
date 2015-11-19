@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
+ * 任务调度，定时更新系统数据
  * author: eryk
  * mail: xuqi86@gmail.com
  * date: 15-8-5.

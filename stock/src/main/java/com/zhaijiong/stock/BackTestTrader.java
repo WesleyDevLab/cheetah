@@ -1,4 +1,4 @@
-package com.zhaijiong.stock.strategy;
+package com.zhaijiong.stock;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -6,6 +6,8 @@ import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.strategy.Account;
+import com.zhaijiong.stock.strategy.DefaultStrategy;
 import com.zhaijiong.stock.tools.ExcelExportHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import java.util.concurrent.Executors;
 import static com.zhaijiong.stock.common.Constants.*;
 
 /**
+ * 策略回测系统
  * author: eryk
  * mail: xuqi86@gmail.com
  * date: 15-10-22.
