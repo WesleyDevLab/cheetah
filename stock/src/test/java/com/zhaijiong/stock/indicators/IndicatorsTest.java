@@ -226,4 +226,14 @@ public class IndicatorsTest {
             System.out.println(kdj[0][i]+"\t"+kdj[1][i]+"\t"+kdj[2][i]);
         }
     }
+
+    @Test
+    public void testDMA(){
+        List<StockData> stockDataList = Provider.dailyData("600160", false);
+        double[] close = Utils.getArrayFrom(stockDataList,"close");
+        double[][] dma = indicators.dma(close);
+        for(int i=0;i<close.length;i++){
+            System.out.println(dma[0][i] + "\t"+dma[1][i]);
+        }
+    }
 }

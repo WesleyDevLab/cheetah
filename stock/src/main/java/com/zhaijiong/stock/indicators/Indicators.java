@@ -58,6 +58,23 @@ public class Indicators {
         return output;
     }
 
+    /**
+     * 计算dma
+     * @param prices
+     * @return
+     */
+    public double[][] dma(double[] prices){
+        double[] ma10 = sma(prices, 10);
+        double[] ma50 = sma(prices, 50);
+        double[] dif = new double[ma10.length];
+        for(int i=0;i<dif.length;i++){
+            dif[i] = ma10[i] - ma50[i];
+        }
+        double[] ama = sma(dif,10);
+        double[][] result = {dif,ama};
+        return result;
+    }
+
     public double[][] macd(double[] prices, int optInFastPeriod, int optInSlowPeriod, int optInSignalPeriod) {
         double[] tempoutput1 = new double[prices.length];
         double[] tempoutput2 = new double[prices.length];
