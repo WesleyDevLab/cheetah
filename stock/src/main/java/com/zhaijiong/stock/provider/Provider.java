@@ -1,6 +1,7 @@
 package com.zhaijiong.stock.provider;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.StockConstants;
@@ -611,18 +612,57 @@ public class Provider {
      * 注意：tick数据为天级别，所以此方法只能计算分钟级别的k线数据
      * @param symbol
      * @param date
-     * @param type  分钟周期
+     * @param periodType  分钟周期
      * @return
      */
-    public static List<Bar> computeBar(String symbol,String date,PeriodType type){
+    public static List<Bar> computeBar(String symbol,String date,PeriodType periodType){
         List<Tick> ticks = tickData(symbol, date);
-        LinkedList<Bar> barList = Lists.newLinkedList();
-        Bar bar = new Bar();
-        for(Tick tick :ticks){
+        Map<Long,Bar> barMap = Maps.newTreeMap();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(Utils.str2Date(date,"yyyyMMdd"));
+        calendar.set(Calendar.HOUR_OF_DAY,9);
+        calendar.set(Calendar.MINUTE,30);
+        long startTime = calendar.getTime().getTime();
+        calendar.set(Calendar.HOUR_OF_DAY,11);
+        calendar.set(Calendar.MINUTE,30);
+        long midEnd = calendar.getTime().getTime();
+        calendar.set(Calendar.HOUR_OF_DAY,13);
+        calendar.set(Calendar.MINUTE,0);
+        long midStart = calendar.getTime().getTime();
+        calendar.set(Calendar.HOUR_OF_DAY,15);
+        calendar.set(Calendar.MINUTE,0);
+        long endTime = calendar.getTime().getTime()-1;
+        System.out.println(Utils.formatDate(calendar.getTime(),"yyyyMMdd HH:mm:ss"));
 
-            System.out.println(tick);
+        for(Tick tick :ticks){
+            long curTime = tick.date.getTime();
+            if(curTime<startTime){
+                curTime = startTime;
+            }else if(curTime>endTime){
+                curTime = endTime;
+            }else if(curTime>midEnd && curTime<midStart){
+                curTime = midEnd;
+            }
+            Long tmpTimeLot = 0l;
+            if(curTime<=midEnd){
+                tmpTimeLot = getTimeSlot(curTime, startTime, periodType.getIntValue());
+            }else if(curTime >= midStart){
+                tmpTimeLot = getTimeSlot(curTime, midStart, periodType.getIntValue()) + (midEnd-startTime)/periodType.getIntValue();
+            }
+            Bar bar = barMap.get(tmpTimeLot);
+            if(bar==null){
+                bar = new Bar(tmpTimeLot,tick);
+            }else{
+                bar.addTick(tick);
+            }
+            barMap.put(tmpTimeLot,bar);
         }
 
-        return Lists.newArrayList();
+        return Lists.newArrayList(barMap.values());
+    }
+
+    //计算是今天第几个bar，从1开始
+    private static long getTimeSlot(long curTime, long startTime, int interval) {
+        return (curTime - startTime) / interval;
     }
 }

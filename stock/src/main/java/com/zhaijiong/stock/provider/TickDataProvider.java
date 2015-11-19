@@ -49,7 +49,7 @@ public class TickDataProvider {
                 Tick tick = new Tick();
                 tick.date = Utils.str2Date(date + fields[0],"yyyy-MM-ddHH:mm:ss");
                 tick.price = Utils.getDouble(fields[1]);
-                tick.volume = Utils.getDouble(fields[3]);
+                tick.volume = Utils.getInt(fields[3]);
                 tick.amount = Utils.getDouble(fields[4]);
                 tick.type = getTickType(fields[5]);
 
@@ -74,7 +74,7 @@ public class TickDataProvider {
                 String[] fields = line.split(",",4);
                 Tick tick = new Tick();
                 tick.date =  Utils.str2Date(Utils.getNow("yyyyMMdd") + fields[0],"yyyyMMddHH:mm:ss");
-                tick.volume = Utils.getDouble(fields[1])/100;
+                tick.volume = Utils.getInt(fields[1])/100;
                 tick.price = Utils.getDouble(fields[2]);
                 tick.amount = Utils.formatDouble(tick.volume * tick.price * 100,"#.##");
                 tick.type = getTickType(fields[3]);
