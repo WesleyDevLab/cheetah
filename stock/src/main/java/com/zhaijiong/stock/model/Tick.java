@@ -11,7 +11,7 @@ public class Tick {
 
     public Date date;     //时间，格式是HH:mm:ss
     public double price;    //成交价格  单位：元
-    public double volume;   //成交量   单位：手
+    public int volume;   //成交量   单位：手
     public double amount;   //成交额
     public Type type;
 

@@ -1,5 +1,7 @@
 package com.zhaijiong.stock.model;
 
+import com.zhaijiong.stock.common.Constants;
+
 /**
  * author: eryk
  * mail: xuqi86@gmail.com
@@ -24,5 +26,33 @@ public enum PeriodType {
 
     public String getType() {
         return type;
+    }
+
+    public int getIntValue(){
+        int val = 0;
+        switch (this) {
+            case ONE_MIN:
+                val =  Constants.MINUTE;
+                break;
+            case FIVE_MIN:
+                val =  Constants.MINUTES_5;
+                break;
+            case FIFTEEN_MIN:
+                val =  Constants.MINUTES_15;
+                break;
+            case THIRTY_MIN:
+                val =  Constants.MINUTES_30;
+                break;
+            case SIXTY_MIN:
+                val =  Constants.MINUTES_60;
+                break;
+            case DAY:
+                val = Constants.DAY;
+                break;
+            case WEEK:
+                val = Constants.WEEK;
+                break;
+        }
+        return val;
     }
 }

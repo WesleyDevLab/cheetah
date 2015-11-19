@@ -36,6 +36,15 @@ public class Constants {
 
     public static final String SCHEDULER_JOB_CRON = "cron";
 
+    public static int SECOND = 1 * 1000;
+    public static int MINUTE = 60 * SECOND;
+    public static int MINUTES_5 = 5 * MINUTE;
+    public static int MINUTES_15  = 15 * MINUTE;
+    public static int MINUTES_30 = 30 * MINUTE;
+    public static int MINUTES_60 = 60 * MINUTE;
+    public static int DAY = 1440 * MINUTE;
+    public static int WEEK = 7 * 1440 * MINUTE;
+
     /**
      * table definition
      */

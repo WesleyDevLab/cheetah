@@ -252,7 +252,7 @@ public class ProviderTest {
 
     @Test
     public void testComputeBar(){
-        List<Bar> bars = Provider.computeBar("600199", "20151117", PeriodType.FIFTEEN_MIN);
+        List<Bar> bars = Provider.computeBar("600160", "20151119", PeriodType.FIFTEEN_MIN);
         for(Bar bar:bars){
             System.out.println(bar);
         }

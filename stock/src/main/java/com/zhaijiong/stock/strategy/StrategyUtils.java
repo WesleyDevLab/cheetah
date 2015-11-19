@@ -6,8 +6,8 @@ import com.zhaijiong.stock.model.StockData;
 import java.util.List;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: eryk
+ * mail: xuqi86@gmail.com
  * date: 15-11-17.
  */
 public class StrategyUtils {
