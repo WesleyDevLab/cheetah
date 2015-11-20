@@ -139,6 +139,28 @@ public class StockCategory {
     }
 
     /**
+     * 获取股票的全部类别，包含概念，行业，地域
+     * @return
+     */
+    public static Map<String,List<String>> getStockCategory(){
+        Map<String, List<StockBlock>> stockCategory = getCategory();
+        Map<String,List<String>> symbolMap = Maps.newTreeMap();
+        for(List<StockBlock> stockBlocks:stockCategory.values()){
+            for(StockBlock stockBlock :stockBlocks){
+                for(String symbol:stockBlock.symbolList){
+                    List<String> category = symbolMap.get(symbol);
+                    if(category == null){
+                        category = Lists.newLinkedList();
+                    }
+                    category.add(stockBlock.name);
+                    symbolMap.put(symbol, category);
+                }
+            }
+        }
+        return symbolMap;
+    }
+
+    /**
      * 获取某个板块下的全部股票
      * @param id
      * @return

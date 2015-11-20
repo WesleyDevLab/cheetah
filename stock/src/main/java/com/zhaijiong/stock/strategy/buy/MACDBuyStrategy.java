@@ -1,5 +1,6 @@
 package com.zhaijiong.stock.strategy.buy;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Conditions;
@@ -96,44 +97,4 @@ public class MACDBuyStrategy implements BuyStrategy {
         return stockDataList;
     }
 
-
-
-    public static void main(String[] args) throws InterruptedException {
-
-        MACDBuyStrategy dayMacdStrategy = new MACDBuyStrategy(3,PeriodType.DAY);
-        MACDBuyStrategy minute15MacdStrategy = new MACDBuyStrategy(3,PeriodType.FIFTEEN_MIN);
-        MACDBuyStrategy minute5MacdStrategy = new MACDBuyStrategy(3,PeriodType.FIVE_MIN);
-
-        Conditions conditions = new Conditions();
-        conditions.addCondition("close", Conditions.Operation.LT,30d);
-        List<String> stockList = Provider.getStockListWithConditions(Provider.tradingStockList(Provider.marginTradingStockList()),conditions);
-
-        ExecutorService pool = Executors.newFixedThreadPool(32);
-        while(true){
-            if(Utils.isTradingTime()){
-                Stopwatch stopwatch = Stopwatch.createStarted();
-                System.out.println(Utils.formatDate(new Date(),"yyyyMMdd HH:mm:ss"));
-                CountDownLatch countDownLatch = new CountDownLatch(stockList.size());
-
-                for (String symbol : stockList) {
-                    pool.execute(() -> {
-                        if (dayMacdStrategy.isBuy(symbol)) {
-                            if (minute15MacdStrategy.isBuy(symbol)) {
-                                if(minute5MacdStrategy.isBuy(symbol)){
-                                    System.out.println(Provider.realtimeData(symbol));
-                                }
-                            }
-                        }
-                        countDownLatch.countDown();
-                    });
-                }
-                countDownLatch.await();
-                System.out.println("cost:"+stopwatch.elapsed(TimeUnit.MILLISECONDS)+"ms");
-            }
-            Sleeper.sleep(300*1000);
-        }
-
-//        Utils.closeThreadPool(pool);
-
-    }
 }
