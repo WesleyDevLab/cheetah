@@ -8,6 +8,7 @@ import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.indicators.Indicators;
 import com.zhaijiong.stock.model.*;
+import com.zhaijiong.stock.strategy.StrategyUtils;
 import com.zhaijiong.stock.tools.StockCategory;
 import com.zhaijiong.stock.tools.StockList;
 import org.slf4j.Logger;
@@ -60,7 +61,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> dailyData(String symbol) {
-        return dailyData(symbol,true);
+        return dailyData(symbol, true);
     }
 
     /**
@@ -113,17 +114,17 @@ public class Provider {
      * @return
      */
     public static List<StockData> dailyDataZS(String symbol,String startDate,String stopDate){
-        return DailyDataProvider.getZS(symbol,startDate,stopDate);
+        return DailyDataProvider.getZS(symbol, startDate, stopDate);
     }
 
     public static List<StockData> dailyDataZS(String symbol,int period){
         DateRange dateRange = DateRange.getRange(period);
-        return dailyDataZS(symbol,dateRange.start(),dateRange.stop());
+        return dailyDataZS(symbol, dateRange.start(), dateRange.stop());
     }
 
     public static List<StockData> dailyDataZS(String symbol){
         DateRange dateRange = DateRange.getRange(250);
-        return dailyDataZS(symbol,dateRange.start(),dateRange.stop());
+        return dailyDataZS(symbol, dateRange.start(), dateRange.stop());
     }
 
     /**
@@ -565,31 +566,37 @@ public class Provider {
         return stockDataList;
     }
 
+    /**
+     * 计算ma指标，包含5，10，20，30，60，120
+     * @param stockDataList
+     * @param columnName
+     * @return
+     */
     public static List<StockData> computeMA(List<StockData> stockDataList, String columnName) {
         List<StockData> maStockDatas = Lists.newArrayListWithCapacity(stockDataList.size());
         double[] closes = Utils.getArrayFrom(stockDataList, columnName);
         double[] ma5Arr = indicators.sma(closes, 5);
         double[] ma10Arr = indicators.sma(closes, 10);
-        double[] ma15Arr = indicators.sma(closes, 15);
         double[] ma20Arr = indicators.sma(closes, 20);
         double[] ma30Arr = indicators.sma(closes, 30);
+        double[] ma40Arr = indicators.sma(closes, 40);
         double[] ma60Arr = indicators.sma(closes, 60);
         double[] ma120Arr = indicators.sma(closes, 120);
         for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
             double ma5 = Utils.formatDouble(ma5Arr[i], "#.##");
             double ma10 = Utils.formatDouble(ma10Arr[i], "#.##");
-            double ma15 = Utils.formatDouble(ma15Arr[i], "#.##");
             double ma20 = Utils.formatDouble(ma20Arr[i], "#.##");
             double ma30 = Utils.formatDouble(ma30Arr[i], "#.##");
+            double ma40 = Utils.formatDouble(ma40Arr[i], "#.##");
             double ma60 = Utils.formatDouble(ma60Arr[i], "#.##");
             double ma120 = Utils.formatDouble(ma120Arr[i], "#.##");
 
             stockData.put(columnName + "_ma5", ma5);
             stockData.put(columnName + "_ma10", ma10);
-            stockData.put(columnName + "_ma15", ma15);
             stockData.put(columnName + "_ma20", ma20);
             stockData.put(columnName + "_ma30", ma30);
+            stockData.put(columnName + "_ma40", ma40);
             stockData.put(columnName + "_ma60", ma60);
             stockData.put(columnName + "_ma120", ma120);
 
@@ -598,12 +605,23 @@ public class Provider {
         return maStockDatas;
     }
 
+    /**
+     * 计算均线粘合程度
+     * @param stockDataList
+     * @param threshold 建议设置成0.005
+     * @return
+     */
+    public static List<StockData> computeAverageBond(List<StockData> stockDataList,double threshold){
+        return StrategyUtils.averageBond(stockDataList,threshold);
+    }
+
     public static List<StockData> computeDailyAll(String symbol, int period){
         List<StockData> stockDataList = Provider.dailyData(symbol, period + 60);
         stockDataList = computeMACD(stockDataList);
         stockDataList = computeMA(stockDataList,"close");
         stockDataList = computeMA(stockDataList,"volume");
         stockDataList = computeBoll(stockDataList);
+        stockDataList = computeAverageBond(stockDataList,0.005);
         return stockDataList;
     }
 

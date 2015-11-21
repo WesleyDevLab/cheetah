@@ -39,11 +39,13 @@ public class StockConstants {
     //均线指标
     public static String CLOSE_MA5 = "close_ma5";
     public static String CLOSE_MA10 = "close_ma10";
-    public static String CLOSE_MA15 = "close_ma15";
     public static String CLOSE_MA20 = "close_ma20";
     public static String CLOSE_MA30 = "close_ma30";
+    public static String CLOSE_MA40 = "close_ma40";
     public static String CLOSE_MA60 = "close_ma60";
     public static String CLOSE_MA120 = "close_ma120";
+
+    public static String AVERAGE_BOND = "average_bond";
 
     public static List<String> DAILY = Lists.newArrayList(
             "close",            //最新价,收盘价
