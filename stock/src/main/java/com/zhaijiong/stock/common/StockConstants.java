@@ -47,6 +47,8 @@ public class StockConstants {
 
     public static String AVERAGE_BOND = "average_bond";
 
+    public static String GOLDEN_SPIDER = "golden_spider";
+
     public static List<String> DAILY = Lists.newArrayList(
             "close",            //最新价,收盘价
             "high",             //最高价

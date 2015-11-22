@@ -2,6 +2,8 @@ package com.zhaijiong.stock.strategy;
 
 import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.StockConstants;
+import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.indicators.Indicators;
 import com.zhaijiong.stock.model.StockData;
 
 import java.util.List;
@@ -78,6 +80,44 @@ public class StrategyUtils {
                 }
             }
             stockData.put(AVERAGE_BOND,maCount);
+            result.add(stockData);
+        }
+        return result;
+    }
+
+    /**
+     * MA2:=EMA(C,2);
+     * MA5:EMA(C,5);
+     * MA13:EMA(C,13);
+     * MA34:EMA(C,34);
+     * MA55:EMA(C,55);
+     * YCX:=MA5>=REF(MA5,1);
+     * H1:=MAX(MAX(MA5,MA13),MA34);
+     * L1:=MIN(MIN(MA5,MA13),MA34);
+     * 一阳穿三线:= H1<C AND O<L1 AND YCX AND MA2>REF(MA2,1);
+     * @param stockDataList
+     * @return
+     */
+    public static List<StockData> goldenSpider(List<StockData> stockDataList){
+        Indicators indicators = new Indicators();
+        List<StockData> result = Lists.newLinkedList();
+        double[] closes = Utils.getArrayFrom(stockDataList, CLOSE);
+        double[] ma2 = indicators.ema(closes, 2);
+        double[] ma5 = indicators.ema(closes, 5);
+        double[] ma13 = indicators.ema(closes, 13);
+        double[] ma34 = indicators.ema(closes, 34);
+        double[] ma55 = indicators.ema(closes,55);
+        for(int i =1;i<stockDataList.size();i++){
+            StockData stockData = stockDataList.get(i);
+            if(ma5[i]>ma5[i-1]){
+                double close = stockData.get(CLOSE);
+                double open = stockData.get(OPEN);
+                double H1 = Math.max(Math.max(ma5[i],ma13[i]),ma34[i]);
+                double L1 = Math.min(Math.min(ma5[i],ma13[i]),ma34[i]);
+                if(H1 < close && open < L1 && ma2[i]>ma2[i-1]){
+                    stockData.put(GOLDEN_SPIDER,1d);
+                }
+            }
             result.add(stockData);
         }
         return result;
