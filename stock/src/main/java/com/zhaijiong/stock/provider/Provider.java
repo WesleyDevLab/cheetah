@@ -549,8 +549,6 @@ public class Provider {
             double upper = Utils.formatDouble(bbands[0][i], "#.##");
             double mid = Utils.formatDouble(bbands[1][i], "#.##");
             double lower = Utils.formatDouble(bbands[2][i], "#.##");
-            double shrink = (upper - lower) / 2;
-            System.out.println(Utils.formatDate(stockData.date, "MMdd") + " " + stockData.symbol + "\t" + upper + "\t" + mid + "\t" + lower);
             stockData.put(StockConstants.UPPER, upper);
             stockData.put(StockConstants.MID, mid);
             stockData.put(StockConstants.LOWER, lower);
@@ -616,7 +614,7 @@ public class Provider {
     }
 
     public static List<StockData> computeDailyAll(String symbol, int period){
-        List<StockData> stockDataList = Provider.dailyData(symbol, period + 60);
+        List<StockData> stockDataList = Provider.dailyData(symbol, period + 60,true);
         stockDataList = computeMACD(stockDataList);
         stockDataList = computeMA(stockDataList,"close");
         stockDataList = computeMA(stockDataList,"volume");

@@ -5,8 +5,12 @@ import com.zhaijiong.stock.BackTestTrader;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.strategy.buy.BuyStrategy;
+import com.zhaijiong.stock.strategy.buy.GoldenSpiderBuyStrategy;
 import com.zhaijiong.stock.strategy.buy.MACDBuyStrategy;
 import com.zhaijiong.stock.strategy.sell.MACDSellStrategy;
+import com.zhaijiong.stock.strategy.sell.MASellStrategy;
+import com.zhaijiong.stock.strategy.sell.SellStrategy;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,13 +21,15 @@ import java.util.concurrent.TimeUnit;
 public class BackTestTraderTest {
 
     private BackTestTrader backTestTrader;
+//    private BuyStrategy buyStrategy = new MACDBuyStrategy(1, PeriodType.DAY);
+//    private SellStrategy sellStrategy = new MACDSellStrategy(1, PeriodType.DAY);
+    private BuyStrategy buyStrategy = new GoldenSpiderBuyStrategy();
+    private SellStrategy sellStrategy = new MASellStrategy(10,3);
 
     @Before
     public void setUp() throws Exception {
         Context context = new Context();
-        MACDBuyStrategy macdBuyStrategy = new MACDBuyStrategy(1, PeriodType.DAY);
-        MACDSellStrategy macdSellStrategy = new MACDSellStrategy(1, PeriodType.DAY);
-        DefaultStrategy strategy = new DefaultStrategy(macdBuyStrategy,macdSellStrategy);
+        DefaultStrategy strategy = new DefaultStrategy(buyStrategy,sellStrategy);
         backTestTrader = new BackTestTrader(context,strategy);
     }
 
@@ -34,7 +40,7 @@ public class BackTestTraderTest {
 
     @Test
     public void testTest() throws Exception {
-        backTestTrader.test("600030");
+        backTestTrader.test("002271");
         backTestTrader.print();
     }
 

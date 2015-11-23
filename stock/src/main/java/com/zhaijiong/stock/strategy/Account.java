@@ -46,6 +46,8 @@ public class Account implements Cloneable{
     public double sharpe = 0;   //夏普率
     public double sortino = 0;  //所提诺比率
 
+    public double avgPostionDays = 0;   //平均持仓天数
+
     private List<Account> status = Lists.newLinkedList();
 
     //股票持仓情况

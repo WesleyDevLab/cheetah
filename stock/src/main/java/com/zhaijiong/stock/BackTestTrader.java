@@ -3,6 +3,7 @@ package com.zhaijiong.stock;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Context;
+import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
@@ -84,16 +85,14 @@ public class BackTestTrader {
 
     public void test(String symbol) {
         Account account = new Account();
-        List<StockData> stockDataList = Provider.dailyData(symbol, tradingDayCount, false);
-
-        for (int i = 60; i < stockDataList.size(); i++) {
+        List<StockData> stockDataList = Provider.computeDailyAll(symbol, tradingDayCount);
+        for (int i = 200; i < stockDataList.size(); i++) {
             List<StockData> tmpList = stockDataList.subList(0, i);
             Date date = tmpList.get(tmpList.size() - 1).date;
             if (account.isHold(symbol)) {
                 if (strategy.isSell(tmpList)) {
                     double stockStartPrice = tmpList.get(0).get("close");
                     double stockStopPrice = tmpList.get(tmpList.size() - 1).get("close");
-
                     double sellPrice = strategy.sell(tmpList);
                     account.sell(symbol,date,sellPrice);
                     account.benchmarkBenfit = stockStopPrice - stockStartPrice;

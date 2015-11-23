@@ -107,16 +107,24 @@ public class StrategyUtils {
         double[] ma13 = indicators.ema(closes, 13);
         double[] ma34 = indicators.ema(closes, 34);
         double[] ma55 = indicators.ema(closes,55);
-        for(int i =1;i<stockDataList.size();i++){
+        for(int i =0;i<stockDataList.size();i++){
             StockData stockData = stockDataList.get(i);
-            if(ma5[i]>ma5[i-1]){
+            if(i>0 && ma5[i]>ma5[i-1]){
                 double close = stockData.get(CLOSE);
                 double open = stockData.get(OPEN);
-                double H1 = Math.max(Math.max(ma5[i],ma13[i]),ma34[i]);
-                double L1 = Math.min(Math.min(ma5[i],ma13[i]),ma34[i]);
-                if(H1 < close && open < L1 && ma2[i]>ma2[i-1]){
-                    stockData.put(GOLDEN_SPIDER,1d);
+                double H3 = Math.max(Math.max(ma5[i],ma13[i]),ma34[i]);
+                double L3 = Math.min(Math.min(ma5[i],ma13[i]),ma34[i]);
+                double H4 = Math.max(Math.max(Math.max(ma5[i], ma13[i]), ma34[i]), ma55[i]);
+                double L4 = Math.min(Math.min(Math.min(ma5[i],ma13[i]),ma34[i]),ma55[i]);
+                if(H3 < close && open < L3 && ma2[i]>ma2[i-1]){
+                    stockData.put(GOLDEN_SPIDER,3d);
+                }else if(H4 < close && open < L4 && ma2[i]>ma2[i-1]){
+                    stockData.put(GOLDEN_SPIDER,4d);
+                }else{
+                    stockData.put(GOLDEN_SPIDER,0d);
                 }
+            }else{
+                stockData.put(GOLDEN_SPIDER,0d);
             }
             result.add(stockData);
         }

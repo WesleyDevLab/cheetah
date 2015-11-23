@@ -10,6 +10,7 @@ import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.strategy.buy.MACDBuyStrategy;
 import com.zhaijiong.stock.tools.Sleeper;
 import com.zhaijiong.stock.tools.StockCategory;
+import com.zhaijiong.stock.tools.StockPool;
 
 import java.util.Date;
 import java.util.List;
@@ -39,8 +40,7 @@ public class Recommender {
         conditions.addCondition("close", Conditions.Operation.LT,30d);
         conditions.addCondition("PE",Conditions.Operation.LT,200d);
         conditions.addCondition("marketValue",Conditions.Operation.LT,100d);
-//        List<String> stockList = Provider.getStockListWithConditions(Provider.tradingStockList(Provider.marginTradingStockList()),conditions);
-        List<String> stockList = Provider.tradingStockList(conditions);
+        List<String> stockList = StockPool.listByConditions(conditions);
         System.out.println("stockList="+stockList.size());
         ExecutorService pool = Executors.newFixedThreadPool(32);
         while(true){
