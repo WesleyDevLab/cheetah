@@ -3,7 +3,6 @@ package com.zhaijiong.stock;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Context;
-import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
@@ -22,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.zhaijiong.stock.common.Constants.*;
+import static com.zhaijiong.stock.common.Constants.POSITION_COLUMN;
 
 /**
  * 策略回测系统
@@ -118,9 +118,11 @@ public class BackTestTrader {
     public void export(String symbol,Account account){
         List accounts = account.getStatus();
         ExcelExportHelper excelExportHelper = new ExcelExportHelper();
-        HSSFWorkbook excel = excelExportHelper.exportExcel(EXCEL_HEADER, EXCEL_COLUMN, accounts, "account");
-        //TODO 添加sheet，增加汇总信息
+        HSSFWorkbook excel = excelExportHelper.exportExcel(ACCOUNT_HEADER, ACCOUNT_COLUMN, accounts, "账户历史");
+        List positionHis = account.getPositionHis();
+        excel = excelExportHelper.exportExcel(excel,POSITION_HEADER, POSITION_COLUMN, positionHis, "交易明细");
         excelExportHelper.saveExcel(excel,excelBaseDir,symbol);
+
     }
 
     public void print(){
@@ -130,7 +132,7 @@ public class BackTestTrader {
             accountList.add(accountEntry.getValue());
         }
         ExcelExportHelper excelExportHelper = new ExcelExportHelper();
-        HSSFWorkbook excel = excelExportHelper.exportExcel(EXCEL_HEADER, EXCEL_COLUMN, accountList, "total");
+        HSSFWorkbook excel = excelExportHelper.exportExcel(ACCOUNT_HEADER, ACCOUNT_COLUMN, accountList, "total");
         excelExportHelper.saveExcel(excel,excelBaseDir,"summary");
         //TODO 输入所有股票的平均状态
     }

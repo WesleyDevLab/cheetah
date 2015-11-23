@@ -162,6 +162,17 @@ public class ExcelExportHelper {
         return book;
     }
 
+    public HSSFWorkbook exportExcel(HSSFWorkbook book,String[] header, String[] properties, List<Object> excelList,
+                                    String sheetTitle) {
+        //生成一个Excel
+        // 生成一个表格
+        sheetTitle = getSheetTitle(sheetTitle); // 判断、设置sheetTitle
+        HSSFSheet sheet = book.createSheet(sheetTitle);
+        // 设置Excel里面数据
+        setExcelContentData(book, sheet, header, properties, excelList);
+        return book;
+    }
+
     /**
      * 通用方法，使用 java 反射机制，根据提供表头 header ，数据列 excelList 生成 Excel,并将Excel保存至某个路径下,
      * 如有图片请转换为byte[]<br>
