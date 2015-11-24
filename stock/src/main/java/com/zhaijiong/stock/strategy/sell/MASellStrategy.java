@@ -32,7 +32,7 @@ public class MASellStrategy implements SellStrategy{
 
     @Override
     public double sell(String symbol) {
-        List<StockData> stockDataList = Provider.dailyData(symbol,500,false);
+        List<StockData> stockDataList = Provider.dailyData(symbol,500,true);
         return sell(stockDataList);
     }
 
@@ -43,7 +43,7 @@ public class MASellStrategy implements SellStrategy{
 
     @Override
     public boolean isSell(String symbol) {
-        List<StockData> stockDataList = Provider.dailyData(symbol,500,false);
+        List<StockData> stockDataList = Provider.dailyData(symbol,500,true);
         return isSell(stockDataList);
     }
 
@@ -61,7 +61,6 @@ public class MASellStrategy implements SellStrategy{
             }
         }
         if(tmpCount>=3){
-            System.out.println(stockDataList.get(size-1) + ":" + tmpCount);
             return true;
         }
         return false;

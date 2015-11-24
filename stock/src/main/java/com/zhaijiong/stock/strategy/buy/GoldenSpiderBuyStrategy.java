@@ -2,6 +2,7 @@ package com.zhaijiong.stock.strategy.buy;
 
 import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.StockConstants;
+import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.strategy.StrategyUtils;
@@ -25,7 +26,7 @@ public class GoldenSpiderBuyStrategy implements BuyStrategy {
 
     @Override
     public double buy(String symbol) {
-        List<StockData> stockDataList = Provider.dailyData(symbol,false);
+        List<StockData> stockDataList = Provider.dailyData(symbol,true);
         return buy(stockDataList);
     }
 
@@ -44,7 +45,7 @@ public class GoldenSpiderBuyStrategy implements BuyStrategy {
 
     @Override
     public boolean isBuy(String symbol) {
-        List<StockData> stockDataList = Provider.dailyData(symbol, false);
+        List<StockData> stockDataList = Provider.dailyData(symbol, true);
         return isBuy(stockDataList);
     }
 
@@ -53,12 +54,8 @@ public class GoldenSpiderBuyStrategy implements BuyStrategy {
         int size = stockDataList.size();
         stockDataList = StrategyUtils.goldenSpider(stockDataList);
         if(size>2){
-            double ma5_pre = stockDataList.get(size-2).get(StockConstants.CLOSE_MA5);
-            double ma10_pre = stockDataList.get(size-2).get(StockConstants.CLOSE_MA10);
-            double ma5 = stockDataList.get(size-1).get(StockConstants.CLOSE_MA5);
-            double ma10 = stockDataList.get(size -1).get(StockConstants.CLOSE_MA10);
             double status = stockDataList.get(size - 1).get(StockConstants.GOLDEN_SPIDER);
-            if(status>=crossCount && ma5_pre < ma5 && ma10_pre<ma10){
+            if(status>=crossCount){
                 return true;
             }
         }
