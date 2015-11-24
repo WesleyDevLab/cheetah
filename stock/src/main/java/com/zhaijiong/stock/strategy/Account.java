@@ -28,7 +28,8 @@ public class Account implements Cloneable{
     public double pnlRate = 0;    //收益率=交易盈亏/起始资产
     public double annualReturn = 0; //年化收益率= 交易盈亏 / (平均持股天数/交易总天数)
 
-    public double avgPostionDays = 0;   //平均每只股票持仓天数
+    public int avgPositionDays = 0;   //平均每只股票持仓天数
+    public int totalPositionDays = 0;    //持仓总天数
 
     public double maxEarnPerOp = 0; //最大单笔盈利
     public double maxLossPerOp = 0; //最大单笔亏损
@@ -149,6 +150,7 @@ public class Account implements Cloneable{
     }
 
     public boolean buy(String symbol,Date date,double buyPrice){
+        this.date = date;
         long volume = new Double((Math.floor((this.end / buyPrice/100)))).longValue()*100;
         if(volume>0){
             return buy(symbol,date,volume,buyPrice);
@@ -184,7 +186,11 @@ public class Account implements Cloneable{
                 this.min = this.end;
             }
         }
-        this.pnlRate = this.pnl / this.end;
+        int dayCount = Utils.daysBetween(this.date,sellDate);
+        this.totalPositionDays += dayCount;
+        this.avgPositionDays = totalPositionDays/this.totalOperate;
+
+        this.pnlRate = this.pnl / this.start;
         this.accuracy = Double.parseDouble(String.valueOf(this.earnOperate)) / this.totalOperate;
         this.meanEarnPerOp = this.pnl / this.totalOperate;
         this.drawdown = this.max - this.min;
@@ -393,12 +399,12 @@ public class Account implements Cloneable{
         this.sortino = sortino;
     }
 
-    public double getAvgPostionDays() {
-        return avgPostionDays;
+    public int getAvgPositionDays() {
+        return avgPositionDays;
     }
 
-    public void setAvgPostionDays(double avgPostionDays) {
-        this.avgPostionDays = avgPostionDays;
+    public void setAvgPositionDays(int avgPositionDays) {
+        this.avgPositionDays = avgPositionDays;
     }
 
     public List<Position> getPositionHis() {
@@ -407,5 +413,13 @@ public class Account implements Cloneable{
 
     public void setPositionHis(List<Position> positionHis) {
         this.positionHis = positionHis;
+    }
+
+    public int getTotalPositionDays() {
+        return totalPositionDays;
+    }
+
+    public void setTotalPositionDays(int totalPositionDays) {
+        this.totalPositionDays = totalPositionDays;
     }
 }
