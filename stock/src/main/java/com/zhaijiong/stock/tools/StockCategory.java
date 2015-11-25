@@ -125,15 +125,19 @@ public class StockCategory {
     public static Map<String,Set<String>> getStockCategory(String type){
         List<StockBlock> stockBlocks = getCategory().get(type);
         Map<String,Set<String>> symbolMap = Maps.newTreeMap();
-        for(StockBlock stockBlock :stockBlocks){
-            for(String symbol:stockBlock.symbolList){
-                Set<String> category = symbolMap.get(symbol);
-                if(category == null){
-                    category = Sets.newHashSet();
+        if(stockBlocks!=null){
+            for(StockBlock stockBlock :stockBlocks){
+                for(String symbol:stockBlock.symbolList){
+                    Set<String> category = symbolMap.get(symbol);
+                    if(category == null){
+                        category = Sets.newHashSet();
+                    }
+                    category.add(stockBlock.name);
+                    symbolMap.put(symbol, category);
                 }
-                category.add(stockBlock.name);
-                symbolMap.put(symbol, category);
             }
+        }else{
+            LOG.warn("get stock category failed");
         }
         return symbolMap;
     }
