@@ -2,15 +2,21 @@ package com.zhaijiong.stock;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Sets;
 import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.strategy.buy.BuyStrategy;
+import com.zhaijiong.stock.strategy.buy.GoldenSpiderBuyStrategy;
 import com.zhaijiong.stock.strategy.buy.MACDBuyStrategy;
+import com.zhaijiong.stock.strategy.sell.SellStrategy;
 import com.zhaijiong.stock.tools.Sleeper;
 import com.zhaijiong.stock.tools.StockCategory;
 import com.zhaijiong.stock.tools.StockPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -28,16 +34,40 @@ import java.util.concurrent.TimeUnit;
  * date: 15-11-19.
  */
 public class Recommender {
-    public static void main(String[] args) throws InterruptedException {
-//        Map<String, List<String>> stockCategory = StockCategory.getStockCategory();
-        Map<String, Set<String>> stockCategory = StockCategory.getStockCategory("概念");
+    protected static final Logger LOG = LoggerFactory.getLogger(Recommender.class);
 
+    protected Set<String> holdingStocks = Sets.newConcurrentHashSet();
+
+    protected static Map<String, Set<String>> stockCategory = StockCategory.getStockCategory("概念");
+
+    /**
+     * 获取股票所属概念版块名称列表
+     * @param symbol    6位股票代码
+     * @return
+     */
+    public static String getStockCategory(String symbol){
+        if(stockCategory.get(symbol)!=null){
+            return Joiner.on(",").join(stockCategory.get(symbol));
+        }
+        return "";
+    }
+
+    public void process(List<String> symbols){
+
+    }
+
+    public void recommender(String symbol){
+
+    }
+
+    public static void main(String[] args) throws InterruptedException {
         MACDBuyStrategy dayMacdStrategy = new MACDBuyStrategy(1, PeriodType.DAY);
         MACDBuyStrategy minute15MacdStrategy = new MACDBuyStrategy(3,PeriodType.FIFTEEN_MIN);
         MACDBuyStrategy minute5MacdStrategy = new MACDBuyStrategy(3,PeriodType.FIVE_MIN);
+        GoldenSpiderBuyStrategy goldenSpiderBuyStrategy = new GoldenSpiderBuyStrategy();
 
         Conditions conditions = new Conditions();
-        conditions.addCondition("close", Conditions.Operation.LT,30d);
+        conditions.addCondition("close", Conditions.Operation.LT,20d);
         conditions.addCondition("PE",Conditions.Operation.LT,200d);
         conditions.addCondition("marketValue",Conditions.Operation.LT,100d);
         List<String> stockList = StockPool.listByConditions(conditions);
@@ -51,6 +81,7 @@ public class Recommender {
 
                 for (String symbol : stockList) {
                     pool.execute(() -> {
+
                         if (dayMacdStrategy.isBuy(symbol)) {
                             if (minute15MacdStrategy.isBuy(symbol)) {
 //                                if(minute5MacdStrategy.isBuy(symbol)){
@@ -59,12 +90,8 @@ public class Recommender {
                                     stockData.name,stockData.symbol,
                                     stockData.get("close"),
                                     stockData.get("PE"));
-                                String category = "";
-                                if(stockCategory.get(symbol)!=null){
-                                    category = Joiner.on(",").join(stockCategory.get(symbol));
-                                }
 
-                                System.out.println(record + "\t" + category);
+                                System.out.println(record + "\t" + getStockCategory(symbol));
 //                                }
                             }
                         }
@@ -76,8 +103,5 @@ public class Recommender {
             }
             Sleeper.sleep(120 * 1000);
         }
-
-//        Utils.closeThreadPool(pool);
-
     }
 }
