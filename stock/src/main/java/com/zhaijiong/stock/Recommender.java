@@ -33,75 +33,82 @@ import java.util.concurrent.TimeUnit;
  * mail: xuqi86@gmail.com
  * date: 15-11-19.
  */
-public class Recommender {
+public abstract class Recommender {
     protected static final Logger LOG = LoggerFactory.getLogger(Recommender.class);
-
-    protected Set<String> holdingStocks = Sets.newConcurrentHashSet();
 
     protected static Map<String, Set<String>> stockCategory = StockCategory.getStockCategory("概念");
 
+    protected static ExecutorService pool = Executors.newFixedThreadPool(32);
+
+    private String name;
+
+    private boolean isAlert = false;
+
+    public Recommender(String name) {
+        this.name = name;
+    }
+
     /**
      * 获取股票所属概念版块名称列表
-     * @param symbol    6位股票代码
+     *
+     * @param symbol 6位股票代码
      * @return
      */
-    public static String getStockCategory(String symbol){
-        if(stockCategory.get(symbol)!=null){
+    public static String getStockCategory(String symbol) {
+        if (stockCategory.get(symbol) != null) {
             return Joiner.on(",").join(stockCategory.get(symbol));
         }
         return "";
     }
 
-    public void process(List<String> symbols){
-
-    }
-
-    public void recommender(String symbol){
-
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        MACDBuyStrategy dayMacdStrategy = new MACDBuyStrategy(1, PeriodType.DAY);
-        MACDBuyStrategy minute15MacdStrategy = new MACDBuyStrategy(3,PeriodType.FIFTEEN_MIN);
-        MACDBuyStrategy minute5MacdStrategy = new MACDBuyStrategy(3,PeriodType.FIVE_MIN);
-        GoldenSpiderBuyStrategy goldenSpiderBuyStrategy = new GoldenSpiderBuyStrategy();
-
-        Conditions conditions = new Conditions();
-        conditions.addCondition("close", Conditions.Operation.LT,20d);
-        conditions.addCondition("PE",Conditions.Operation.LT,200d);
-        conditions.addCondition("marketValue",Conditions.Operation.LT,100d);
-        List<String> stockList = StockPool.listByConditions(conditions);
-        System.out.println("stockList="+stockList.size());
-        ExecutorService pool = Executors.newFixedThreadPool(32);
-        while(true){
-            if(Utils.isTradingTime()){
-                Stopwatch stopwatch = Stopwatch.createStarted();
-                System.out.println(Utils.formatDate(new Date(),"yyyyMMdd HH:mm:ss"));
-                CountDownLatch countDownLatch = new CountDownLatch(stockList.size());
-
-                for (String symbol : stockList) {
-                    pool.execute(() -> {
-
-                        if (dayMacdStrategy.isBuy(symbol)) {
-                            if (minute15MacdStrategy.isBuy(symbol)) {
-//                                if(minute5MacdStrategy.isBuy(symbol)){
-                                StockData stockData = Provider.realtimeData(symbol);
-                            String record = Joiner.on("\t").join(
-                                    stockData.name,stockData.symbol,
-                                    stockData.get("close"),
-                                    stockData.get("PE"));
-
-                                System.out.println(record + "\t" + getStockCategory(symbol));
-//                                }
-                            }
+    /**
+     * 调用isBuy的策略对股票池进行验证，默认处理时间应小于5分钟
+     * @param symbols
+     */
+    public void process(List<String> symbols) {
+        LOG.info(String.format("Recommender %s is start processing,symbols count=%s",name,symbols.size()));
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        CountDownLatch countDownLatch = new CountDownLatch(symbols.size());
+        for (String symbol : symbols) {
+            pool.execute(() -> {
+                try {
+                    if (isBuy(symbol)) {
+                        StockData stockData = Provider.realtimeData(symbol);
+                        recommender(stockData);
+                        if(isAlert){
+                            alert(stockData);
                         }
-                        countDownLatch.countDown();
-                    });
+                    }
+                } catch (Exception e) {
+                    LOG.error(String.format("fail to process [%s]", symbol), e);
+                } finally {
+                    countDownLatch.countDown();
                 }
-                countDownLatch.await();
-                System.out.println("cost:"+stopwatch.elapsed(TimeUnit.SECONDS)+"s");
-            }
-            Sleeper.sleep(120 * 1000);
+            });
         }
+        try {
+            countDownLatch.await(300, TimeUnit.SECONDS); //对股票池的处理操作应小于5分钟
+        } catch (InterruptedException e) {
+            LOG.error(e.getMessage());
+        }
+        System.out.println("process elapsed time=" + stopwatch.elapsed(TimeUnit.SECONDS) + "s");
     }
+
+    public void recommender(StockData stockData) {
+        String record = Joiner.on("\t").join(
+                stockData.name, stockData.symbol,
+                stockData.get("close"),
+                stockData.get("PE"));
+        System.out.println(record + "\t" + getStockCategory(stockData.symbol));
+    }
+
+    //TODO 增加QQ、短信、微信、Mail报警
+    public void alert(StockData stockData){}
+
+    public abstract boolean isBuy(String symbol);
+
+    public static void close(){
+        Utils.closeThreadPool(pool);
+    }
+
 }

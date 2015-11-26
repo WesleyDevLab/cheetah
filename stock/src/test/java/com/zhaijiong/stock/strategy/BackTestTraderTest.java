@@ -2,12 +2,14 @@ package com.zhaijiong.stock.strategy;
 
 import com.google.common.base.Stopwatch;
 import com.zhaijiong.stock.BackTestTrader;
+import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.strategy.buy.BuyStrategy;
 import com.zhaijiong.stock.strategy.buy.GoldenSpiderBuyStrategy;
 import com.zhaijiong.stock.strategy.buy.MACDBuyStrategy;
+import com.zhaijiong.stock.strategy.sell.GoldenSpiderSellStrategy;
 import com.zhaijiong.stock.strategy.sell.MACDSellStrategy;
 import com.zhaijiong.stock.strategy.sell.MASellStrategy;
 import com.zhaijiong.stock.strategy.sell.SellStrategy;
@@ -24,7 +26,7 @@ public class BackTestTraderTest {
 //    private BuyStrategy buyStrategy = new MACDBuyStrategy(1, PeriodType.DAY);
 //    private SellStrategy sellStrategy = new MACDSellStrategy(1, PeriodType.DAY);
     private BuyStrategy buyStrategy = new GoldenSpiderBuyStrategy();
-    private SellStrategy sellStrategy = new MASellStrategy(10,3);
+    private SellStrategy sellStrategy = new GoldenSpiderSellStrategy();
 
     @Before
     public void setUp() throws Exception {
@@ -47,7 +49,11 @@ public class BackTestTraderTest {
     @Test
     public void testTestList() throws Exception {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        List<String> stockDatalist = Provider.stockList();
+        Conditions conditions = new Conditions();
+        conditions.addCondition("close", Conditions.Operation.LT,20d);
+        conditions.addCondition("PE",Conditions.Operation.LT,200d);
+        conditions.addCondition("marketValue",Conditions.Operation.LT,100d);
+        List<String> stockDatalist = Provider.tradingStockList(conditions);
         System.out.println("stockDataList:"+stockDatalist.size());
         backTestTrader.test(stockDatalist);
         System.out.println("cost:"+stopwatch.elapsed(TimeUnit.SECONDS)+"s");
