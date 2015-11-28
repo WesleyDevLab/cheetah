@@ -89,10 +89,10 @@ public class MACDBuyStrategy implements BuyStrategy {
                 stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "60"));
                 break;
             case DAY:
-                stockDataList = Lists.newArrayList(Provider.dailyData(symbol,false));
+                stockDataList = Lists.newArrayList(Provider.dailyData(symbol,true));
                 break;
             default:
-                stockDataList = Lists.newArrayList(Provider.dailyData(symbol,false));
+                stockDataList = Lists.newArrayList(Provider.dailyData(symbol,true));
         }
         return stockDataList;
     }

@@ -1,24 +1,14 @@
-package com.zhaijiong.stock;
+package com.zhaijiong.stock.recommend;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Sets;
-import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
-import com.zhaijiong.stock.strategy.buy.BuyStrategy;
-import com.zhaijiong.stock.strategy.buy.GoldenSpiderBuyStrategy;
-import com.zhaijiong.stock.strategy.buy.MACDBuyStrategy;
-import com.zhaijiong.stock.strategy.sell.SellStrategy;
-import com.zhaijiong.stock.tools.Sleeper;
 import com.zhaijiong.stock.tools.StockCategory;
-import com.zhaijiong.stock.tools.StockPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +33,8 @@ public abstract class Recommender {
     private String name;
 
     private boolean isAlert = false;
+
+    public Recommender(){}
 
     public Recommender(String name) {
         this.name = name;
@@ -74,7 +66,11 @@ public abstract class Recommender {
                 try {
                     if (isBuy(symbol)) {
                         StockData stockData = Provider.realtimeData(symbol);
-                        recommender(stockData);
+                        if(stockData!=null){
+                            recommend(stockData);
+                        }else{
+                            LOG.warn(String.format("fait to get realtime data,symbol is [%s]"));
+                        }
                         if(isAlert){
                             alert(stockData);
                         }
@@ -94,12 +90,12 @@ public abstract class Recommender {
         System.out.println("process elapsed time=" + stopwatch.elapsed(TimeUnit.SECONDS) + "s");
     }
 
-    public void recommender(StockData stockData) {
+    public void recommend(StockData stockData) {
         String record = Joiner.on("\t").join(
                 stockData.name, stockData.symbol,
                 stockData.get("close"),
                 stockData.get("PE"));
-        System.out.println(record + "\t" + getStockCategory(stockData.symbol));
+        LOG.info(record + "\t" + getStockCategory(stockData.symbol));
     }
 
     //TODO 增加QQ、短信、微信、Mail报警

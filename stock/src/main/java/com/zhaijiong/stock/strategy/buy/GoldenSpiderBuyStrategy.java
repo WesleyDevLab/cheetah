@@ -6,6 +6,7 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.strategy.StrategyUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
