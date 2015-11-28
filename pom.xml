@@ -18,12 +18,13 @@
     <modules>
         <module>stock</module>
         <module>crawler</module>
+        <module>web</module>
     </modules>
 
     <properties>
         <!--<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
-        <!--&lt;!&ndash;<java.version>1.6</java.version>&ndash;&gt;-->
-        <!--&lt;!&ndash;<tomcat.version>7.0.59</tomcat.version>&ndash;&gt;-->
+        <!--<!--<java.version>1.6</java.version>-->-->
+        <!--<!--<tomcat.version>7.0.59</tomcat.version>-->-->
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
