@@ -2,7 +2,8 @@ package com.zhaijiong.stock;
 
 import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.model.PeriodType;
-import com.zhaijiong.stock.strategy.buy.GoldenSpiderBuyStrategy;
+import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.recommend.Recommender;
 import com.zhaijiong.stock.strategy.buy.MACDBuyStrategy;
 import com.zhaijiong.stock.tools.StockPool;
 import org.junit.After;
@@ -10,8 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class RecommenderTest {
 
@@ -44,7 +43,17 @@ public class RecommenderTest {
                 }
                 return false;
             }
+
+            @Override
+            public boolean isBuy(List<StockData> stockDataList) {
+                if (dayMacdStrategy.isBuy(stockDataList) && minute15MacdStrategy.isBuy(stockDataList)) {
+                    return true;
+                }
+                return false;
+            }
+
         };
+
         recommender.process(stockList);
         recommender.close();
     }

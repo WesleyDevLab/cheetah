@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 简单推荐器 -->
+    <bean id="simpleRecommender" class="com.zhaijiong.stock.recommend.SimpleRecommender">
+        <property name="name" value="simple"/>
+        <property name="buyStrategy" ref="goldenSpiderBuyStrategy"/>
+    </bean>
+
+    <!-- 组合推荐器，将简单Recommender组合起来作股票推荐 -->
+    <bean id="combinedRecommender" class="com.zhaijiong.stock.recommend.CombinedRecommender">
+        <property name="name" value="combined"/>
+        <property name="recommenderList">
+            <list>
+                <ref bean="macdRecommender"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="goldenSpiderRecommender" class="com.zhaijiong.stock.recommend.GoldenSpiderRecommender">
+        <property name="name" value="goldenSpider"/>
+    </bean>
+
+    <bean id="macdRecommender" class="com.zhaijiong.stock.recommend.MACDRecommender">
+        <property name="name" value="macd"/>
+    </bean>
+
+
+
+</beans>

@@ -30,7 +30,7 @@ public abstract class Recommender {
 
     protected static ExecutorService pool = Executors.newFixedThreadPool(32);
 
-    private String name;
+    protected String name;
 
     private boolean isAlert = false;
 
@@ -103,8 +103,17 @@ public abstract class Recommender {
 
     public abstract boolean isBuy(String symbol);
 
+    public abstract boolean isBuy(List<StockData> stockDataList);
+
     public static void close(){
         Utils.closeThreadPool(pool);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

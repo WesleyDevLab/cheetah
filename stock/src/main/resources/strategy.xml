@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dayMACDBuyStrategy" class="com.zhaijiong.stock.strategy.buy.MACDBuyStrategy">
+        <constructor-arg index="0" value="3"/>
+        <constructor-arg index="1" value="DAY"/>
+    </bean>
+
+    <bean id="minute15BuyStrategy" class="com.zhaijiong.stock.strategy.buy.MACDBuyStrategy">
+        <constructor-arg index="0" value="3"/>
+        <constructor-arg index="1" value="FIFTEEN_MIN"/>
+    </bean>
+
+    <bean id="goldenSpiderBuyStrategy" class="com.zhaijiong.stock.strategy.buy.GoldenSpiderBuyStrategy">
+        <constructor-arg value="3"/>
+    </bean>
+
+</beans>
