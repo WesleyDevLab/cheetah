@@ -53,6 +53,9 @@ public class GoldenSpiderBuyStrategy implements BuyStrategy {
     @Override
     public boolean isBuy(List<StockData> stockDataList) {
         int size = stockDataList.size();
+        if(stockDataList.size()<60){
+            stockDataList = Provider.dailyData(stockDataList.get(0).symbol,500,true);
+        }
         stockDataList = StrategyUtils.goldenSpider(stockDataList);
         if(size>2){
             double status = stockDataList.get(size - 1).get(StockConstants.GOLDEN_SPIDER);
