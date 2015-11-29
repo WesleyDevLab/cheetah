@@ -411,6 +411,12 @@ public class Utils {
         return closes;
     }
 
+    public static String[] toArray(List stockList){
+        String[] array = new String[stockList.size()];
+        stockList.toArray(array);
+        return array;
+    }
+
     /**
      * 判断当前时间是否是交易时间段
      * 上午：09:30-11:30

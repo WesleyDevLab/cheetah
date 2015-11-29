@@ -1,6 +1,7 @@
 package com.zhaijiong.stock.common;
 
 import com.google.common.collect.Lists;
+import com.zhaijiong.stock.provider.Provider;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,5 +42,13 @@ public class UtilsTest {
     @Test
     public void testIsTradingTime(){
         System.out.println(Utils.isTradingTime());
+    }
+
+    @Test
+    public void toArray(){
+        String[] array = Utils.toArray(Provider.tradingStockList());
+        for(String stock:array){
+            System.out.println(stock);
+        }
     }
 }
