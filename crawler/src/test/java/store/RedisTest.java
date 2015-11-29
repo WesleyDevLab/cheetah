@@ -14,8 +14,8 @@ public class RedisTest {
     @Before
     public void setUp() throws Exception {
         Config config = new Config("crawler.yaml");
-        redis = new Redis(config);
-        redis.init();
+        redis = new Redis();
+        redis.init(config);
     }
 
     @After

@@ -63,7 +63,8 @@ public class StrategyUtilsTest {
         conditions.addCondition("close", Conditions.Operation.LT,30d);
         conditions.addCondition("PE",Conditions.Operation.LT,200d);
         conditions.addCondition("marketValue", Conditions.Operation.LT, 100d);
-        List<String> stockList = StockPool.listByConditions(conditions);
+        StockPool stockPool = new StockPool();
+        List<String> stockList = stockPool.listByConditions(conditions);
 
         CountDownLatch countDownLatch = new CountDownLatch(stockList.size());
         for(String stock :stockList){

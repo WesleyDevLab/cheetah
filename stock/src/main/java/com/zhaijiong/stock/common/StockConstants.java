@@ -25,6 +25,8 @@ public class StockConstants {
     public static String AMPLITUDE = "amplitude";           //振幅
     public static String FACTOR = "factor";                 //复权因子
 
+    public static String PE = "PE";                         //动态市盈率
+
     public static String POSITION="position";
     //macd指标
     public static String DIF = "dif";

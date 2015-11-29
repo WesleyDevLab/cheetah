@@ -33,12 +33,14 @@ public class RecommenderTest {
         conditions.addCondition("close", Conditions.Operation.LT, 20d);
         conditions.addCondition("PE", Conditions.Operation.LT, 200d);
         conditions.addCondition("marketValue", Conditions.Operation.LT, 200d);
-        List<String> stockList = StockPool.listByConditions(conditions);
+        StockPool stockPool = new StockPool();
+        List<String> stockList = stockPool.listByConditions(conditions);
 
         Recommender recommender = new Recommender("macd_day_15min") {
             @Override
             public boolean isBuy(String symbol) {
-                if (dayMacdStrategy.isBuy(symbol) && minute15MacdStrategy.isBuy(symbol)) {
+                if (dayMacdStrategy.isBuy(symbol) ) {
+                    if(minute15MacdStrategy.isBuy(symbol))
                     return true;
                 }
                 return false;

@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -10,9 +11,21 @@
 
     <context:component-scan base-package="com.zhaijiong.stock"/>
 
-    <task:annotation-driven executor="executor" scheduler="scheduler"/>
-    <task:executor id="executor" pool-size="16" queue-capacity="128"/>
-    <task:scheduler id="scheduler" pool-size="16"/>
+    <!--<task:annotation-driven executor="executor" scheduler="scheduler"/>-->
+    <!--<task:executor id="executor" pool-size="16" queue-capacity="128"/>-->
+    <!--<task:scheduler id="scheduler" pool-size="16"/>-->
 
+    <bean id="context" class="com.zhaijiong.stock.common.Context">
+        <constructor-arg value="conf.yaml"/>
+    </bean>
 
+    <bean id="recommendSystem" class="com.zhaijiong.stock.recommend.RecommendSystem"/>
+
+    <bean id="stockPool" class="com.zhaijiong.stock.tools.StockPool"/>
+
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+          p:hostName="112.124.60.26" p:port="6399" />
+
+    <!-- redis template definition -->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" p:connectionFactory-ref="jedisConnectionFactory"/>
 </beans>

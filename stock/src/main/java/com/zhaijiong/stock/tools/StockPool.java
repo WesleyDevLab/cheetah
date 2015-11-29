@@ -1,11 +1,16 @@
 package com.zhaijiong.stock.tools;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.model.StockBlock;
 import com.zhaijiong.stock.provider.Provider;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Map;
+
+import static com.zhaijiong.stock.common.StockConstants.*;
 
 /**
  * author: eryk
@@ -13,6 +18,40 @@ import java.util.List;
  * date: 15-11-21.
  */
 public class StockPool {
+
+    public static Map<String,List<String>> stockPool = Maps.newConcurrentMap();
+
+    public StockPool(){}
+
+    public synchronized boolean add(String name,List<String> stockList){
+        if(stockPool.containsKey(name)){
+            return false;
+        }else{
+            stockPool.put(name,stockList);
+        }
+        return true;
+    }
+
+    public List<String> get(String key){
+        return stockPool.get(key);
+    }
+
+    public int size(){
+        return stockPool.size();
+    }
+
+    @PostConstruct
+    public static synchronized void build(){
+        if(stockPool.size()==0){
+            stockPool.put("trading",Provider.tradingStockList());
+            stockPool.put("margin",Provider.marginTradingStockList());
+            Conditions conditions = new Conditions();
+            conditions.addCondition(CLOSE, Conditions.Operation.LT, 20d);
+            conditions.addCondition(PE, Conditions.Operation.LT, 200d);
+            conditions.addCondition(MARKET_VALUE, Conditions.Operation.LT, 100d);
+            stockPool.put("small",listByConditions(conditions));
+        }
+    }
 
     /**
      * 获取股票列表中交易中的股票列表
