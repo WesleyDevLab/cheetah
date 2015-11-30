@@ -26,7 +26,7 @@ public class IndicatorsTest {
     public void setUp() throws Exception {
         indicators = new Indicators();
         context = new Context();
-        stockDB = new StockDB(context);
+        stockDB = new StockDB();
     }
 
     @After

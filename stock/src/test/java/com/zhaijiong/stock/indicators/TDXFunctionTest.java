@@ -20,7 +20,7 @@ public class TDXFunctionTest {
         String start = "20150312";
         String stop = "20150821";
         Context context = new Context();
-        StockDB stockDB = new StockDB(context);
+        StockDB stockDB = new StockDB();
         List<StockData> stocks = stockDB.getStockDataDaily("600376",start,stop);
 
         double[] prices = new double[stocks.size()];
@@ -60,7 +60,7 @@ public class TDXFunctionTest {
         String start = "20150701";
         String stop = "20150821";
         Context context = new Context();
-        StockDB stockDB = new StockDB(context);
+        StockDB stockDB = new StockDB();
         List<StockData> stocks = stockDB.getStockDataDaily("600376",start,stop);
 
         double[] prices = new double[stocks.size()];

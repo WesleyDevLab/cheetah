@@ -2,7 +2,6 @@ package com.zhaijiong.stock.strategy.buy;
 
 import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.provider.Provider;
-import com.zhaijiong.stock.tools.StockCategory;
 import com.zhaijiong.stock.tools.StockPool;
 import com.zhaijiong.stock.tools.ThreadPool;
 import org.junit.Test;
@@ -12,11 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)  //使用junit4进行测试
 @ContextConfiguration({"classpath:applicationContext.xml"}) //加载配置文件

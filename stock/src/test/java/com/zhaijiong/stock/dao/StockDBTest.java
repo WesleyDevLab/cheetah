@@ -10,26 +10,21 @@ import com.zhaijiong.stock.tools.StockList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
+@RunWith(SpringJUnit4ClassRunner.class)  //使用junit4进行测试
+@ContextConfiguration({"classpath:applicationContext.xml"}) //加载配置文件
 public class StockDBTest {
-    String table = "stocks_day";
-    Context context;
 
-
-    @Before
-    public void setUp() throws Exception {
-        context = new Context();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        context.close();
-    }
+    @Autowired
+    StockDB stockDB;
 
     @Test
     public void testSetAll() throws Exception {
@@ -58,7 +53,7 @@ public class StockDBTest {
         DailyDataProvider collecter = new DailyDataProvider();
         List<StockData> stocks = collecter.getFQ(symbol, start, stop);
 
-        StockDB stockDB = new StockDB(context);
+        StockDB stockDB = new StockDB();
         stockDB.saveStockDailyData(stocks);
     }
 
@@ -78,7 +73,7 @@ public class StockDBTest {
         String stop = DateRange.getRange(3).stop();
         String symbol = "600376";
 
-        StockDB stockDB = new StockDB(context);
+        StockDB stockDB = new StockDB();
         List<StockData> stocks = stockDB.getStockDataDaily(symbol, start, stop);
         for (StockData stock : stocks) {
             System.out.println(stock.date);
@@ -94,32 +89,11 @@ public class StockDBTest {
         String stop = "20150826";
         String symbol = "600376";
 
-        StockDB stockDB = new StockDB(context);
+        StockDB stockDB = new StockDB();
         List<StockData> stocks = stockDB.getStockData15Min(symbol, start, stop);
         for (StockData stock : stocks) {
             System.out.println(stock.date + stock.toString());
         }
-    }
-
-    @Test
-    public void testSaveStockList() throws IOException {
-        StockDB stockDB = new StockDB(context);
-        stockDB.saveStockSymbols(StockList.getMap());
-        context.close();
-    }
-
-    @Test
-    public void testGetStockList(){
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        StockDB stockDB = new StockDB(context);
-//        List<String> stockList = stockDB.getStockSymbols();
-//        List<String> stockList = stockDB.getStockSymbols(StockMarketType.SZ);
-        List<String> stockList = stockDB.getTradingStockSymbols();
-        System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        for(String symbol:stockList){
-            System.out.println(symbol);
-        }
-        System.out.println("size="+stockList.size());
     }
 
     @Test
@@ -140,9 +114,7 @@ public class StockDBTest {
 
     @Test
     public void testGetLatestStockData(){
-        Context context = new Context();
-        StockDB stockDB = new StockDB(context);
-        StockData stockData = stockDB.getLatestStockData("600376");
+        StockData stockData = stockDB.getLatestStockData("600133");
         for(Map.Entry<String,Double> entry:stockData.entrySet()){
             System.out.println(entry.getKey()+":"+entry.getValue());
         }
