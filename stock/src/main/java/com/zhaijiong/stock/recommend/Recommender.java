@@ -95,7 +95,7 @@ public abstract class Recommender {
                 stockData.name, stockData.symbol,
                 stockData.get("close"),
                 stockData.get("PE"));
-        LOG.info(record + "\t" + getStockCategory(stockData.symbol));
+        LOG.info(name +"\t"+ record + "\t" + getStockCategory(stockData.symbol));
     }
 
     //TODO 增加QQ、短信、微信、Mail报警
