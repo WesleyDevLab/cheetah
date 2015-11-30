@@ -9,10 +9,19 @@ import com.zhaijiong.stock.tools.StockPool;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
+@RunWith(SpringJUnit4ClassRunner.class)  //使用junit4进行测试
+@ContextConfiguration({"classpath:applicationContext.xml"}) //加载配置文件
 public class RecommenderTest {
+
+    @Autowired
+    StockPool stockPool;
 
     @Before
     public void setUp() throws Exception {
@@ -33,8 +42,7 @@ public class RecommenderTest {
         conditions.addCondition("close", Conditions.Operation.LT, 20d);
         conditions.addCondition("PE", Conditions.Operation.LT, 200d);
         conditions.addCondition("marketValue", Conditions.Operation.LT, 200d);
-        StockPool stockPool = new StockPool();
-        List<String> stockList = stockPool.listByConditions(conditions);
+        List<String> stockList = stockPool.get("small");
 
         Recommender recommender = new Recommender("macd_day_15min") {
             @Override

@@ -1,6 +1,8 @@
 package com.zhaijiong.stock.recommend;
 
+import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.Context;
+import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.tools.StockPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,26 +38,32 @@ public class RecommendSystem {
     @Autowired
     public StockPool stockPool;
 
-//    @Autowired
-//    public RedisTemplate<String, String> redisTemplate;
-
     public RecommenderContext recommenderContext;
+    public ScheduledExecutorService executorService;
 
     @PostConstruct
     public void init(){
         LOG.info("recommend system is init...");
-        LOG.info("stockPool size=" + stockPool.size());
         recommenderContext = new RecommenderContext(context.getMap("recommender"));
         LOG.info("recommender config count="+recommenderContext.getConfigList().size());
+        executorService = Executors.newScheduledThreadPool(16);
     }
 
     public void process(){
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(16);
         List<RecommenderContext.Config> configList = recommenderContext.getConfigList();
         for(RecommenderContext.Config config:configList){
-            System.out.println("config:"+config.getName());
             Recommender recommender = (Recommender) applicationContext.getBean(config.getName());
-            Runnable task = () -> recommender.process(stockPool.get(config.getStockPool()));
+            List<String> stockList = stockPool.get(config.getStockPool());
+            if(stockList==null || stockList.size()==0){
+                Conditions conditions = new Conditions();
+                conditions.addCondition("close", Conditions.Operation.LT, 30d);
+                conditions.addCondition("PE", Conditions.Operation.LT, 200d);
+                conditions.addCondition("marketValue", Conditions.Operation.LT, 200d);
+                stockList = Provider.tradingStockList(conditions);
+                stockPool.add(config.getStockPool(),stockList,86400);
+            }
+            final List<String> finalStockList = stockList;
+            Runnable task = () -> recommender.process(finalStockList);
             executorService.scheduleAtFixedRate(task,0,config.getInterval(),TimeUnit.SECONDS);
         }
     }
@@ -64,13 +72,5 @@ public class RecommendSystem {
         applicationContext=new ClassPathXmlApplicationContext("applicationContext.xml");
         RecommendSystem recommendSystem = (RecommendSystem) applicationContext.getBean("recommendSystem");
         recommendSystem.process();
-//        recommendSystem.redisTemplate.delete("tradingStock");
-//        List<String> list = recommendSystem.stockPool.get("small");
-//        String[] values = new String[list.size()];
-//        for(int i=0;i<list.size();i++){
-//            values[i] = list.get(i);
-//        }
-//        recommendSystem.redisTemplate.opsForList().leftPushAll("tradingStock",values);
-//        recommendSystem.redisTemplate.expire("tradingStock",30, TimeUnit.SECONDS);
     }
 }
