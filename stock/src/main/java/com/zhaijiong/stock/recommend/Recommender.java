@@ -64,7 +64,7 @@ public abstract class Recommender {
         for (String symbol : symbols) {
             pool.execute(() -> {
                 try {
-                    if (isBuy(symbol)) {
+                    if (Utils.isTradingTime() && isBuy(symbol)) {
                         StockData stockData = Provider.realtimeData(symbol);
                         if(stockData!=null){
                             recommend(stockData);
@@ -87,7 +87,7 @@ public abstract class Recommender {
         } catch (InterruptedException e) {
             LOG.error(e.getMessage());
         }
-        System.out.println("process elapsed time=" + stopwatch.elapsed(TimeUnit.SECONDS) + "s");
+        LOG.info(String.format("Recommender %s process elapsed time=%ss",name, stopwatch.elapsed(TimeUnit.SECONDS)));
     }
 
     public void recommend(StockData stockData) {
