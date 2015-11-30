@@ -9,6 +9,7 @@
     <import resource="recommender.xml"/>
     <import resource="strategy.xml"/>
 
+    <context:property-placeholder location="classpath:application.properties"/>
     <context:component-scan base-package="com.zhaijiong.stock"/>
 
     <!--<task:annotation-driven executor="executor" scheduler="scheduler"/>-->
@@ -24,8 +25,9 @@
     <bean id="stockPool" class="com.zhaijiong.stock.tools.StockPool"/>
 
     <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-          p:hostName="112.124.60.26" p:port="6399" />
+          p:hostName="${redis.address}" p:port="${redis.port}" />
 
     <!-- redis template definition -->
-    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" p:connectionFactory-ref="jedisConnectionFactory"/>
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate"
+          p:connectionFactory-ref="jedisConnectionFactory"/>
 </beans>

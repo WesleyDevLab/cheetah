@@ -64,7 +64,7 @@ public abstract class Recommender {
         for (String symbol : symbols) {
             pool.execute(() -> {
                 try {
-                    if (Utils.isTradingTime() && isBuy(symbol)) {
+                    if (isBuy(symbol)) {
                         StockData stockData = Provider.realtimeData(symbol);
                         if(stockData!=null){
                             recommend(stockData);
