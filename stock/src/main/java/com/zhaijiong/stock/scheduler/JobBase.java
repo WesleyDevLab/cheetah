@@ -2,9 +2,11 @@ package com.zhaijiong.stock.scheduler;
 
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.dao.StockDB;
+import com.zhaijiong.stock.tools.StockPool;
 import org.quartz.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -20,19 +22,21 @@ import static com.zhaijiong.stock.common.Constants.DATABASE_POOL_SIZE;
 public abstract class JobBase implements Job {
     protected static final Logger LOG = LoggerFactory.getLogger(JobBase.class);
 
-    Context context = new Context();
-    StockDB stockDB = new StockDB(context);
-    ExecutorService executorService;
+    @Autowired
+    protected Context context;
+    @Autowired
+    protected StockDB stockDB;
+    @Autowired
+    protected StockPool stockPool;
 
     public JobBase(){
-        executorService = Executors.newFixedThreadPool(context.getInt(DATABASE_POOL_SIZE,1));
     }
 
     public List<String> getSymbolList(){
-        return stockDB.getTradingStockSymbols();
+        return stockPool.tradingStock();
     }
 
     public void close(){
-        executorService.shutdown();
+
     }
 }

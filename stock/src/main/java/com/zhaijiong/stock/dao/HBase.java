@@ -5,6 +5,8 @@ import com.zhaijiong.stock.common.Context;
 import org.apache.hadoop.hbase.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,10 +16,14 @@ import java.util.List;
  * mail: xuqi86@gmail.com
  * date: 15-8-10.
  */
+@Component
 public class HBase {
     private static final Logger LOG = LoggerFactory.getLogger(StockDB.class);
 
-    Context context;
+    @Autowired
+    private Context context;
+
+    public HBase(){}
 
     public HBase(Context context){
         this.context = context;
@@ -85,5 +91,21 @@ public class HBase {
             context.closeTable(table);
         }
         return results;
+    }
+
+    public HTableInterface getTable(String tableName){
+        return context.getTable(tableName);
+    }
+
+    public void closeTable(HTableInterface table){
+        context.closeTable(table);
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

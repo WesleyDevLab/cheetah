@@ -8,6 +8,7 @@ import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Map;
 /**
  * Created by eryk on 15-7-26.
  */
+@Component
 public class Context {
     private static final Logger LOG = LoggerFactory.getLogger(Context.class);
 

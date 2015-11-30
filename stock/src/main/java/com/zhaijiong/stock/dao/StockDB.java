@@ -18,6 +18,8 @@ import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -33,15 +35,21 @@ import static org.apache.hadoop.hbase.util.Bytes.toBytes;
 /**
  * Created by eryk on 15-7-25.
  */
+@Component
 public class StockDB {
     private static final Logger LOG = LoggerFactory.getLogger(StockDB.class);
 
-    Context context;
+    @Autowired
     HBase hbase;
 
-    public StockDB(Context context) {
-        this.context = context;
-        this.hbase = new HBase(context);
+    public StockDB(){}
+
+    public HBase getHbase() {
+        return hbase;
+    }
+
+    public void setHbase(HBase hbase) {
+        this.hbase = hbase;
     }
 
     public void save(String tableName,List<Put> puts){
@@ -77,42 +85,6 @@ public class StockDB {
             symbols.add(Bytes.toString(Bytes.tail(result.getRow(),6)));
         }
         return symbols;
-    }
-
-    public List<String> getTradingStockSymbols(){
-        Scan scan = new Scan();
-        scan.setCaching(5000);
-        scan.addColumn(TABLE_CF_INFO, Bytes.toBytes("status"));
-        List<Result> resultList = hbase.scan(TABLE_STOCK_INFO, scan);
-        List<String> symbols = Lists.newLinkedList();
-        for(Result result :resultList){
-            if("trading".equals(Bytes.toString(result.getValue(TABLE_CF_INFO,Bytes.toBytes("status"))))){
-                symbols.add(Bytes.toString(Bytes.tail(result.getRow(),6)));
-            }
-        }
-        return symbols;
-    }
-
-    public List<String> getStockSymbols(final StockMarketType type){
-        List<String> symbols = getStockSymbols();
-        Collection<String> filter = Collections2.filter(symbols, new Predicate<String>() {
-            @Override
-            public boolean apply(String input) {
-                return type.isMatchType(input);
-            }
-        });
-        return Lists.newArrayList(filter);
-    }
-
-    public List<String> getStockSymbols(final BoardType type){
-        List<String> symbols = getStockSymbols();
-        Collection<String> filter = Collections2.filter(symbols, new Predicate<String>() {
-            @Override
-            public boolean apply(String input) {
-                return type.isMatchType(input);
-            }
-        });
-        return Lists.newArrayList(filter);
     }
 
     /**
@@ -216,7 +188,7 @@ public class StockDB {
 
     public List<StockData> getStockData(String tableName, String symbol, String startDate, String stopDate) {
         List<StockData> stocks = Lists.newLinkedList();
-        HTableInterface table = context.getTable(tableName);
+        HTableInterface table = hbase.getTable(tableName);
         Scan scan = new Scan();
         scan.setStartRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, startDate));
         scan.setStopRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, stopDate));
@@ -236,7 +208,7 @@ public class StockDB {
                     startDate,
                     stopDate));
         }
-        context.closeTable(table);
+        hbase.closeTable(table);
         return stocks;
     }
 
