@@ -1,16 +1,15 @@
 package com.zhaijiong.stock.tools;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.zhaijiong.stock.common.Conditions;
+import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockBlock;
 import com.zhaijiong.stock.provider.Provider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Map;
-
-import static com.zhaijiong.stock.common.StockConstants.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * author: eryk
@@ -19,70 +18,115 @@ import static com.zhaijiong.stock.common.StockConstants.*;
  */
 public class StockPool {
 
-    public static Map<String,List<String>> stockPool = Maps.newConcurrentMap();
+    private static final String REDIS_KEY_PREFIX = "stocklist:";
 
-    public StockPool(){}
+    @Autowired
+    public RedisTemplate<String, String> redisTemplate;
 
-    public synchronized boolean add(String name,List<String> stockList){
-        if(stockPool.containsKey(name)){
-            return false;
-        }else{
-            stockPool.put(name,stockList);
+    public StockPool() {
+    }
+
+    public String getKeyWithPrefix(String key) {
+        return REDIS_KEY_PREFIX + key;
+    }
+
+    /**
+     * stockpool添加list到redis存储
+     *
+     * @param name
+     * @param stockList
+     * @param timeout   单位：秒
+     */
+    public void add(String name, List<String> stockList, long timeout) {
+        redisTemplate.delete(getKeyWithPrefix(name));
+        String[] valueList = Utils.toArray(stockList);
+        redisTemplate.opsForList().rightPushAll(getKeyWithPrefix(name), valueList);
+        redisTemplate.expire(getKeyWithPrefix(name), timeout, TimeUnit.SECONDS);
+    }
+
+    public List<String> get(String key) {
+        return redisTemplate.opsForList().range(getKeyWithPrefix(key), 0, 5000);
+    }
+
+    /**
+     * 获取交易中的股票列表
+     * @return
+     */
+    public List<String> tradingStock(){
+        String key = "trade";
+        List<String> stockList = redisTemplate.opsForList().range(REDIS_KEY_PREFIX + key, 0, 4000);
+        if(stockList==null || stockList.size()==0){
+            stockList = Provider.tradingStockList();
+            add(key,stockList,86400);
         }
-        return true;
-    }
-
-    public List<String> get(String key){
-        return stockPool.get(key);
-    }
-
-    public int size(){
-        return stockPool.size();
-    }
-
-    @PostConstruct
-    public static synchronized void build(){
-        if(stockPool.size()==0){
-            stockPool.put("trading",Provider.tradingStockList());
-            stockPool.put("margin",Provider.marginTradingStockList());
-            Conditions conditions = new Conditions();
-            conditions.addCondition(CLOSE, Conditions.Operation.LT, 20d);
-            conditions.addCondition(PE, Conditions.Operation.LT, 200d);
-            conditions.addCondition(MARKET_VALUE, Conditions.Operation.LT, 100d);
-            stockPool.put("small",listByConditions(conditions));
-        }
+        return stockList;
     }
 
     /**
      * 获取股票列表中交易中的股票列表
+     *
      * @param stockList
      * @return
      */
-    public static List<String> tradingStock(List<String> stockList){
-        return Provider.tradingStockList(stockList);
+    public List<String> tradingStock(List<String> stockList) {
+        List<String> tradingStockList = Lists.newArrayList(tradingStock());
+        stockList.retainAll(tradingStockList);
+        return stockList;
+    }
+
+    /**
+     * 获取融资融券股票列表
+     * @return
+     */
+    public List<String> marginTradingStock() {
+        String key = "margin";
+        List<String> stockList = redisTemplate.opsForList().range(REDIS_KEY_PREFIX + key, 0, 4000);
+        if(stockList==null){
+            stockList = Provider.marginTradingStockList();
+            add(key,stockList,86400);
+        }
+        return stockList;
+    }
+
+    /**
+     * 全部股票列表
+     * @return
+     */
+    public List<String> stockList(){
+        return getList("all",86400);
     }
 
     /**
      * 获取某个大分类下的版块名称
-     * @param category  概念，行业，地域
+     *
+     * @param category 概念，行业，地域
      * @param name
      * @return
      */
-    public static List<String> listByCategory(String category,String name){
+    public List<String> listByCategory(String category, String name) {
         List<StockBlock> stockBlocks = StockCategory.getCategory().get(category);
-        for(StockBlock stockBlock:stockBlocks){
-            if(stockBlock.name.equals(name)){
+        for (StockBlock stockBlock : stockBlocks) {
+            if (stockBlock.name.equals(name)) {
                 return tradingStock(stockBlock.symbolList);
             }
         }
         return Lists.newArrayList();
     }
 
-    public static List<String> listByConditions(Conditions conditions){
-        return Provider.tradingStockList(conditions);
+    public List<String> listByConditions(Conditions conditions) {
+        List<String> tradingStockList = tradingStock();
+        return Provider.getStockListWithConditions(tradingStockList, conditions);
     }
 
-    public static List<String> marginTradingStock(List<String> stockList){
-        return tradingStock(Provider.marginTradingStockList(stockList));
+    private List<String> getList(String key,long timeout) {
+        List<String> stockList = redisTemplate.opsForList().range(REDIS_KEY_PREFIX + key, 0, 4000);
+        if(stockList==null || stockList.size()==0){
+            stockList = Provider.marginTradingStockList();
+            String[] array = Utils.toArray(stockList);
+            redisTemplate.opsForList().rightPushAll(REDIS_KEY_PREFIX + key,array);
+            redisTemplate.expire(getKeyWithPrefix(key), timeout, TimeUnit.SECONDS);
+        }
+        return stockList;
     }
+
 }
