@@ -4,13 +4,16 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Conditions;
+import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.strategy.StrategyUtils;
 import com.zhaijiong.stock.tools.Sleeper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
@@ -32,6 +35,9 @@ public class MACDBuyStrategy implements BuyStrategy {
 
     private int timeRange = 5;
     private PeriodType type;
+
+    @Autowired
+    StockDB stockDB;
 
     public MACDBuyStrategy(int timeRange, PeriodType type){
         this.timeRange = timeRange;
@@ -75,6 +81,7 @@ public class MACDBuyStrategy implements BuyStrategy {
 
     private List<StockData> getStockDataByType(String symbol) {
         List<StockData> stockDataList;
+        DateRange dateRange = DateRange.getRange(250);
         switch (type){
             case FIVE_MIN:
                 stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "5"));
@@ -89,10 +96,10 @@ public class MACDBuyStrategy implements BuyStrategy {
                 stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "60"));
                 break;
             case DAY:
-                stockDataList = Lists.newArrayList(Provider.dailyData(symbol,true));
+                stockDataList = stockDB.getStockDataDaily(symbol,dateRange.start(),dateRange.stop());
                 break;
             default:
-                stockDataList = Lists.newArrayList(Provider.dailyData(symbol,true));
+                stockDataList = stockDB.getStockDataDaily(symbol,dateRange.start(),dateRange.stop());
         }
         return stockDataList;
     }
