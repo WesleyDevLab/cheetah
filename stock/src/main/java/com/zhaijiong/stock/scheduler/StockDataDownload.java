@@ -15,11 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,13 +24,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * author: eryk
- * mail: xuqi86@gmail.com
- * date: 15-11-30.
- */
-@SpringBootApplication
-@EnableScheduling
-@ImportResource({"classpath:applicationContext.xml"})
+* author: eryk
+* mail: xuqi86@gmail.com
+* date: 15-11-30.
+*/
+@Component
 public class StockDataDownload {
     protected static final Logger LOG = LoggerFactory.getLogger(StockDataDownload.class);
 
@@ -44,7 +39,7 @@ public class StockDataDownload {
     @Autowired
     protected StockPool stockPool;
 
-    @Scheduled(cron = "0 0 20  * * MON-FRI")
+    @Scheduled(cron = "0 53 22  * * MON-FRI")
     public void downloadDailyData() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<String> stockList = stockPool.tradingStock();
@@ -111,8 +106,4 @@ public class StockDataDownload {
         stockDB.saveStockData(Constants.TABLE_STOCK_DAILY, stockDataList);
     }
 
-    public static void main(String[] args) {
-        ThreadPool.init(16);
-        SpringApplication.run(StockDataDownload.class);
-    }
 }
