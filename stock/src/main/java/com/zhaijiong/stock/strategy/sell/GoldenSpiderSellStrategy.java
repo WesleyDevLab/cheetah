@@ -9,8 +9,8 @@ import java.util.List;
 import static com.zhaijiong.stock.common.StockConstants.*;
 
 /**
- * author: xuqi.xq
- * mail: xuqi.xq@alibaba-inc.com
+ * author: xuqi86
+ * mail: xuqi86@gmail.com
  * date: 15-11-23.
  */
 public class GoldenSpiderSellStrategy implements SellStrategy{

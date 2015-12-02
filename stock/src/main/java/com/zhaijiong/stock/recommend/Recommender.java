@@ -106,6 +106,10 @@ public abstract class Recommender {
 
     public abstract boolean isBuy(List<StockData> stockDataList);
 
+    public abstract boolean isSell(String symbol);
+
+    public abstract boolean isSell(List<StockData> stockDataList);
+
     public static void close(){
         Utils.closeThreadPool(pool);
     }

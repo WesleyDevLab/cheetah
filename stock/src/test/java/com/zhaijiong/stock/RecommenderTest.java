@@ -62,6 +62,16 @@ public class RecommenderTest {
                 return false;
             }
 
+            @Override
+            public boolean isSell(String symbol) {
+                return false;
+            }
+
+            @Override
+            public boolean isSell(List<StockData> stockDataList) {
+                return false;
+            }
+
         };
 
         recommender.process(stockList);

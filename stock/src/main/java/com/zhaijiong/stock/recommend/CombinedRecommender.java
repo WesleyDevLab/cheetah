@@ -37,6 +37,28 @@ public class CombinedRecommender extends Recommender{
         return isBuy;
     }
 
+    @Override
+    public boolean isSell(String symbol) {
+        boolean isSell = true;
+        for(Recommender recommender:recommenderList){
+            if(!recommender.isSell(symbol)){
+                isSell = false;
+            }
+        }
+        return isSell;
+    }
+
+    @Override
+    public boolean isSell(List<StockData> stockDataList) {
+        boolean isSell = true;
+        for(Recommender recommender:recommenderList){
+            if(!recommender.isSell(stockDataList)){
+                isSell = false;
+            }
+        }
+        return isSell;
+    }
+
     public List<Recommender> getRecommenderList() {
         return recommenderList;
     }
