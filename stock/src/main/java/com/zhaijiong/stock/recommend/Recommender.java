@@ -2,6 +2,7 @@ package com.zhaijiong.stock.recommend;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
+import com.google.common.base.Strings;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
@@ -66,7 +67,7 @@ public abstract class Recommender {
                 try {
                     if (isBuy(symbol)) {
                         StockData stockData = Provider.realtimeData(symbol);
-                        if(stockData!=null){
+                        if(stockData!=null && !Strings.isNullOrEmpty(stockData.symbol)){
                             recommend(stockData);
                         }else{
                             LOG.warn(String.format("fait to get realtime data,symbol is [%s]"));
@@ -95,7 +96,7 @@ public abstract class Recommender {
                 stockData.name, stockData.symbol,
                 stockData.get("close"),
                 stockData.get("PE"));
-        LOG.info(name +"\t"+ record + "\t" + getStockCategory(stockData.symbol));
+        LOG.info(name + "\t" + Utils.formatDate(stockData.date,"MM月dd日 HHmmss") +"\t"+ record + "\t" + getStockCategory(stockData.symbol));
     }
 
     //TODO 增加QQ、短信、微信、Mail报警

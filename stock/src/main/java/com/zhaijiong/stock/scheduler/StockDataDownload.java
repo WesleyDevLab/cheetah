@@ -39,7 +39,7 @@ public class StockDataDownload {
     @Autowired
     protected StockPool stockPool;
 
-    @Scheduled(cron = "0 53 22  * * MON-FRI")
+    @Scheduled(cron = "0 0 20 * * MON-FRI")
     public void downloadDailyData() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<String> stockList = stockPool.tradingStock();
@@ -47,6 +47,7 @@ public class StockDataDownload {
         for (String symbol : stockList) {
             ThreadPool.execute(() -> {
                 LOG.info(String.format("start download daily data with symbol [%s]", symbol));
+                //TODO retry when fail
                 List<StockData> stockDataList = Provider.dailyData(symbol, 1000, true);
                 if (stockDataList != null && stockDataList.size() != 0) {
                     save(stockDataList);
@@ -64,7 +65,7 @@ public class StockDataDownload {
         LOG.info(String.format("download elapsed time=%ss", stopwatch.elapsed(TimeUnit.SECONDS)));
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 120000)
     public void downloadRealTimeData() {
         if (!Utils.isTradingTime()) {
             return;
@@ -87,7 +88,7 @@ public class StockDataDownload {
                             LOG.error(String.format("fail to download realtime data with symbol [%s]", symbol));
                         }
                     } catch (Exception e) {
-                        LOG.error(e.getMessage());
+                        LOG.error(String.format("fail to get symbol [%s] data",symbol),e);
                     }
                     countDownLatch.countDown();
                 }

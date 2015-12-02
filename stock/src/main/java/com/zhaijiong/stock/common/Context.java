@@ -17,7 +17,6 @@ import java.util.Map;
 /**
  * Created by eryk on 15-7-26.
  */
-@Component
 public class Context {
     private static final Logger LOG = LoggerFactory.getLogger(Context.class);
 

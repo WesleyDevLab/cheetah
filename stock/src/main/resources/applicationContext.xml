@@ -20,8 +20,6 @@
         <constructor-arg value="conf.yaml"/>
     </bean>
 
-    <bean id="recommendSystem" class="com.zhaijiong.stock.recommend.RecommendSystem"/>
-
     <bean id="stockPool" class="com.zhaijiong.stock.tools.StockPool"/>
 
     <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"

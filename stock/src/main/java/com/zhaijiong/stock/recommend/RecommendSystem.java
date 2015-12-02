@@ -4,14 +4,19 @@ import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.tools.StockPool;
+import com.zhaijiong.stock.tools.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -22,11 +27,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * author: eryk
- * mail: xuqi86@gmail.com
- * date: 15-11-27.
- */
-@Component()
+* author: eryk
+* mail: xuqi86@gmail.com
+* date: 15-11-27.
+*/
+@SpringBootApplication
+@EnableScheduling
+@ImportResource({"classpath:applicationContext.xml"})
 public class RecommendSystem {
     private static final Logger LOG = LoggerFactory.getLogger(RecommendSystem.class);
 
@@ -68,8 +75,25 @@ public class RecommendSystem {
         }
     }
 
+    public StockPool getStockPool() {
+        return stockPool;
+    }
+
+    public void setStockPool(StockPool stockPool) {
+        this.stockPool = stockPool;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
     public static void main(String[] args) {
-        applicationContext=new ClassPathXmlApplicationContext("applicationContext.xml");
+        ThreadPool.init(16);
+        applicationContext= SpringApplication.run(RecommendSystem.class);
         RecommendSystem recommendSystem = (RecommendSystem) applicationContext.getBean("recommendSystem");
         recommendSystem.process();
     }

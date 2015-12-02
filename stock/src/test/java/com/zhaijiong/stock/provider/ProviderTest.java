@@ -19,7 +19,7 @@ public class ProviderTest {
 
     @Test
     public void testRealtimeData() throws Exception {
-        StockData values = Provider.realtimeData("600199");
+        StockData values = Provider.realtimeData("600322");
         System.out.println(Utils.formatDate(values.date, "yyyy-MM-dd HH:mm:ss"));
         System.out.println(values);
     }
