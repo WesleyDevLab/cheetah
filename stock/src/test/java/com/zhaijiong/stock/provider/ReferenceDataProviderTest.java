@@ -30,6 +30,18 @@ public class ReferenceDataProviderTest {
     }
 
     @Test
+    public void testFHRZ(){
+        List<String> stockList = Provider.tradingStockList();
+        for(String symbol:stockList){
+            List<StockData> stockDataList = ReferenceDataProvider.getFHRZ(symbol);
+            stockDataList.forEach(stockData ->{
+                System.out.println(stockData);
+            });
+            System.out.println("count:"+stockDataList.size());
+        }
+    }
+
+    @Test
     public void testGetFPYA() throws Exception {
 
     }

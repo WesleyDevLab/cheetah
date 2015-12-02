@@ -112,6 +112,29 @@ public class ReferenceDataProvider {
         return stockDataList;
     }
 
+    public static String FHRZ_URL = "http://f10.eastmoney.com/f10_v2/BonusFinancing.aspx?code=%s";
+
+    /**
+     * 获取分红融资数据
+     * @return
+     */
+    public static List<StockData> getFHRZ(String symbol){
+        String url = String.format(FHRZ_URL, Symbol.getSymbol(symbol, FHRZ_URL));
+        String data = Downloader.download(url);
+        Elements elements = Jsoup.parse(data).getElementById("BonusDetailsTable").getElementsByTag("tbody").get(0).getElementsByTag("tr");
+        List<StockData> stockDataList = Lists.newLinkedList();
+        for(int i=1;i<elements.size();i++){
+            Elements tr = elements.get(i).getElementsByTag("td");
+            if(!tr.get(3).text().equals("--")){
+                StockData stockData = new StockData(symbol);
+                stockData.date = Utils.str2Date(tr.get(3).text(),"yyyy-MM-dd");
+                stockData.attr("分红方案",tr.get(1).text());
+                stockDataList.add(stockData);
+            }
+        }
+        return stockDataList;
+    }
+
     private static Integer getPageCount(String year) {
         String url = String.format(FPYA_URL, year, 0);
         String data = BasicDownloader.download(url);
