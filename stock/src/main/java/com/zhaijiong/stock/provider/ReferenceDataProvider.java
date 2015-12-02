@@ -8,6 +8,7 @@ import com.zhaijiong.stock.download.AjaxDownloader;
 import com.zhaijiong.stock.download.BasicDownloader;
 import com.zhaijiong.stock.download.Downloader;
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.model.Symbol;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -51,6 +52,7 @@ public class ReferenceDataProvider {
      */
     private static String SHAREHOLDER_COUNT_URL= "http://datainterface.eastmoney.com/EM_DataCenter/JS.aspx?type=GG&sty=GDRS&st=2&sr=-1&p=1&ps=5000&mkt=%s&fd=%s&rt=48094965";
 
+    private static String SHAREHOLDER_STOCK_URL = "http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s";
     /**
      * 股东人数变化，周期为季度
      * @param market
@@ -83,6 +85,15 @@ public class ReferenceDataProvider {
             stockDataList.add(stockData);
         }
         return stockDataList;
+    }
+
+    public static List<StockData> getShareHolderCountData(String symbol){
+        String url = String.format(SHAREHOLDER_STOCK_URL, Symbol.getSymbol(symbol, SHAREHOLDER_STOCK_URL));
+        String data = Downloader.download(url);
+        Elements elementsByTag = Jsoup.parse(data).getElementById("Table0").getElementsByTag("tbody");
+        //TODO
+        System.out.println(elementsByTag);
+        return Lists.newArrayList();
     }
 
     /**

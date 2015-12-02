@@ -39,6 +39,9 @@ public class Symbol {
         if(url.contains("nuff.eastmoney.com")){
             return eastMoneyRealTimeSymbol(code);
         }
+        if(url.contains("f10.eastmoney.com")){
+            return sinaSymbol(code);
+        }
         return "";
     }
 
