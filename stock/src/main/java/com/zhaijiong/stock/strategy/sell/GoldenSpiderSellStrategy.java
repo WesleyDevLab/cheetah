@@ -1,7 +1,9 @@
 package com.zhaijiong.stock.strategy.sell;
 
+import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.strategy.StrategyBase;
 import com.zhaijiong.stock.strategy.StrategyUtils;
 
 import java.util.List;
@@ -13,20 +15,24 @@ import static com.zhaijiong.stock.common.StockConstants.*;
  * mail: xuqi86@gmail.com
  * date: 15-11-23.
  */
-public class GoldenSpiderSellStrategy implements SellStrategy{
+public class GoldenSpiderSellStrategy extends StrategyBase implements SellStrategy{
 
+    private static final String NAME = "goldenSpiderSell";
     private int crossCount = 3;
     private SellStrategy sellStrategy = new MASellStrategy(10,3);
 
-    public GoldenSpiderSellStrategy(){}
+    public GoldenSpiderSellStrategy(){
+        this.name = NAME;
+    }
 
     public GoldenSpiderSellStrategy(int crossCount){
         this.crossCount = crossCount;
+        this.name = NAME;
     }
 
     @Override
     public double sell(String symbol) {
-        List<StockData> stockDataList = Provider.dailyData(symbol, true);
+        List<StockData> stockDataList = getDailyData(symbol);
         return sell(stockDataList);
     }
 
@@ -37,7 +43,7 @@ public class GoldenSpiderSellStrategy implements SellStrategy{
 
     @Override
     public boolean isSell(String symbol) {
-        List<StockData> stockDataList = Provider.dailyData(symbol, true);
+        List<StockData> stockDataList = getDailyData(symbol);
         return isSell(stockDataList);
     }
 

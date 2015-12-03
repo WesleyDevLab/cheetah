@@ -18,29 +18,8 @@ dashboard:
   - "600887"
   - "600030"
 
-# cron格式
-# Seconds Minutes Hours DayOfMonth Month DayOfWeek Year
-#   ,-*     ,-*    ,-*    ,-*?/LW   ,-*   ,-*?/L#   ,-*
-jobs:
-  stockListDownload:
-    classname: com.zhaijiong.stock.scheduler.StockListDownloadJob
-    cron: "0 0 0 ? * 2-6 *"
-  dailyDataDownload:
-    classname: com.zhaijiong.stock.scheduler.DailyDataDownloadJob
-    cron: "0 0/5 9-15 ? * 2-6 *"
-  stock15MinuteDataDownload:
-    classname: com.zhaijiong.stock.scheduler.StockMinuteDataDownloadJob
-    type: "15"
-    cron: "0 0/15 9-15 ? * 2-6 *"
-  DailyIndicatorsCompute:
-    classname: com.zhaijiong.stock.scheduler.IndicatorsComputeJob
-    cron: "0 0 3 ? * 2-6 *"
-  FinanceDataDownload:
-    classname: com.zhaijiong.stock.scheduler.FinanceDataDownloadJob
-    cron: "0 0 0 1 * ? *"
-  moneyFlowDataDownload:
-    classname: com.zhaijiong.stock.scheduler.MoneyFlowDataDownloadJob
-    cron: "0 0/15 9-15 ? * 2-6 *"
+account:
+  - "002617"
 
 recommender:
   goldenSpiderRecommender:

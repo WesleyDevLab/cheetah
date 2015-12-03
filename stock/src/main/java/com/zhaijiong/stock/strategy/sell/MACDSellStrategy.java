@@ -1,28 +1,36 @@
 package com.zhaijiong.stock.strategy.sell;
 
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.strategy.StrategyBase;
 import com.zhaijiong.stock.strategy.StrategyUtils;
-import com.zhaijiong.stock.tools.StockList;
 
 import java.util.List;
+
+import static com.zhaijiong.stock.common.StockConstants.CLOSE;
+import static com.zhaijiong.stock.common.StockConstants.MACD_CROSS;
 
 /**
  * author: eryk
  * mail: xuqi86@gmail.com
  * date: 15-11-9.
  */
-public class MACDSellStrategy implements SellStrategy{
+public class MACDSellStrategy extends StrategyBase implements SellStrategy{
 
     private int timeRange = 5;
     private PeriodType type;
+    private static final String NAME = "macdSell";
+
+    public MACDSellStrategy(){
+        this.name = NAME;
+    }
 
     public MACDSellStrategy(int timeRange, PeriodType type){
         this.timeRange = timeRange;
         this.type = type;
+        this.name = NAME;
     }
 
     @Override
@@ -37,9 +45,9 @@ public class MACDSellStrategy implements SellStrategy{
         stockDataList = Provider.computeMACD(stockDataList);
         for (int i = count - 1; i > 0; i--) {
             StockData stockData = stockDataList.get(i);
-            Double cross = stockData.get(StockConstants.MACD_CROSS);
+            Double cross = stockData.get(MACD_CROSS);
             if (cross != null && count - i <= timeRange && cross == 0)
-                return stockData.get("close");
+                return stockData.get(CLOSE);
         }
         return -1;
     }
@@ -75,22 +83,12 @@ public class MACDSellStrategy implements SellStrategy{
                 stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "60"));
                 break;
             case DAY:
-                stockDataList = Lists.newArrayList(Provider.dailyData(symbol,false));
+                stockDataList = getDailyData(symbol);
                 break;
             default:
-                stockDataList = Lists.newArrayList(Provider.dailyData(symbol,false));
+                stockDataList = getDailyData(symbol);
         }
         return stockDataList;
     }
 
-    public static void main(String[] args) {
-        MACDSellStrategy sellStrategy = new MACDSellStrategy(3,PeriodType.DAY);
-        List<String> symbols = StockList.getMarginTradingStockList();
-        for(String symbol:symbols){
-            if(sellStrategy.isSell(symbol)){
-                System.out.println("for:"+symbol);
-                System.out.println(sellStrategy.sell(symbol));
-            }
-        }
-    }
 }

@@ -2,6 +2,7 @@ package com.zhaijiong.stock.strategy.sell;
 
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.strategy.StrategyBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,25 +15,29 @@ import static com.zhaijiong.stock.common.StockConstants.*;
  * mail: xuqi86@gmail.com
  * date: 15-11-22.
  */
-public class MASellStrategy implements SellStrategy{
+public class MASellStrategy extends StrategyBase implements SellStrategy{
     private static final Logger LOG = LoggerFactory.getLogger(MASellStrategy.class);
 
     private static final String COLUMN_NAME_PROFIX = "close_ma";
     private int timeRange = 10; //计算的ma周期
     private String columnName = COLUMN_NAME_PROFIX + timeRange;
     private int count = 3;  //连续跌破ma周期线多少天以后卖出
+    private static final String NAME = "maSell";
 
     public MASellStrategy(int timeRange,int count){
         this.timeRange = timeRange;
         this.columnName = COLUMN_NAME_PROFIX + timeRange;
         this.count = count;
+        this.name = NAME;
     }
 
-    public MASellStrategy(){}
+    public MASellStrategy(){
+        this.name = NAME;
+    }
 
     @Override
     public double sell(String symbol) {
-        List<StockData> stockDataList = Provider.dailyData(symbol,500,true);
+        List<StockData> stockDataList = getDailyData(symbol);
         return sell(stockDataList);
     }
 
@@ -43,7 +48,7 @@ public class MASellStrategy implements SellStrategy{
 
     @Override
     public boolean isSell(String symbol) {
-        List<StockData> stockDataList = Provider.dailyData(symbol,500,true);
+        List<StockData> stockDataList = getDailyData(symbol);
         return isSell(stockDataList);
     }
 

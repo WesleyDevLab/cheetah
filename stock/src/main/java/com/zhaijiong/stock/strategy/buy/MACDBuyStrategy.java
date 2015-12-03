@@ -1,26 +1,16 @@
 package com.zhaijiong.stock.strategy.buy;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.common.Conditions;
-import com.zhaijiong.stock.common.DateRange;
-import com.zhaijiong.stock.common.StockConstants;
-import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.strategy.StrategyBase;
 import com.zhaijiong.stock.strategy.StrategyUtils;
-import com.zhaijiong.stock.tools.Sleeper;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+
+import static com.zhaijiong.stock.common.StockConstants.CLOSE;
+import static com.zhaijiong.stock.common.StockConstants.MACD_CROSS;
 
 /**
  * author: eryk
@@ -31,17 +21,20 @@ import java.util.concurrent.TimeUnit;
  * 1.判断日线级别macd最近n天是否处于金叉状态,并且红柱持续放大
  * 2.判断最近n根15分钟数据是否处于金叉状态
  */
-public class MACDBuyStrategy implements BuyStrategy {
+public class MACDBuyStrategy extends StrategyBase implements BuyStrategy {
 
     private int timeRange = 5;
     private PeriodType type;
+    private static final String NAME = "macdBuy";
 
-    @Autowired
-    StockDB stockDB;
+    public MACDBuyStrategy(){
+        this.name = NAME;
+    }
 
     public MACDBuyStrategy(int timeRange, PeriodType type){
         this.timeRange = timeRange;
         this.type = type;
+        this.name = NAME;
     }
 
     @Override
@@ -56,9 +49,9 @@ public class MACDBuyStrategy implements BuyStrategy {
         stockDataList = Provider.computeMACD(stockDataList);
         for (int i = count - 1; i > 0; i--) {
             StockData stockData = stockDataList.get(i);
-            Double cross = stockData.get(StockConstants.MACD_CROSS);
+            Double cross = stockData.get(MACD_CROSS);
             if (cross != null && count - i <= timeRange && cross == 1)
-                return stockData.get("close");
+                return stockData.get(CLOSE);
         }
         return -1;
     }
@@ -81,7 +74,6 @@ public class MACDBuyStrategy implements BuyStrategy {
 
     private List<StockData> getStockDataByType(String symbol) {
         List<StockData> stockDataList;
-        DateRange dateRange = DateRange.getRange(250);
         switch (type){
             case FIVE_MIN:
                 stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "5"));
@@ -96,10 +88,10 @@ public class MACDBuyStrategy implements BuyStrategy {
                 stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "60"));
                 break;
             case DAY:
-                stockDataList = stockDB.getStockDataDaily(symbol,dateRange.start(),dateRange.stop());
+                stockDataList = getDailyData(symbol);
                 break;
             default:
-                stockDataList = stockDB.getStockDataDaily(symbol,dateRange.start(),dateRange.stop());
+                stockDataList = getDailyData(symbol);
         }
         return stockDataList;
     }
