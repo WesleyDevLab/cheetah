@@ -7,6 +7,7 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.tools.StockCategory;
+import com.zhaijiong.stock.tools.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +29,6 @@ public abstract class Recommender {
     protected static final Logger LOG = LoggerFactory.getLogger(Recommender.class);
 
     protected static Map<String, Set<String>> stockCategory = StockCategory.getStockCategory("概念");
-
-    protected static ExecutorService pool = Executors.newFixedThreadPool(32);
 
     protected String name;
 
@@ -63,16 +62,16 @@ public abstract class Recommender {
         Stopwatch stopwatch = Stopwatch.createStarted();
         CountDownLatch countDownLatch = new CountDownLatch(symbols.size());
         for (String symbol : symbols) {
-            pool.execute(() -> {
+            ThreadPool.execute(() -> {
                 try {
                     if (isBuy(symbol)) {
                         StockData stockData = Provider.realtimeData(symbol);
-                        if(stockData!=null && !Strings.isNullOrEmpty(stockData.symbol)){
+                        if (stockData != null && !Strings.isNullOrEmpty(stockData.symbol)) {
                             recommend(stockData);
-                        }else{
-                            LOG.warn(String.format("fait to get realtime data,symbol is [%s]",symbol));
+                        } else {
+                            LOG.warn(String.format("fait to get realtime data,symbol is [%s]", symbol));
                         }
-                        if(isAlert){
+                        if (isAlert) {
                             alert(stockData);
                         }
                     }
@@ -109,10 +108,6 @@ public abstract class Recommender {
     public abstract boolean isSell(String symbol);
 
     public abstract boolean isSell(List<StockData> stockDataList);
-
-    public static void close(){
-        Utils.closeThreadPool(pool);
-    }
 
     public String getName() {
         return name;

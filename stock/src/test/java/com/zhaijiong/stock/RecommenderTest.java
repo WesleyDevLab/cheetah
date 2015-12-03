@@ -75,6 +75,5 @@ public class RecommenderTest {
         };
 
         recommender.process(stockList);
-        recommender.close();
     }
 }

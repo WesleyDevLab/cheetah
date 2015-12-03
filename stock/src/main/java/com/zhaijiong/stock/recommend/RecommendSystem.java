@@ -50,7 +50,7 @@ public class RecommendSystem {
 
     @PostConstruct
     public void init(){
-        LOG.info("recommend system is init...");
+        LOG.info("recommender system is init...");
         recommenderContext = new RecommenderContext(context.getMap("recommender"));
         LOG.info("recommender config count="+recommenderContext.getConfigList().size());
         executorService = Executors.newScheduledThreadPool(16);
@@ -92,7 +92,7 @@ public class RecommendSystem {
     }
 
     public static void main(String[] args) {
-        ThreadPool.init(16);
+        ThreadPool.init(32);
         applicationContext= SpringApplication.run(RecommendSystem.class);
         RecommendSystem recommendSystem = (RecommendSystem) applicationContext.getBean("recommendSystem");
         recommendSystem.process();
