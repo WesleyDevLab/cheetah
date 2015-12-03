@@ -67,7 +67,7 @@ public class RecommendSystem {
                 conditions.addCondition("PE", Conditions.Operation.LT, 200d);
                 conditions.addCondition("marketValue", Conditions.Operation.LT, 200d);
                 stockList = Provider.tradingStockList(conditions);
-                stockPool.add(config.getStockPool(),stockList,86400);
+                stockPool.add(config.getStockPool(),stockList,43200);
             }
             final List<String> finalStockList = stockList;
             Runnable task = () -> recommender.process(finalStockList);

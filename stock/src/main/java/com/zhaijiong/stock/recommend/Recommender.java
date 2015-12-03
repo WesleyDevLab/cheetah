@@ -70,7 +70,7 @@ public abstract class Recommender {
                         if(stockData!=null && !Strings.isNullOrEmpty(stockData.symbol)){
                             recommend(stockData);
                         }else{
-                            LOG.warn(String.format("fait to get realtime data,symbol is [%s]"));
+                            LOG.warn(String.format("fait to get realtime data,symbol is [%s]",symbol));
                         }
                         if(isAlert){
                             alert(stockData);
