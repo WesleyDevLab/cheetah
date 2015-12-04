@@ -123,7 +123,7 @@ public abstract class Recommender {
                 stockData.get("close"),
                 stockData.get("PE"));
         LOG.info(name + "\t" +
-                Utils.formatDate(stockData.date,"MM月dd日 HHmmss") +"\t"+
+                Utils.formatDate(stockData.date,"MM月dd日HH:mm:ss ") +"\t"+
                 record + "\t" +
                 getIndustryCategory(stockData.symbol) + "\t" +
                 getConceptCategory(stockData.symbol));
