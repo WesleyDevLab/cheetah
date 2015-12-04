@@ -17,6 +17,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -43,10 +44,20 @@ public class StockCategory {
 
     private static ExecutorService threadPool  = Executors.newFixedThreadPool(30);
 
+    private static Map<String,List<StockBlock>> category = Maps.newConcurrentMap();
+
+    @PostConstruct
+    public void init(){
+        category = getCategory();
+    }
+
     //获取概念版块、行业版块、地域版块分类
     //key:版块分类：概念，行业，地域
     //value：List<StockBlock>具体版块信息
     public static Map<String,List<StockBlock>> getCategory() {
+        if(category.size()!=0){
+            return category;
+        }
         final Map<String,List<StockBlock>> blockMap = Maps.newConcurrentMap();
 
         int retryTimes = 0;
@@ -113,7 +124,7 @@ public class StockCategory {
                 LOG.error("fail to stop thread pool",e);
             }
         }
-
+        category.putAll(blockMap);
         return blockMap;
     }
 
@@ -123,7 +134,7 @@ public class StockCategory {
      * @return
      */
     public static Map<String,Set<String>> getStockCategory(String type){
-        List<StockBlock> stockBlocks = getCategory().get(type);
+        List<StockBlock> stockBlocks = category.get(type);
         Map<String,Set<String>> symbolMap = Maps.newTreeMap();
         if(stockBlocks!=null){
             for(StockBlock stockBlock :stockBlocks){
@@ -147,7 +158,7 @@ public class StockCategory {
      * @return
      */
     public static Map<String,List<String>> getStockCategory(){
-        Map<String, List<StockBlock>> stockCategory = getCategory();
+        Map<String, List<StockBlock>> stockCategory = category;
         Map<String,List<String>> symbolMap = Maps.newTreeMap();
         for(List<StockBlock> stockBlocks:stockCategory.values()){
             for(StockBlock stockBlock :stockBlocks){
@@ -185,25 +196,5 @@ public class StockCategory {
             return blockStockList;
         }
         return Lists.newLinkedList();
-    }
-
-    public static void main(String[] args) {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-//        Map<String, List<StockBlock>> stockBlocks = StockCategory.getCategory();
-//        for (Map.Entry<String, List<StockBlock>> entry : stockBlocks.entrySet()) {
-//            for (StockBlock stockBlock : entry.getValue()) {
-//                System.out.println(entry.getKey() + ":" + stockBlock);
-//                List<String> symbolList = stockBlock.symbolList;
-//                for(String symbol:symbolList){
-//                    System.out.println(symbol);
-//                }
-//            }
-//            System.out.println(entry.getKey() + ":" + entry.getValue().size());
-//        }
-        Map<String, Set<String>> stockCategory = StockCategory.getStockCategory("概念");
-        for(Map.Entry<String,Set<String>> entry:stockCategory.entrySet()){
-            System.out.println(entry.getKey()+":"+entry.getValue());
-        }
-        System.out.println("cost:"+stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 }

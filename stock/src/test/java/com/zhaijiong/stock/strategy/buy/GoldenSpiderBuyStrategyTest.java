@@ -33,7 +33,7 @@ public class GoldenSpiderBuyStrategyTest {
     @Test
     public void testIsBuy() throws Exception {
         ThreadPool.init(16);
-//        Map<String, Set<String>> stockCategory = StockCategory.getStockCategory("概念");
+//        Map<String, Set<String>> conceptCategory = StockCategory.getConceptCategory("概念");
         List<String> stockList = stockPool.get("small_medium");
         if(stockList==null||stockList.size()==0){
             Conditions conditions = new Conditions();

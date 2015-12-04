@@ -3,6 +3,7 @@ package com.zhaijiong.stock.recommend;
 import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.tools.StockCategory;
 import com.zhaijiong.stock.tools.StockPool;
 import com.zhaijiong.stock.tools.ThreadPool;
 import org.slf4j.Logger;
@@ -62,17 +63,28 @@ public class RecommendSystem {
             Recommender recommender = (Recommender) applicationContext.getBean(config.getName());
             List<String> stockList = stockPool.get(config.getStockPool());
             if(stockList==null || stockList.size()==0){
-                Conditions conditions = new Conditions();
-                conditions.addCondition("close", Conditions.Operation.LT, 30d);
-                conditions.addCondition("PE", Conditions.Operation.LT, 200d);
-                conditions.addCondition("marketValue", Conditions.Operation.LT, 200d);
-                stockList = Provider.tradingStockList(conditions);
-                stockPool.add(config.getStockPool(),stockList,43200);
+                stockList = defaultStockList(config.getStockPool());
+                LOG.warn(config.getStockPool() + " is not exist. load default stockpool,poolSize="+stockList.size());
             }
             final List<String> finalStockList = stockList;
             Runnable task = () -> recommender.process(finalStockList);
             executorService.scheduleAtFixedRate(task,0,config.getInterval(),TimeUnit.SECONDS);
         }
+    }
+
+    /**
+     * 默认的股票池，股价小于30，PE小于200，流通市值小于200亿
+     * @param poolName
+     * @return
+     */
+    public List<String> defaultStockList(String poolName){
+        Conditions conditions = new Conditions();
+        conditions.addCondition("close", Conditions.Operation.LT, 30d);
+        conditions.addCondition("PE", Conditions.Operation.LT, 200d);
+        conditions.addCondition("marketValue", Conditions.Operation.LT, 200d);
+        List<String> stockList = Provider.tradingStockList(conditions);
+        stockPool.add(poolName,stockList,43200);
+        return stockList;
     }
 
     public StockPool getStockPool() {

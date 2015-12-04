@@ -3,6 +3,7 @@ package com.zhaijiong.stock.recommend;
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
+import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
@@ -10,13 +11,13 @@ import com.zhaijiong.stock.tools.StockCategory;
 import com.zhaijiong.stock.tools.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,11 +29,21 @@ import java.util.concurrent.TimeUnit;
 public abstract class Recommender {
     protected static final Logger LOG = LoggerFactory.getLogger(Recommender.class);
 
-    protected static Map<String, Set<String>> stockCategory = StockCategory.getStockCategory("概念");
+    @Autowired
+    public StockCategory stockCategory;
+
+    protected static Map<String, Set<String>> conceptCategory;
+
+    protected static Map<String,Set<String>> industryCategory;
 
     protected String name;
 
     private boolean isAlert = false;
+
+    @Autowired
+    public Context context;
+
+    public List<String> account;
 
     public Recommender(){}
 
@@ -40,15 +51,31 @@ public abstract class Recommender {
         this.name = name;
     }
 
+    @PostConstruct
+    public void init(){
+        account = context.getList("account");
+        conceptCategory = stockCategory.getStockCategory("概念");
+        industryCategory = stockCategory.getStockCategory("行业");
+//        for(String symbol:account){
+//            System.out.println(symbol);
+//        }
+    }
     /**
      * 获取股票所属概念版块名称列表
      *
      * @param symbol 6位股票代码
      * @return
      */
-    public static String getStockCategory(String symbol) {
-        if (stockCategory.get(symbol) != null) {
-            return Joiner.on(",").join(stockCategory.get(symbol));
+    public static String getConceptCategory(String symbol) {
+        if (conceptCategory.get(symbol) != null) {
+            return Joiner.on(",").join(conceptCategory.get(symbol));
+        }
+        return "";
+    }
+
+    public static String getIndustryCategory(String symbol){
+        if(industryCategory.get(symbol)!=null){
+            return Joiner.on(",").join(industryCategory.get(symbol));
         }
         return "";
     }
@@ -95,7 +122,11 @@ public abstract class Recommender {
                 stockData.name, stockData.symbol,
                 stockData.get("close"),
                 stockData.get("PE"));
-        LOG.info(name + "\t" + Utils.formatDate(stockData.date,"MM月dd日 HHmmss") +"\t"+ record + "\t" + getStockCategory(stockData.symbol));
+        LOG.info(name + "\t" +
+                Utils.formatDate(stockData.date,"MM月dd日 HHmmss") +"\t"+
+                record + "\t" +
+                getIndustryCategory(stockData.symbol) + "\t" +
+                getConceptCategory(stockData.symbol));
     }
 
     //TODO 增加QQ、短信、微信、Mail报警

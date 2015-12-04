@@ -19,7 +19,7 @@ dashboard:
   - "600030"
 
 account:
-  - "002617"
+  - "002317"
 
 recommender:
   goldenSpiderRecommender:

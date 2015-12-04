@@ -28,4 +28,6 @@
     <!-- redis template definition -->
     <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate"
           p:connectionFactory-ref="jedisConnectionFactory"/>
+
+    <bean id="stockCategory" class="com.zhaijiong.stock.tools.StockCategory"/>
 </beans>
