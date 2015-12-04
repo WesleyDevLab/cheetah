@@ -3,6 +3,7 @@ package com.zhaijiong.stock.recommend;
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.StockData;
@@ -43,7 +44,7 @@ public abstract class Recommender {
     @Autowired
     public Context context;
 
-    public List<String> account;
+    public Set<String> account; //持仓股票集合
 
     public Recommender(){}
 
@@ -53,12 +54,9 @@ public abstract class Recommender {
 
     @PostConstruct
     public void init(){
-        account = context.getList("account");
+        account = Sets.newHashSet(context.getList("account"));
         conceptCategory = stockCategory.getStockCategory("概念");
         industryCategory = stockCategory.getStockCategory("行业");
-//        for(String symbol:account){
-//            System.out.println(symbol);
-//        }
     }
     /**
      * 获取股票所属概念版块名称列表
@@ -92,14 +90,11 @@ public abstract class Recommender {
             ThreadPool.execute(() -> {
                 try {
                     if (isBuy(symbol)) {
-                        StockData stockData = Provider.realtimeData(symbol);
-                        if (stockData != null && !Strings.isNullOrEmpty(stockData.symbol)) {
-                            recommend(stockData);
-                        } else {
-                            LOG.warn(String.format("fait to get realtime data,symbol is [%s]", symbol));
-                        }
-                        if (isAlert) {
-                            alert(stockData);
+                        recommend(symbol,"buy");
+                    }
+                    if(account.contains(symbol)){
+                        if(isSell(symbol)){
+                            recommend(symbol,"sell");
                         }
                     }
                 } catch (Exception e) {
@@ -117,16 +112,25 @@ public abstract class Recommender {
         LOG.info(String.format("Recommender %s process elapsed time=%ss",name, stopwatch.elapsed(TimeUnit.SECONDS)));
     }
 
-    public void recommend(StockData stockData) {
-        String record = Joiner.on("\t").join(
-                stockData.name, stockData.symbol,
-                stockData.get("close"),
-                stockData.get("PE"));
-        LOG.info(name + "\t" +
-                Utils.formatDate(stockData.date,"MM月dd日HH:mm:ss ") +"\t"+
-                record + "\t" +
-                getIndustryCategory(stockData.symbol) + "\t" +
-                getConceptCategory(stockData.symbol));
+    public void recommend(String symbol,String type) {
+        StockData stockData = Provider.realtimeData(symbol);
+        if (stockData != null && !Strings.isNullOrEmpty(stockData.symbol)) {
+            String record = Joiner.on("\t").join(
+                    stockData.name, stockData.symbol,
+                    stockData.get("close"),
+                    stockData.get("PE"));
+            LOG.info(name + "\t" +
+                    type + "\t" +
+                    Utils.formatDate(stockData.date,"MM月dd日HH:mm:ss ") +"\t"+
+                    record + "\t" +
+                    getIndustryCategory(stockData.symbol) + "\t" +
+                    getConceptCategory(stockData.symbol));
+        } else {
+            LOG.warn(String.format("fait to get realtime data,symbol is [%s]", symbol));
+        }
+        if (isAlert) {
+            alert(stockData);
+        }
     }
 
     //TODO 增加QQ、短信、微信、Mail报警

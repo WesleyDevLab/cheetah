@@ -67,6 +67,9 @@ public class GoldenSpiderBuyStrategy extends StrategyBase implements BuyStrategy
         }
         if(size<60){
             stockDataList = Provider.dailyData(stockDataList.get(0).symbol,500,true);
+            if(stockDataList.size()<60){
+                return false;
+            }
         }
         stockDataList = StrategyUtils.goldenSpider(stockDataList);
         if(size>2){
