@@ -81,8 +81,8 @@ public class StockDataDownload {
                 public void run() {
                     try {
                         StockData stockData = Provider.realtimeData(symbol);
-                        stockData.date = Utils.str2Date(Utils.formatDate(stockData.date, "yyyyMMdd"), "yyyyMMdd");
                         if (stockData != null && !Strings.isNullOrEmpty(stockData.symbol)) {
+                            stockData.date = Utils.str2Date(Utils.formatDate(stockData.date, "yyyyMMdd"), "yyyyMMdd");
                             stockDataList.add(stockData);
                         } else {
                             LOG.error(String.format("fail to download realtime data with symbol [%s]", symbol));
