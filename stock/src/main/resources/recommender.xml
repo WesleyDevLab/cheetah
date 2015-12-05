@@ -15,11 +15,25 @@
         <property name="sellStrategy" ref="minute60SellStrategy"/>
     </bean>
 
+    <bean id="dayMACDRecommender" class="com.zhaijiong.stock.recommend.SimpleRecommender">
+        <property name="name" value="simple"/>
+        <property name="buyStrategy" ref="dayMACDBuyStrategy"/>
+        <property name="sellStrategy" ref="maSellStrategy"/> <!-- 相同卖出策略问题 -->
+    </bean>
+
+    <bean id="maRecommender" class="com.zhaijiong.stock.recommend.SimpleRecommender">
+        <property name="name" value="simple"/>
+        <property name="buyStrategy" ref="maBuyStrategy"/>
+        <property name="sellStrategy" ref="maSellStrategy"/>
+    </bean>
+
     <!-- 组合推荐器，将简单Recommender组合起来作股票推荐 -->
     <bean id="combinedRecommender" class="com.zhaijiong.stock.recommend.CombinedRecommender">
         <property name="name" value="combined"/>
         <property name="recommenderList">
             <list>
+                <ref bean="dayMACDRecommender"/>
+                <ref bean="maRecommender"/>
                 <ref bean="mintue60MACDRecommender"/>
             </list>
         </property>

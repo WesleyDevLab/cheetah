@@ -9,7 +9,7 @@
     </bean>
 
     <bean id="minute60BuyStrategy" class="com.zhaijiong.stock.strategy.buy.MACDBuyStrategy">
-        <constructor-arg index="0" value="1"/>
+        <constructor-arg index="0" value="3"/>
         <constructor-arg index="1" value="SIXTY_MIN"/>
     </bean>
 
@@ -37,9 +37,14 @@
     </bean>
 
     <bean id="maBuyStrategy" class="com.zhaijiong.stock.strategy.buy.MABuyStrategy">
-        <constructor-arg value="4"/>
+        <constructor-arg value="3"/>
         <constructor-arg value="close_ma5"/>
         <constructor-arg value="close_ma10"/>
         <constructor-arg value="SIXTY_MIN"/>
+    </bean>
+
+    <bean id="maSellStrategy" class="com.zhaijiong.stock.strategy.sell.MASellStrategy">
+        <constructor-arg value="10"/>
+        <constructor-arg value="1"/>
     </bean>
 </beans>
