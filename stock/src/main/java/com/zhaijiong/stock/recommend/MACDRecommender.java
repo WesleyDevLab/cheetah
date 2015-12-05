@@ -4,6 +4,7 @@ import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.strategy.buy.MACDBuyStrategy;
 import com.zhaijiong.stock.strategy.sell.MACDSellStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,10 +21,13 @@ public class MACDRecommender extends Recommender{
     private MACDBuyStrategy dayMACDBuyStrategy;
 
     @Autowired
+    private MACDBuyStrategy minute60BuyStrategy;
+
+    @Autowired
     private MACDBuyStrategy minute15BuyStrategy;
 
     @Autowired
-    private MACDSellStrategy minute15SellStratgy;
+    private MACDSellStrategy minute15SellStrategy;
 
     @Override
     public boolean isBuy(String symbol) {
@@ -43,7 +47,7 @@ public class MACDRecommender extends Recommender{
 
     @Override
     public boolean isSell(String symbol) {
-        if(minute15SellStratgy.isSell(symbol)){
+        if(minute15SellStrategy.isSell(symbol)){
             return true;
         }
         return false;
@@ -51,7 +55,7 @@ public class MACDRecommender extends Recommender{
 
     @Override
     public boolean isSell(List<StockData> stockDataList) {
-        if(minute15SellStratgy.isSell(stockDataList)){
+        if(minute15SellStrategy.isSell(stockDataList)){
             return true;
         }
         return false;
@@ -71,5 +75,21 @@ public class MACDRecommender extends Recommender{
 
     public void setMinute15BuyStrategy(MACDBuyStrategy minute15BuyStrategy) {
         this.minute15BuyStrategy = minute15BuyStrategy;
+    }
+
+    public MACDBuyStrategy getMinute60BuyStrategy() {
+        return minute60BuyStrategy;
+    }
+
+    public void setMinute60BuyStrategy(MACDBuyStrategy minute60BuyStrategy) {
+        this.minute60BuyStrategy = minute60BuyStrategy;
+    }
+
+    public MACDSellStrategy getMinute15SellStrategy() {
+        return minute15SellStrategy;
+    }
+
+    public void setMinute15SellStrategy(MACDSellStrategy minute15SellStrategy) {
+        this.minute15SellStrategy = minute15SellStrategy;
     }
 }

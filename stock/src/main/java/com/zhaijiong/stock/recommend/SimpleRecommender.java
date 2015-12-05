@@ -44,4 +44,12 @@ public class SimpleRecommender extends Recommender{
     public void setBuyStrategy(BuyStrategy buyStrategy) {
         this.buyStrategy = buyStrategy;
     }
+
+    public SellStrategy getSellStrategy() {
+        return sellStrategy;
+    }
+
+    public void setSellStrategy(SellStrategy sellStrategy) {
+        this.sellStrategy = sellStrategy;
+    }
 }

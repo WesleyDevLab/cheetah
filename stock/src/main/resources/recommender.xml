@@ -9,12 +9,18 @@
         <property name="buyStrategy" ref="goldenSpiderBuyStrategy"/>
     </bean>
 
+    <bean id="mintue60MACDRecommender" class="com.zhaijiong.stock.recommend.SimpleRecommender">
+        <property name="name" value="simple"/>
+        <property name="buyStrategy" ref="minute60BuyStrategy"/>
+        <property name="sellStrategy" ref="minute60SellStrategy"/>
+    </bean>
+
     <!-- 组合推荐器，将简单Recommender组合起来作股票推荐 -->
     <bean id="combinedRecommender" class="com.zhaijiong.stock.recommend.CombinedRecommender">
         <property name="name" value="combined"/>
         <property name="recommenderList">
             <list>
-                <ref bean="macdRecommender"/>
+                <ref bean="mintue60MACDRecommender"/>
             </list>
         </property>
     </bean>

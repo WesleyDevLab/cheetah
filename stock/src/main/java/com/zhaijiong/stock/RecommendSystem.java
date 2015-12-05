@@ -1,9 +1,10 @@
-package com.zhaijiong.stock.recommend;
+package com.zhaijiong.stock;
 
 import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.provider.Provider;
-import com.zhaijiong.stock.tools.StockCategory;
+import com.zhaijiong.stock.recommend.Recommender;
+import com.zhaijiong.stock.recommend.RecommenderContext;
 import com.zhaijiong.stock.tools.StockPool;
 import com.zhaijiong.stock.tools.ThreadPool;
 import org.slf4j.Logger;
@@ -13,15 +14,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

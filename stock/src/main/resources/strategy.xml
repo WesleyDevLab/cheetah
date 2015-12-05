@@ -8,6 +8,17 @@
         <constructor-arg index="1" value="DAY"/>
     </bean>
 
+    <bean id="minute60BuyStrategy" class="com.zhaijiong.stock.strategy.buy.MACDBuyStrategy">
+        <constructor-arg index="0" value="1"/>
+        <constructor-arg index="1" value="SIXTY_MIN"/>
+    </bean>
+
+    <bean id="minute60SellStrategy" class="com.zhaijiong.stock.strategy.sell.MACDSellStrategy">
+        <constructor-arg index="0" value="1"/>
+        <constructor-arg index="1" value="SIXTY_MIN"/>
+    </bean>
+
+
     <bean id="minute15BuyStrategy" class="com.zhaijiong.stock.strategy.buy.MACDBuyStrategy">
         <constructor-arg index="0" value="1"/>
         <constructor-arg index="1" value="FIFTEEN_MIN"/>
