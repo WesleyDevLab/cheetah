@@ -27,8 +27,8 @@ public class StrategyUtils {
         int count = stockDataList.size();
         for (int i = count - 1; i > 0; i--) {
             StockData stockData = stockDataList.get(i);
-            Double cross = stockData.get(MACD_CROSS);
-            if (cross != null && count - i <= period && cross == 1)
+            double cross = stockData.get(MACD_CROSS);
+            if (count - i <= period && cross == 1)
                 return true;
         }
         return false;
@@ -44,8 +44,8 @@ public class StrategyUtils {
         int count = stockDataList.size();
         for (int i = count - 1; i > 0; i--) {
             StockData stockData = stockDataList.get(i);
-            Double cross = stockData.get(MACD_CROSS);
-            if (cross != null && count - i <= period && cross == 0)
+            double cross = stockData.get(MACD_CROSS);
+            if (count - i <= period && cross == 0)
                 return true;
         }
         return false;

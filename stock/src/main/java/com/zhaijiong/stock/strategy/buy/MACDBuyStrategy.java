@@ -39,7 +39,7 @@ public class MACDBuyStrategy extends StrategyBase implements BuyStrategy {
 
     @Override
     public double buy(String symbol){
-        List<StockData> stockDataList = getStockDataByType(symbol);
+        List<StockData> stockDataList = getStockDataByType(type,symbol);
         return buy(stockDataList);
     }
 
@@ -59,7 +59,7 @@ public class MACDBuyStrategy extends StrategyBase implements BuyStrategy {
 
     @Override
     public boolean isBuy(String symbol) {
-        List<StockData> stockDataList = getStockDataByType(symbol);
+        List<StockData> stockDataList = getStockDataByType(type,symbol);
         return isBuy(stockDataList);
     }
 
@@ -70,30 +70,6 @@ public class MACDBuyStrategy extends StrategyBase implements BuyStrategy {
             return true;
         }
         return false;
-    }
-
-    private List<StockData> getStockDataByType(String symbol) {
-        List<StockData> stockDataList;
-        switch (type){
-            case FIVE_MIN:
-                stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "5"));
-                break;
-            case FIFTEEN_MIN:
-                stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "15"));
-                break;
-            case THIRTY_MIN:
-                stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "30"));
-                break;
-            case SIXTY_MIN:
-                stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "60"));
-                break;
-            case DAY:
-                stockDataList = getDailyData(symbol);
-                break;
-            default:
-                stockDataList = getDailyData(symbol);
-        }
-        return stockDataList;
     }
 
 }

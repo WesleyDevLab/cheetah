@@ -1,8 +1,10 @@
 package com.zhaijiong.stock.strategy;
 
+import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.dao.StockDB;
+import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,30 @@ public class StrategyBase {
 
     public void setStockDB(StockDB stockDB) {
         this.stockDB = stockDB;
+    }
+
+    protected List<StockData> getStockDataByType(PeriodType type,String symbol) {
+        List<StockData> stockDataList;
+        switch (type){
+            case FIVE_MIN:
+                stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "5"));
+                break;
+            case FIFTEEN_MIN:
+                stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "15"));
+                break;
+            case THIRTY_MIN:
+                stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "30"));
+                break;
+            case SIXTY_MIN:
+                stockDataList = Lists.newArrayList(Provider.minuteData(symbol, "60"));
+                break;
+            case DAY:
+                stockDataList = getDailyData(symbol);
+                break;
+            default:
+                stockDataList = getDailyData(symbol);
+        }
+        return stockDataList;
     }
 
     public List<StockData> getDailyData(String symbol){
