@@ -37,6 +37,13 @@ public class UtilsTest {
     }
 
     @Test
+    public void testIsBetween(){
+        System.out.println(Utils.isBetween(8.8,7,10));
+        System.out.println(Utils.isBetween(8.8,8.8,10));
+        System.out.println(Utils.isBetween(8.8,5,7));
+    }
+
+    @Test
     public void testEnum(){
         System.out.println(Bytes.toInt(ArticleType.FINANCIAL_STATEMENTS.getType()));
     }

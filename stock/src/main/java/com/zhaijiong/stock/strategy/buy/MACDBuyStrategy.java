@@ -1,6 +1,5 @@
 package com.zhaijiong.stock.strategy.buy;
 
-import com.google.common.collect.Lists;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
@@ -9,8 +8,7 @@ import com.zhaijiong.stock.strategy.StrategyUtils;
 
 import java.util.List;
 
-import static com.zhaijiong.stock.common.StockConstants.CLOSE;
-import static com.zhaijiong.stock.common.StockConstants.MACD_CROSS;
+import static com.zhaijiong.stock.common.StockConstants.*;
 
 /**
  * author: eryk
@@ -23,7 +21,7 @@ import static com.zhaijiong.stock.common.StockConstants.MACD_CROSS;
  */
 public class MACDBuyStrategy extends StrategyBase implements BuyStrategy {
 
-    private int timeRange = 5;
+    private int period = 5;
     private PeriodType type;
     private static final String NAME = "macdBuy";
 
@@ -31,8 +29,8 @@ public class MACDBuyStrategy extends StrategyBase implements BuyStrategy {
         this.name = NAME;
     }
 
-    public MACDBuyStrategy(int timeRange, PeriodType type){
-        this.timeRange = timeRange;
+    public MACDBuyStrategy(int period, PeriodType type){
+        this.period = period;
         this.type = type;
         this.name = NAME;
     }
@@ -50,7 +48,7 @@ public class MACDBuyStrategy extends StrategyBase implements BuyStrategy {
         for (int i = count - 1; i > 0; i--) {
             StockData stockData = stockDataList.get(i);
             double cross = stockData.get(MACD_CROSS);
-            if (count - i <= timeRange && cross == 1)
+            if (count - i <= period && cross == 1)
                 return stockData.get(CLOSE);
         }
         return -1;
@@ -66,7 +64,7 @@ public class MACDBuyStrategy extends StrategyBase implements BuyStrategy {
     @Override
     public boolean isBuy(List<StockData> stockDataList){
         stockDataList = Provider.computeMACD(stockDataList);
-        if (StrategyUtils.isMACDGoldenCrossIn(stockDataList, timeRange)) {
+        if (StrategyUtils.isMACDGoldenCrossIn(stockDataList, period)) {
             return true;
         }
         return false;

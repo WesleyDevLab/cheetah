@@ -18,7 +18,7 @@ import static com.zhaijiong.stock.common.StockConstants.*;
 public class StrategyUtils {
 
     /**
-     * 判断最近n个时间周期内是否出现金叉
+     * 判断最近n个时间周期内是否出现金叉,或者是当前的MACD值在（-0.1,0.1）之间并且dif，dea持续缩短
      *
      * @param period
      * @return 如果是返回true
@@ -27,9 +27,10 @@ public class StrategyUtils {
         int count = stockDataList.size();
         for (int i = count - 1; i > 0; i--) {
             StockData stockData = stockDataList.get(i);
-            double cross = stockData.get(MACD_CROSS);
-            if (count - i <= period && cross == 1)
+            Double cross = stockData.get(MACD_CROSS);
+            if (cross != null && count - i <= period && cross == 1){ // && stockDataList.get(i).get(DIF) < 0
                 return true;
+            }
         }
         return false;
     }

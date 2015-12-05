@@ -3,6 +3,7 @@ package com.zhaijiong.stock.common;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.zhaijiong.stock.model.StockData;
@@ -434,5 +435,9 @@ public class Utils {
             return true;
         }
         return false;
+    }
+
+    public static boolean isBetween(double value,double start,double stop){
+        return Range.open(start, stop).contains(value);
     }
 }
