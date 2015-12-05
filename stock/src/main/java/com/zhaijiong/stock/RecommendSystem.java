@@ -10,6 +10,7 @@ import com.zhaijiong.stock.tools.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -34,11 +35,13 @@ public class RecommendSystem {
     private static final Logger LOG = LoggerFactory.getLogger(RecommendSystem.class);
 
     @Autowired
+    @Qualifier("context")
     public Context context;
 
     public static ApplicationContext applicationContext;
 
     @Autowired
+    @Qualifier("stockPool")
     public StockPool stockPool;
 
     public RecommenderContext recommenderContext;

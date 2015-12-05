@@ -49,8 +49,8 @@ public class MACDBuyStrategy extends StrategyBase implements BuyStrategy {
         stockDataList = Provider.computeMACD(stockDataList);
         for (int i = count - 1; i > 0; i--) {
             StockData stockData = stockDataList.get(i);
-            Double cross = stockData.get(MACD_CROSS);
-            if (cross != null && count - i <= timeRange && cross == 1)
+            double cross = stockData.get(MACD_CROSS);
+            if (count - i <= timeRange && cross == 1)
                 return stockData.get(CLOSE);
         }
         return -1;

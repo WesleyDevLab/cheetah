@@ -35,6 +35,45 @@ public class StrategyUtils {
     }
 
     /**
+     * 判断收盘价两条线是否相交，快线从下上传慢线叫金叉，快慢线名称请参考StockConstants类
+     *
+     * @param stockDataList
+     * @param maFast        例如：close_ma5
+     * @param maSlow        例如：close_ma10
+     * @param period
+     * @return
+     */
+    public static boolean isGoldenCrossIn(List<StockData> stockDataList, String maFast, String maSlow, int period) {
+        int size = stockDataList.size() - 1;
+        double[] maFastArr = Utils.getArrayFrom(stockDataList, maFast);
+        double[] maSlowArr = Utils.getArrayFrom(stockDataList, maSlow);
+        for (int i = size; i > 0; i--) {
+            if (size - i > period) {
+                break;
+            }
+            if (maFastArr[i] > maSlowArr[i] && maFastArr[i-1] < maSlowArr[i-1]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static double goldenCrossPrice(List<StockData> stockDataList, String maFast, String maSlow, int period){
+        int size = stockDataList.size() - 1;
+        double[] maFastArr = Utils.getArrayFrom(stockDataList, maFast);
+        double[] maSlowArr = Utils.getArrayFrom(stockDataList, maSlow);
+        for (int i = size; i > 0; i--) {
+            if (size - i < period) {
+                break;
+            }
+            if (maFastArr[i] > maSlowArr[i] && maFastArr[i-1] < maSlowArr[i-1]) {
+                return stockDataList.get(i).get(StockConstants.CLOSE);
+            }
+        }
+        return -1;
+    }
+
+    /**
      * 判断最近n个时间周期内是否出现死叉
      *
      * @param period
@@ -56,7 +95,7 @@ public class StrategyUtils {
      *
      * @return
      */
-    public static List<StockData> averageBond(List<StockData> stockDataList,double threshold) {
+    public static List<StockData> averageBond(List<StockData> stockDataList, double threshold) {
         List<StockData> result = Lists.newLinkedList();
         for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
@@ -67,19 +106,19 @@ public class StrategyUtils {
             double ma40 = stockData.get(CLOSE_MA40);
             double ma60 = stockData.get(CLOSE_MA60);
 //            double ma120 = stockData.get(CLOSE_MA120);
-            if (ma5 == 0 || ma10 == 0 || ma20 == 0 || ma30 == 0 || ma40==0 || ma60 == 0){
+            if (ma5 == 0 || ma10 == 0 || ma20 == 0 || ma30 == 0 || ma40 == 0 || ma60 == 0) {
                 continue;
             }
             double maCount = 0;
-            double[] maArr = {ma5,ma10,ma20,ma30,ma40,ma60};
-            for(int j=0;j<5;j++){
-                for(int k =j+1;k<6;k++){
-                    if(Math.abs(maArr[j]/maArr[k] - 1) < threshold){
+            double[] maArr = {ma5, ma10, ma20, ma30, ma40, ma60};
+            for (int j = 0; j < 5; j++) {
+                for (int k = j + 1; k < 6; k++) {
+                    if (Math.abs(maArr[j] / maArr[k] - 1) < threshold) {
                         maCount++;
                     }
                 }
             }
-            stockData.put(AVERAGE_BOND,maCount);
+            stockData.put(AVERAGE_BOND, maCount);
             result.add(stockData);
         }
         return result;
@@ -95,10 +134,11 @@ public class StrategyUtils {
      * H1:=MAX(MAX(MA5,MA13),MA34);
      * L1:=MIN(MIN(MA5,MA13),MA34);
      * 一阳穿三线:= H1<C AND O<L1 AND YCX AND MA2>REF(MA2,1);
+     *
      * @param stockDataList
      * @return
      */
-    public static List<StockData> goldenSpider(List<StockData> stockDataList){
+    public static List<StockData> goldenSpider(List<StockData> stockDataList) {
         Indicators indicators = new Indicators();
         List<StockData> result = Lists.newLinkedList();
         double[] closes = Utils.getArrayFrom(stockDataList, CLOSE);
@@ -106,25 +146,25 @@ public class StrategyUtils {
         double[] ma5 = indicators.ema(closes, 5);
         double[] ma13 = indicators.ema(closes, 13);
         double[] ma34 = indicators.ema(closes, 34);
-        double[] ma55 = indicators.ema(closes,55);
-        for(int i =0;i<stockDataList.size();i++){
+        double[] ma55 = indicators.ema(closes, 55);
+        for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
-            if(i>0 && ma5[i]>ma5[i-1]){
+            if (i > 0 && ma5[i] > ma5[i - 1]) {
                 double close = stockData.get(CLOSE);
                 double open = stockData.get(OPEN);
-                double H3 = Math.max(Math.max(ma5[i],ma13[i]),ma34[i]);
-                double L3 = Math.min(Math.min(ma5[i],ma13[i]),ma34[i]);
+                double H3 = Math.max(Math.max(ma5[i], ma13[i]), ma34[i]);
+                double L3 = Math.min(Math.min(ma5[i], ma13[i]), ma34[i]);
                 double H4 = Math.max(Math.max(Math.max(ma5[i], ma13[i]), ma34[i]), ma55[i]);
-                double L4 = Math.min(Math.min(Math.min(ma5[i],ma13[i]),ma34[i]),ma55[i]);
-                if(H3 < close && open < L3 && ma2[i]>ma2[i-1]){
-                    stockData.put(GOLDEN_SPIDER,3d);
-                }else if(H4 < close && open < L4 && ma2[i]>ma2[i-1]){
-                    stockData.put(GOLDEN_SPIDER,4d);
-                }else{
-                    stockData.put(GOLDEN_SPIDER,0d);
+                double L4 = Math.min(Math.min(Math.min(ma5[i], ma13[i]), ma34[i]), ma55[i]);
+                if (H3 < close && open < L3 && ma2[i] > ma2[i - 1]) {
+                    stockData.put(GOLDEN_SPIDER, 3d);
+                } else if (H4 < close && open < L4 && ma2[i] > ma2[i - 1]) {
+                    stockData.put(GOLDEN_SPIDER, 4d);
+                } else {
+                    stockData.put(GOLDEN_SPIDER, 0d);
                 }
-            }else{
-                stockData.put(GOLDEN_SPIDER,0d);
+            } else {
+                stockData.put(GOLDEN_SPIDER, 0d);
             }
             result.add(stockData);
         }

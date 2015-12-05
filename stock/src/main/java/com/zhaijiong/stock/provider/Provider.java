@@ -145,7 +145,7 @@ public class Provider {
      * @return
      */
     public static List<StockData> minuteData(String symbol, String type) {
-        DateRange range = DateRange.getRange(30);//数据源不够30天
+        DateRange range = DateRange.getRange(120);//数据源不够30天
         List<StockData> stockDataList = minuteData(symbol, range.start(), range.stop(), type);
         return stockDataList;
     }
@@ -579,7 +579,7 @@ public class Provider {
         double[] ma30Arr = indicators.sma(closes, 30);
         double[] ma40Arr = indicators.sma(closes, 40);
         double[] ma60Arr = indicators.sma(closes, 60);
-        double[] ma120Arr = indicators.sma(closes, 120);
+//        double[] ma120Arr = indicators.sma(closes, 120);
         for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
             double ma5 = Utils.formatDouble(ma5Arr[i], "#.##");
@@ -588,7 +588,7 @@ public class Provider {
             double ma30 = Utils.formatDouble(ma30Arr[i], "#.##");
             double ma40 = Utils.formatDouble(ma40Arr[i], "#.##");
             double ma60 = Utils.formatDouble(ma60Arr[i], "#.##");
-            double ma120 = Utils.formatDouble(ma120Arr[i], "#.##");
+//            double ma120 = Utils.formatDouble(ma120Arr[i], "#.##");
 
             stockData.put(columnName + "_ma5", ma5);
             stockData.put(columnName + "_ma10", ma10);
@@ -596,7 +596,7 @@ public class Provider {
             stockData.put(columnName + "_ma30", ma30);
             stockData.put(columnName + "_ma40", ma40);
             stockData.put(columnName + "_ma60", ma60);
-            stockData.put(columnName + "_ma120", ma120);
+//            stockData.put(columnName + "_ma120", ma120);
 
             maStockDatas.add(stockData);
         }
