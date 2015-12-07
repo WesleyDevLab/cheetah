@@ -4,6 +4,10 @@ import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MAType;
 import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.RetCode;
+import com.zhaijiong.stock.common.StockConstants;
+import com.zhaijiong.stock.model.StockData;
+
+import java.util.List;
 
 public class Indicators {
     private Core core;
@@ -218,6 +222,18 @@ public class Indicators {
 
         double[][] result = {outSlowK,outSlowD,outSlowJ};
         return result;
+    }
+
+    public double[][] kdj(List<StockData> stockDataList){
+        double[] closes = new double[stockDataList.size()];
+        double[] high = new double[stockDataList.size()];
+        double[] low = new double[stockDataList.size()];
+        for (int i = 0; i < stockDataList.size(); i++) {
+            closes[i] = stockDataList.get(i).get(StockConstants.CLOSE);
+            high[i] = stockDataList.get(i).get(StockConstants.HIGH);
+            low[i] = stockDataList.get(i).get(StockConstants.LOW);
+        }
+        return kdj(high,low,closes);
     }
 
     // 6,12,24
