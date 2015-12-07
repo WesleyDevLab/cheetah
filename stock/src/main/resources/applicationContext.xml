@@ -30,4 +30,6 @@
           p:connectionFactory-ref="jedisConnectionFactory"/>
 
     <bean id="stockCategory" class="com.zhaijiong.stock.tools.StockCategory"/>
+
+    <bean id="function" class="com.zhaijiong.stock.indicators.TDXFunction"/>
 </beans>

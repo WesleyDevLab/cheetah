@@ -116,4 +116,24 @@ public class TDXFunction {
         }
         return false;
     }
+
+    public double max(double...values){
+        double tmp=Double.MIN_VALUE;
+        for(double value:values){
+            if(value>tmp){
+                tmp=value;
+            }
+        }
+        return tmp;
+    }
+
+    public double min(double...values){
+        double tmp = Double.MAX_VALUE;
+        for(double value:values){
+            if(value<tmp){
+                tmp = value;
+            }
+        }
+        return tmp;
+    }
 }

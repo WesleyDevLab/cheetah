@@ -4,10 +4,12 @@ import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.dao.StockDB;
+import com.zhaijiong.stock.indicators.TDXFunction;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
 
@@ -23,6 +25,9 @@ public class StrategyBase {
 
     @Autowired
     public StockDB stockDB;
+    @Autowired
+    @Qualifier("function")
+    public TDXFunction function;
 
     public String getName() {
         return name;
@@ -38,6 +43,14 @@ public class StrategyBase {
 
     public void setStockDB(StockDB stockDB) {
         this.stockDB = stockDB;
+    }
+
+    public TDXFunction getFunction() {
+        return function;
+    }
+
+    public void setFunction(TDXFunction function) {
+        this.function = function;
     }
 
     protected List<StockData> getStockDataByType(PeriodType type,String symbol) {
