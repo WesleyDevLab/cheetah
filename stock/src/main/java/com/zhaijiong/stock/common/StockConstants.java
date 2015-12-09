@@ -41,11 +41,17 @@ public class StockConstants {
     //均线指标
     public static String CLOSE_MA5 = "close_ma5";
     public static String CLOSE_MA10 = "close_ma10";
+    public static String CLOSE_MA13 = "close_ma13";
     public static String CLOSE_MA20 = "close_ma20";
     public static String CLOSE_MA30 = "close_ma30";
+    public static String CLOSE_MA34 = "close_ma34";
     public static String CLOSE_MA40 = "close_ma40";
+    public static String CLOSE_MA55 = "close_ma55";
     public static String CLOSE_MA60 = "close_ma60";
     public static String CLOSE_MA120 = "close_ma120";
+
+    public static String MAX = "max";
+    public static String MIN = "min";
 
     public static String AVERAGE_BOND = "average_bond";
 
