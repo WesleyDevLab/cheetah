@@ -42,7 +42,7 @@ public class StockDataDownload {
     @Scheduled(cron = "0 0 20 * * MON-FRI")
     public void downloadDailyData() {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        List<String> stockList = stockPool.tradingStock();
+        List<String> stockList = stockPool.stockList();
         CountDownLatch countDownLatch = new CountDownLatch(stockList.size());
         for (String symbol : stockList) {
             ThreadPool.execute(() -> {
@@ -65,7 +65,7 @@ public class StockDataDownload {
         LOG.info(String.format("download elapsed time=%ss", stopwatch.elapsed(TimeUnit.SECONDS)));
     }
 
-    @Scheduled(fixedRate = 120000)
+    @Scheduled(fixedRate = 300000)
     public void downloadRealTimeData() {
         if (!Utils.isTradingTime()) {
             return;
