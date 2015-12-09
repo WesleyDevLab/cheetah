@@ -28,8 +28,8 @@ recommender:
   goldenSpiderRecommender:
     name: goldenSpiderRecommender  #需要与recommender.xml配置的bean的id一致
     stockPool: small  #参考stockPool
-    interval: 180  #单位：秒
+    interval: 300  #单位：秒
   combinedRecommender:
     name: combinedRecommender
     stockPool: small
-    interval: 180
+    interval: 300
