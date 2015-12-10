@@ -69,15 +69,12 @@ public class StockDBTest {
 
     @Test
     public void testGet() throws IOException {
-        DateRange dateRange = DateRange.getRange(100);
-        String symbol = "000910";
+        DateRange dateRange = DateRange.getRange(500);
+        String symbol = "002783";
 
         List<StockData> stocks = stockDB.getStockDataDaily(symbol, dateRange.start(), dateRange.stop());
         for (StockData stock : stocks) {
-            System.out.println(stock.date);
-            for(Map.Entry<String,Double> entry:stock.entrySet()){
-                System.out.println(entry.getKey()+":"+entry.getValue());
-            }
+            System.out.println(stock);
         }
     }
 

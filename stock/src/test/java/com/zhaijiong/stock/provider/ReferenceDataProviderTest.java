@@ -42,6 +42,24 @@ public class ReferenceDataProviderTest {
     }
 
     @Test
+    public void testFHRZ1(){
+        String symbol = "002271";
+        List<StockData> stockDataList = ReferenceDataProvider.getFHRZ(symbol);
+        stockDataList.forEach(stockData ->{
+            System.out.println(stockData);
+        });
+    }
+
+    @Test
+    public void testFHPG(){
+        String symbol = "002271";
+        List<StockData> stockDataList = ReferenceDataProvider.getFHPG(symbol);
+        stockDataList.forEach(stockData ->{
+            System.out.println(stockData);
+        });
+    }
+
+    @Test
     public void testGetFPYA() throws Exception {
 
     }

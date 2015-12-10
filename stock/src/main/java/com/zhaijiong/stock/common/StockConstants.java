@@ -57,6 +57,16 @@ public class StockConstants {
 
     public static String GOLDEN_SPIDER = "golden_spider";
 
+    public static String DATE_OF_DECLARATION = "dateOfDeclaration";  //公告日期
+    public static String ANNUAL = "annual"; //分红年度
+    public static String DATE_OF_RECORD = "dateOfRecord"; //股权登记日
+    public static String DATE_OF_EX_DIVIDEND = "dateOfExDividend";   //除权除息日
+
+    public static String STOCK_SHARES = "stockShares"; //送股
+    public static String STOCK_TRANSFERRED = "stockTransferred"; //转增
+    public static String STOCK_DIVIDEND = "stockDividend"; //派息
+
+
     public static List<String> DAILY = Lists.newArrayList(
             "close",            //最新价,收盘价
             "high",             //最高价
