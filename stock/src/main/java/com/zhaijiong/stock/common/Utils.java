@@ -440,4 +440,33 @@ public class Utils {
     public static boolean isBetween(double value,double start,double stop){
         return Range.open(start, stop).contains(value);
     }
+
+    /**
+     * 获取数据复权数据
+     * @param stockData
+     * @param sg
+     * @param zz
+     * @param px
+     * @return
+     */
+    public static StockData fuquan(StockData stockData,double sg,double zz,double px){
+        double percent = (stockData.get("close") - px/10) / ((zz+10)/10+sg/10) / stockData.get("close");
+        stockData.put("close",stockData.get("close") * percent);
+        stockData.put("high",stockData.get("high") * percent);
+        stockData.put("low",stockData.get("low") * percent);
+        stockData.put("open",stockData.get("open") * percent);
+        stockData.put("lastClose",stockData.get("lastClose") * percent);
+        return stockData;
+    }
+
+    public static List<String> getYearBetween(String startDate, String stopDate) {
+        List<String> years = Lists.newLinkedList();
+        DateTime start = new DateTime(Utils.str2Date(startDate,"yyyyMMdd"));
+        DateTime stop = new DateTime(Utils.str2Date(stopDate,"yyyyMMdd"));
+        while(start.getYear() <= stop.getYear()){
+            years.add(String.valueOf(start.getYear()));
+            start = start.plusYears(1);
+        }
+        return years;
+    }
 }

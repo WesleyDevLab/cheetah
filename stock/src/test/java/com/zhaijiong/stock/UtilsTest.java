@@ -2,6 +2,7 @@ package com.zhaijiong.stock;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.ArticleType;
 import com.zhaijiong.stock.model.StockData;
@@ -46,5 +47,14 @@ public class UtilsTest {
     @Test
     public void testEnum(){
         System.out.println(Bytes.toInt(ArticleType.FINANCIAL_STATEMENTS.getType()));
+    }
+
+    @Test
+    public void testGetYearBetween(){
+        DateRange dateRange = DateRange.getRange(5000);
+        List<String> years = Utils.getYearBetween(dateRange.start(),dateRange.stop());
+        for(String year:years){
+            System.out.println(year);
+        }
     }
 }
