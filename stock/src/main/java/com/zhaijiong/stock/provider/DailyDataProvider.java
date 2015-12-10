@@ -1,6 +1,7 @@
 package com.zhaijiong.stock.provider;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -196,32 +197,37 @@ public class DailyDataProvider {
      * @param stopDate
      * @return
      */
-    public static List<StockData> getFQ(String symbol, String startDate, String stopDate) {
-        Map<String, StockData> stockDatas = qfqData(symbol, startDate, stopDate);
 
-        List<StockData> stockDataList = getDailyDataWithOutFQ(symbol, startDate, stopDate);
-        if(stockDatas.size()==0){
-            return stockDataList;
-        }
-        ArrayList<String> dateList = Lists.newArrayList(stockDatas.keySet());
-        Collections.sort(dateList);
-        String date = dateList.get(dateList.size() - 1);
-        double factor = stockDatas.get(date).get(StockConstants.FACTOR);//复权因子
-        for (int i = 0; i < stockDataList.size(); i++) {
-            StockData stockData = stockDataList.get(i);
-            date = Utils.formatDate(stockData.date, "yyyyMMdd");
-            StockData stockDataFQ = stockDatas.get(date);
-            if (stockDataFQ != null) {
-                stockData.put(OPEN, Utils.formatDouble(stockDataFQ.get(OPEN) / factor));
-                stockData.put(CLOSE, Utils.formatDouble(stockDataFQ.get(CLOSE) / factor));
-                stockData.put(HIGH, Utils.formatDouble(stockDataFQ.get(HIGH) / factor));
-                stockData.put(LOW, Utils.formatDouble(stockDataFQ.get(LOW) / factor));
-                if (i > 0) {
-                    stockData.put(LAST_CLOSE, stockDataList.get(i - 1).get(CLOSE));
+    //http://d.10jqka.com.cn/v2/line/hs_600133/01/2015.js
+    public static String FQ_URL = "http://d.10jqka.com.cn/v2/line/hs_%s/01/%s.js";
+    public static List<StockData> getFQ(String symbol, String startDate, String stopDate){
+        List<StockData> stockDataList = Lists.newLinkedList();
+        List<String> years = Utils.getYearBetween(startDate,stopDate);
+        for(String year:years){
+            String url = String.format(FQ_URL, symbol, year);
+            String data = Downloader.download(url);
+            if(Strings.isNullOrEmpty(data)){
+               continue;
+            }
+            String[] records = data.substring(47, data.length() - 3).split(";");
+            for(int i =0;i<records.length;i++){
+                String[] record = records[i].split(",");
+                StockData stockData = new StockData(symbol);
+                stockData.date = Utils.str2Date(record[0],"yyyyMMdd");
+                stockData.put(OPEN,Utils.str2Double(record[1]));
+                stockData.put(HIGH,Utils.str2Double(record[2]));
+                stockData.put(LOW,Utils.str2Double(record[3]));
+                stockData.put(CLOSE,Utils.str2Double(record[4]));
+                stockData.put(VOLUME,Utils.str2Double(record[5])/100);
+                stockData.put(AMOUNT,Utils.str2Double(record[6])/10000);
+                stockData.put(TURNOVER_RATE,Utils.str2Double(record[7]));
+                if(i>0){
+                    stockData.put(LAST_CLOSE,stockDataList.get(i-1).get(CLOSE));
+                    stockData.put(CHANGE_AMOUNT,stockData.get(CLOSE) - stockDataList.get(i-1).get(CLOSE));
+                    stockData.put(AMPLITUDE, Utils.formatDouble((stockData.get(HIGH) - stockData.get(LOW)) / stockData.get(LAST_CLOSE))*100);
+                    stockData.put(CHANGE, Utils.formatDouble((stockData.get(CHANGE_AMOUNT)) / stockData.get(LAST_CLOSE))*100);
                 }
-            } else {
-                //有时daily数据已经更新到最新，而复权数据还没有更新，这时去掉daily最新日期的数据，以复权数据源的日期数据为准
-                stockDataList.remove(i);
+                stockDataList.add(stockData);
             }
         }
         return stockDataList;
@@ -249,12 +255,4 @@ public class DailyDataProvider {
         return String.format(DAILY_DATA_URL, Symbol.getSymbol(symbol, DAILY_DATA_URL), startDate, stopDate);
     }
 
-    public static void main(String[] args) {
-        DateRange range = DateRange.getRange(5);
-
-        Map<String, StockData> stockDataList1 = DailyDataProvider.qfqData("000008", range.start(), range.stop());
-        for (Map.Entry<String, StockData> stockDataEntry : stockDataList1.entrySet()) {
-            System.out.println(stockDataEntry.getKey() + ":" + stockDataEntry.getValue());
-        }
-    }
 }

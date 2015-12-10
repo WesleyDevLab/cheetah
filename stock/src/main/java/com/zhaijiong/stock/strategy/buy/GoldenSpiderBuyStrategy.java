@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.zhaijiong.stock.common.StockConstants.CLOSE;
+
 /**
  * author: eryk
  * mail: xuqi86@gmail.com
@@ -62,14 +64,8 @@ public class GoldenSpiderBuyStrategy extends StrategyBase implements BuyStrategy
     @Override
     public boolean isBuy(List<StockData> stockDataList) {
         int size = stockDataList.size();
-        if(size==0){
+        if(size==0 || size < 60){
             return false;
-        }
-        if(size<60){
-            stockDataList = Provider.dailyData(stockDataList.get(0).symbol,500,true);
-            if(stockDataList.size()<60){
-                return false;
-            }
         }
         stockDataList = StrategyUtils.goldenSpider(stockDataList);
         if(size>2){

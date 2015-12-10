@@ -22,14 +22,14 @@ dashboard:
 
 account:
   - "002271"
-  - "600108"
+  - "002429"
 
 recommender:
   goldenSpiderRecommender:
     name: goldenSpiderRecommender  #需要与recommender.xml配置的bean的id一致
     stockPool: small  #参考stockPool
-    interval: 300  #单位：秒
-  combinedRecommender:
-    name: combinedRecommender
-    stockPool: small
-    interval: 300
+    interval: 120  #单位：秒
+#  combinedRecommender:
+#    name: combinedRecommender
+#    stockPool: small
+#    interval: 120

@@ -43,6 +43,16 @@ public class ProviderTest {
     }
 
     @Test
+    public void testDailyData1(){
+        String symbol = "002271";
+        List<StockData> stockDataList = Provider.dailyData(symbol, false);
+        ReferenceDataProvider.getFHPG(symbol);
+        for(StockData stockData:stockDataList){
+            System.out.println(stockData);
+        }
+    }
+
+    @Test
     public void testDailyDataZS(){
         List<StockData> stockDataList = Provider.dailyDataZS("000001");
         for(StockData stockData:stockDataList){

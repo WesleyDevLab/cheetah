@@ -47,4 +47,6 @@
         <constructor-arg value="10"/>
         <constructor-arg value="1"/>
     </bean>
+
+    <bean id="cheetahBuyStrategy" class="com.zhaijiong.stock.strategy.buy.CheetahBuyStrategy"/>
 </beans>

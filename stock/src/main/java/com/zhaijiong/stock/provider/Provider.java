@@ -565,38 +565,47 @@ public class Provider {
     }
 
     /**
-     * 计算ma指标，包含5，10，20，30，60，120
+     * 计算ma指标，包含5,10,13,20,30,34,55,60
      * @param stockDataList
      * @param columnName
      * @return
      */
     public static List<StockData> computeMA(List<StockData> stockDataList, String columnName) {
         List<StockData> maStockDatas = Lists.newArrayListWithCapacity(stockDataList.size());
-        double[] closes = Utils.getArrayFrom(stockDataList, columnName);
-        double[] ma5Arr = indicators.sma(closes, 5);
-        double[] ma10Arr = indicators.sma(closes, 10);
-        double[] ma20Arr = indicators.sma(closes, 20);
-        double[] ma30Arr = indicators.sma(closes, 30);
-        double[] ma40Arr = indicators.sma(closes, 40);
-        double[] ma60Arr = indicators.sma(closes, 60);
-//        double[] ma120Arr = indicators.sma(closes, 120);
+        double[] values = Utils.getArrayFrom(stockDataList, columnName);
+        double[] ma3Arr = indicators.sma(values, 3);
+        double[] ma5Arr = indicators.sma(values, 5);
+        double[] ma10Arr = indicators.sma(values, 10);
+        double[] ma13Arr = indicators.sma(values, 13);
+        double[] ma20Arr = indicators.sma(values, 20);
+        double[] ma30Arr = indicators.sma(values, 30);
+        double[] ma34Arr = indicators.sma(values, 34);
+        double[] ma40Arr = indicators.sma(values, 40);
+        double[] ma55Arr = indicators.sma(values, 55);
+        double[] ma60Arr = indicators.sma(values, 60);
         for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
-            double ma5 = Utils.formatDouble(ma5Arr[i], "#.##");
-            double ma10 = Utils.formatDouble(ma10Arr[i], "#.##");
-            double ma20 = Utils.formatDouble(ma20Arr[i], "#.##");
-            double ma30 = Utils.formatDouble(ma30Arr[i], "#.##");
-            double ma40 = Utils.formatDouble(ma40Arr[i], "#.##");
-            double ma60 = Utils.formatDouble(ma60Arr[i], "#.##");
-//            double ma120 = Utils.formatDouble(ma120Arr[i], "#.##");
+            double ma3 = Utils.formatDouble(ma3Arr[i], "#.###");
+            double ma5 = Utils.formatDouble(ma5Arr[i], "#.###");
+            double ma10 = Utils.formatDouble(ma10Arr[i], "#.###");
+            double ma13 = Utils.formatDouble(ma13Arr[i], "#.###");
+            double ma20 = Utils.formatDouble(ma20Arr[i], "#.###");
+            double ma30 = Utils.formatDouble(ma30Arr[i], "#.###");
+            double ma34 = Utils.formatDouble(ma34Arr[i], "#.###");
+            double ma40 = Utils.formatDouble(ma40Arr[i], "#.###");
+            double ma55 = Utils.formatDouble(ma55Arr[i], "#.###");
+            double ma60 = Utils.formatDouble(ma60Arr[i], "#.###");
 
+            stockData.put(columnName + "_ma3", ma3);
             stockData.put(columnName + "_ma5", ma5);
             stockData.put(columnName + "_ma10", ma10);
+            stockData.put(columnName + "_ma13", ma13);
             stockData.put(columnName + "_ma20", ma20);
             stockData.put(columnName + "_ma30", ma30);
+            stockData.put(columnName + "_ma34", ma34);
             stockData.put(columnName + "_ma40", ma40);
+            stockData.put(columnName + "_ma55", ma55);
             stockData.put(columnName + "_ma60", ma60);
-//            stockData.put(columnName + "_ma120", ma120);
 
             maStockDatas.add(stockData);
         }

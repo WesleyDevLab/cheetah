@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.dao.StockDB;
+import com.zhaijiong.stock.indicators.Indicators;
 import com.zhaijiong.stock.indicators.TDXFunction;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
@@ -28,6 +29,8 @@ public class StrategyBase {
     @Autowired
     @Qualifier("function")
     public TDXFunction function;
+    @Autowired
+    public Indicators indicators;
 
     public String getName() {
         return name;
@@ -80,7 +83,7 @@ public class StrategyBase {
     public List<StockData> getDailyData(String symbol){
         DateRange dateRange = DateRange.getRange(250);
         List<StockData> stockDataList = stockDB.getStockDataDaily(symbol,dateRange.start(),dateRange.stop());
-        if(stockDataList.size()==0 || stockDataList.size()<120){
+        if(stockDataList.size()<120){
             stockDataList = Provider.dailyData(symbol, 500, true);
             stockDB.saveStockData(Constants.TABLE_STOCK_DAILY,stockDataList);
         }

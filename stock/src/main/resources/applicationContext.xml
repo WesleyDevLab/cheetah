@@ -32,4 +32,6 @@
     <bean id="stockCategory" class="com.zhaijiong.stock.tools.StockCategory"/>
 
     <bean id="function" class="com.zhaijiong.stock.indicators.TDXFunction"/>
+
+    <bean id="indicators" class="com.zhaijiong.stock.indicators.Indicators"/>
 </beans>
