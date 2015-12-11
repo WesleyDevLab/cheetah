@@ -1,6 +1,7 @@
 package com.zhaijiong.stock.provider;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -212,22 +213,30 @@ public class DailyDataProvider {
             String[] records = data.substring(47, data.length() - 3).split(";");
             for(int i =0;i<records.length;i++){
                 String[] record = records[i].split(",");
-                StockData stockData = new StockData(symbol);
-                stockData.date = Utils.str2Date(record[0],"yyyyMMdd");
-                stockData.put(OPEN,Utils.str2Double(record[1]));
-                stockData.put(HIGH,Utils.str2Double(record[2]));
-                stockData.put(LOW,Utils.str2Double(record[3]));
-                stockData.put(CLOSE,Utils.str2Double(record[4]));
-                stockData.put(VOLUME,Utils.str2Double(record[5])/100);
-                stockData.put(AMOUNT,Utils.str2Double(record[6])/10000);
-                stockData.put(TURNOVER_RATE,Utils.str2Double(record[7]));
-                if(i>0){
-                    stockData.put(LAST_CLOSE,stockDataList.get(i-1).get(CLOSE));
-                    stockData.put(CHANGE_AMOUNT,stockData.get(CLOSE) - stockDataList.get(i-1).get(CLOSE));
-                    stockData.put(AMPLITUDE, Utils.formatDouble((stockData.get(HIGH) - stockData.get(LOW)) / stockData.get(LAST_CLOSE))*100);
-                    stockData.put(CHANGE, Utils.formatDouble((stockData.get(CHANGE_AMOUNT)) / stockData.get(LAST_CLOSE))*100);
+                if(record.length==8){
+                    StockData stockData = new StockData(symbol);
+                    stockData.date = Utils.str2Date(record[0],"yyyyMMdd");
+                    stockData.put(OPEN,Utils.str2Double(record[1]));
+                    stockData.put(HIGH,Utils.str2Double(record[2]));
+                    stockData.put(LOW,Utils.str2Double(record[3]));
+                    stockData.put(CLOSE,Utils.str2Double(record[4]));
+                    stockData.put(VOLUME,Utils.str2Double(record[5])/100);
+                    stockData.put(AMOUNT,Utils.str2Double(record[6])/10000);
+                    stockData.put(TURNOVER_RATE,Utils.str2Double(record[7]));
+                    try{
+                        if(stockDataList.size()>0){
+                            stockData.put(LAST_CLOSE,stockDataList.get(i-1).get(CLOSE));
+                            stockData.put(CHANGE_AMOUNT,stockData.get(CLOSE) - stockDataList.get(i-1).get(CLOSE));
+                            stockData.put(AMPLITUDE, Utils.formatDouble((stockData.get(HIGH) - stockData.get(LOW)) / stockData.get(LAST_CLOSE))*100);
+                            stockData.put(CHANGE, Utils.formatDouble((stockData.get(CHANGE_AMOUNT)) / stockData.get(LAST_CLOSE))*100);
+                        }
+                    }catch(Exception e){
+                        //TODO CHECK
+                    }
+                    stockDataList.add(stockData);
+                }else{
+                    LOG.error(Joiner.on(",").join(record));
                 }
-                stockDataList.add(stockData);
             }
         }
         return stockDataList;

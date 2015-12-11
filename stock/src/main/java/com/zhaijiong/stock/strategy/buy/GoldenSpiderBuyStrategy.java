@@ -10,9 +10,11 @@ import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.strategy.StrategyBase;
 import com.zhaijiong.stock.strategy.StrategyUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 import static com.zhaijiong.stock.common.StockConstants.CLOSE;
@@ -57,7 +59,20 @@ public class GoldenSpiderBuyStrategy extends StrategyBase implements BuyStrategy
 
     @Override
     public boolean isBuy(String symbol) {
+        if(blackList.contains(symbol)){
+            return false;
+        }
         List<StockData> stockDataList = getDailyData(symbol);
+        if(stockDataList.size()>=0){
+            //如果最后一个stockData不包含今天，则请求实时数据补全
+            Date lastDate = stockDataList.get(stockDataList.size()-1).date;
+            Date recentDate = Utils.str2Date(Utils.getRecentWorkingDay(lastDate,"yyyyMMdd"),"yyyyMMdd");
+            if(recentDate.getTime()!=lastDate.getTime()){
+                StockData stockData = Provider.realtimeData(symbol);
+                stockDataList.add(stockData);
+                LOG.warn(String.format("%s data is expired.",symbol));
+            }
+        }
         return isBuy(stockDataList);
     }
 

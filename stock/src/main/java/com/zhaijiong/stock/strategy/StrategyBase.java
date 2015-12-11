@@ -1,6 +1,7 @@
 package com.zhaijiong.stock.strategy;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.dao.StockDB;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * author: eryk
@@ -26,6 +28,11 @@ public class StrategyBase {
 
     public static final String DEFAULT_STRATEGY_NAME = "cheetah";
     protected String name;
+
+    /**
+     * 如果股票为新股，stockdata list数量小于60，则不再重复爬去
+     */
+    protected Set<String> blackList = Sets.newConcurrentHashSet();
 
     @Autowired
     public StockDB stockDB;
@@ -89,6 +96,10 @@ public class StrategyBase {
         if(stockDataList.size()<60){
             stockDataList = Provider.dailyData(symbol, 500, true);
             stockDB.saveStockData(Constants.TABLE_STOCK_DAILY,stockDataList);
+
+            if(stockDataList.size()<60){
+                blackList.add(symbol);  //如果获取的股票数据依然小于60天，则不再抓取
+            }
         }
         return stockDataList;
     }

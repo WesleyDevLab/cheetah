@@ -14,6 +14,7 @@ import com.zhaijiong.stock.tools.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -33,13 +34,15 @@ public class StockDataDownload {
     protected static final Logger LOG = LoggerFactory.getLogger(StockDataDownload.class);
 
     @Autowired
+    @Qualifier("context")
     protected Context context;
     @Autowired
     protected StockDB stockDB;
     @Autowired
+    @Qualifier("stockPool")
     protected StockPool stockPool;
 
-    @Scheduled(cron = "0 0 20 * * MON-FRI")
+    @Scheduled(cron = "0 0 10 * * MON-FRI")
     public void downloadDailyData() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<String> stockList = stockPool.stockList();
@@ -48,7 +51,7 @@ public class StockDataDownload {
             ThreadPool.execute(() -> {
                 LOG.info(String.format("start download daily data with symbol [%s]", symbol));
                 //TODO retry when fail
-                List<StockData> stockDataList = Provider.dailyData(symbol, 1000, true);
+                List<StockData> stockDataList = Provider.dailyData(symbol, 240, true);
                 if (stockDataList != null && stockDataList.size() != 0) {
                     save(stockDataList);
                 } else {
@@ -65,7 +68,7 @@ public class StockDataDownload {
         LOG.info(String.format("download elapsed time=%ss", stopwatch.elapsed(TimeUnit.SECONDS)));
     }
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 120000)
     public void downloadRealTimeData() {
         if (!Utils.isTradingTime()) {
             return;

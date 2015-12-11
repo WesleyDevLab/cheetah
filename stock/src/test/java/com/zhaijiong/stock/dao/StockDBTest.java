@@ -69,8 +69,8 @@ public class StockDBTest {
 
     @Test
     public void testGet() throws IOException {
-        DateRange dateRange = DateRange.getRange(500);
-        String symbol = "002271";
+        DateRange dateRange = DateRange.getRange(1000);
+        String symbol = "000537";
 
         List<StockData> stocks = stockDB.getStockDataDaily(symbol, dateRange.start(), dateRange.stop());
         for (StockData stock : stocks) {
