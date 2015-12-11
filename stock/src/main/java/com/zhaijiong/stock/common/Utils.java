@@ -10,6 +10,7 @@ import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.tools.Sleeper;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalTime;
 import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormat;
@@ -435,6 +436,18 @@ public class Utils {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 获取最新的交易日期
+     * @return
+     */
+    public static String getRecentWorkingDay(Date date,String format){
+        DateTime dt = new DateTime(date);
+        while(dt.getDayOfWeek()>= DateTimeConstants.SATURDAY){
+            dt = dt.plusDays(-1);
+        }
+        return dt.toString(format);
     }
 
     public static boolean isBetween(double value,double start,double stop){

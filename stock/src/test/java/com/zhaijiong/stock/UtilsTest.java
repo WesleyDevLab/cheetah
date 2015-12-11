@@ -7,8 +7,10 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.ArticleType;
 import com.zhaijiong.stock.model.StockData;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.List;
 
 public class UtilsTest {
@@ -56,5 +58,18 @@ public class UtilsTest {
         for(String year:years){
             System.out.println(year);
         }
+    }
+
+    @Test
+    public void testGetRecentWorkingDay(){
+        Date date = Utils.str2Date("20151211","yyyyMMdd");
+        String dateStr = Utils.getRecentWorkingDay(date,"yyyyMMdd");
+        Assert.assertEquals("20151211",dateStr);
+        date = Utils.str2Date("20151213","yyyyMMdd");
+        dateStr = Utils.getRecentWorkingDay(date,"yyyyMMdd");
+        Assert.assertEquals("20151211",dateStr);
+        date = Utils.str2Date("20151207","yyyyMMdd");
+        dateStr = Utils.getRecentWorkingDay(date,"yyyyMMdd");
+        Assert.assertNotEquals("20151206",dateStr);
     }
 }
