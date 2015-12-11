@@ -9,6 +9,8 @@ import com.zhaijiong.stock.indicators.TDXFunction;
 import com.zhaijiong.stock.model.PeriodType;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -20,6 +22,7 @@ import java.util.List;
  * date: 15-12-3.
  */
 public class StrategyBase {
+    protected static final Logger LOG = LoggerFactory.getLogger(StrategyBase.class);
 
     public static final String DEFAULT_STRATEGY_NAME = "cheetah";
     protected String name;
@@ -81,9 +84,9 @@ public class StrategyBase {
     }
 
     public List<StockData> getDailyData(String symbol){
-        DateRange dateRange = DateRange.getRange(250);
+        DateRange dateRange = DateRange.getRange(240);
         List<StockData> stockDataList = stockDB.getStockDataDaily(symbol,dateRange.start(),dateRange.stop());
-        if(stockDataList.size()<120){
+        if(stockDataList.size()<60){
             stockDataList = Provider.dailyData(symbol, 500, true);
             stockDB.saveStockData(Constants.TABLE_STOCK_DAILY,stockDataList);
         }
