@@ -40,6 +40,7 @@ public class StrategyBase {
     @Qualifier("function")
     public TDXFunction function;
     @Autowired
+    @Qualifier("indicators")
     public Indicators indicators;
 
     public String getName() {

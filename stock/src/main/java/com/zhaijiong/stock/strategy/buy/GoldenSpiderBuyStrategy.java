@@ -63,17 +63,6 @@ public class GoldenSpiderBuyStrategy extends StrategyBase implements BuyStrategy
             return false;
         }
         List<StockData> stockDataList = getDailyData(symbol);
-        if(stockDataList.size()>=0){
-            //如果最后一个stockData不包含今天，则请求实时数据补全
-            Date lastDate = stockDataList.get(stockDataList.size()-1).date;
-            Date recentDate = Utils.str2Date(Utils.getRecentWorkingDay(lastDate,"yyyyMMdd"),"yyyyMMdd");
-            if(recentDate.getTime()!=lastDate.getTime()){
-                StockData stockData = Provider.realtimeData(symbol);
-                stockDataList.add(stockData);
-                stockDB.saveStockDailyData(Lists.newArrayList(stockData));
-                LOG.warn(String.format("%s data is expired.",symbol));
-            }
-        }
         return isBuy(stockDataList);
     }
 

@@ -15,6 +15,12 @@
         <property name="sellStrategy" ref="minute60SellStrategy"/>
     </bean>
 
+    <bean id="mintue15MACDRecommender" class="com.zhaijiong.stock.recommend.SimpleRecommender">
+        <property name="name" value="simple"/>
+        <property name="buyStrategy" ref="minute15BuyStrategy"/>
+        <property name="sellStrategy" ref="minute15SellStrategy"/>
+    </bean>
+
     <bean id="dayMACDRecommender" class="com.zhaijiong.stock.recommend.SimpleRecommender">
         <property name="name" value="simple"/>
         <property name="buyStrategy" ref="dayMACDBuyStrategy"/>
@@ -27,6 +33,12 @@
         <property name="sellStrategy" ref="maSellStrategy"/>
     </bean>
 
+    <bean id="cheetahRecommender" class="com.zhaijiong.stock.recommend.SimpleRecommender">
+        <property name="name" value="cheetah"/>
+        <property name="buyStrategy" ref="cheetahBuyStrategy"/>
+        <property name="sellStrategy" ref="maSellStrategy"/>
+    </bean>
+
     <!-- 组合推荐器，将简单Recommender组合起来作股票推荐 -->
     <bean id="combinedRecommender" class="com.zhaijiong.stock.recommend.CombinedRecommender">
         <property name="name" value="combined"/>
@@ -34,7 +46,7 @@
             <list>
                 <ref bean="dayMACDRecommender"/>
                 <ref bean="maRecommender"/>
-                <ref bean="mintue60MACDRecommender"/>
+                <ref bean="mintue15MACDRecommender"/>
             </list>
         </property>
     </bean>

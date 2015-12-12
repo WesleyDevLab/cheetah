@@ -58,15 +58,20 @@ public class CheetahBuyStrategy extends StrategyBase implements BuyStrategy{
 
     @Override
     public boolean isBuy(String symbol) {
+        if(blackList.contains(symbol)){
+            return false;
+        }
         List<StockData> stockDataList = getDailyData(symbol);
         if(stockDataList.size()<60){
             LOG.warn(String.format("symbol [%s] stockdata size < 60",symbol));
+            blackList.add(symbol);
             return false;
         }
         return isBuy(stockDataList);
     }
 
     /*
+    均线粘合
     RSV:=(C - LLV(L,9)) / (HHV(H, 9) - LLV(L, 9)) * 100;
     FASTK:=SMA(RSV, 3, 1);
     K:=SMA(FASTK, 3, 1);
