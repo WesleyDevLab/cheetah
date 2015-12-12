@@ -70,6 +70,7 @@ public class GoldenSpiderBuyStrategy extends StrategyBase implements BuyStrategy
             if(recentDate.getTime()!=lastDate.getTime()){
                 StockData stockData = Provider.realtimeData(symbol);
                 stockDataList.add(stockData);
+                stockDB.saveStockDailyData(Lists.newArrayList(stockData));
                 LOG.warn(String.format("%s data is expired.",symbol));
             }
         }
