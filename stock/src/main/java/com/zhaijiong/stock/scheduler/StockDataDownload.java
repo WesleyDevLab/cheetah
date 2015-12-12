@@ -42,10 +42,11 @@ public class StockDataDownload {
     @Qualifier("stockPool")
     protected StockPool stockPool;
 
-    @Scheduled(cron = "0 0 10 * * MON-FRI")
+    @Scheduled(cron = "0 0 8 * * MON-FRI")
     public void downloadDailyData() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<String> stockList = stockPool.stockList();
+        LOG.info("start to download daily data,stockList=" + stockList.size());
         CountDownLatch countDownLatch = new CountDownLatch(stockList.size());
         for (String symbol : stockList) {
             ThreadPool.execute(() -> {
@@ -65,10 +66,10 @@ public class StockDataDownload {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        LOG.info(String.format("download elapsed time=%ss", stopwatch.elapsed(TimeUnit.SECONDS)));
+        LOG.info(String.format("daily data download elapsed time=%ss", stopwatch.elapsed(TimeUnit.SECONDS)));
     }
 
-    @Scheduled(fixedRate = 120000)
+    @Scheduled(fixedRate = 180000)
     public void downloadRealTimeData() {
         if (!Utils.isTradingTime()) {
             return;
@@ -103,7 +104,7 @@ public class StockDataDownload {
             e.printStackTrace();
         }
         save(stockDataList);
-        LOG.info(String.format("download elapsed time=%ss,save count=%s", stopwatch.elapsed(TimeUnit.SECONDS), stockDataList.size()));
+        LOG.info(String.format("realtime data download elapsed time=%ss,save count=%s", stopwatch.elapsed(TimeUnit.SECONDS), stockDataList.size()));
     }
 
     public void save(List<StockData> stockDataList) {
