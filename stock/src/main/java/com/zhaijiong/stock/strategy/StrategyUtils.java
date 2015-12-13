@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.indicators.Indicators;
+import com.zhaijiong.stock.indicators.TDXFunction;
 import com.zhaijiong.stock.model.StockData;
 
 import java.util.List;
@@ -16,6 +17,8 @@ import static com.zhaijiong.stock.common.StockConstants.*;
  * date: 15-11-17.
  */
 public class StrategyUtils {
+
+    private static TDXFunction function = new TDXFunction();
 
     /**
      * 判断最近n个时间周期内是否出现金叉,或者是当前的MACD值在（-0.1,0.1）之间并且dif，dea持续缩短
@@ -145,7 +148,10 @@ public class StrategyUtils {
         double[] closes = Utils.getArrayFrom(stockDataList, CLOSE);
         double[] ma2 = indicators.ema(closes, 2);
         double[] ma5 = indicators.ema(closes, 5);
+        double[] ma10 = indicators.ema(closes,10);
         double[] ma13 = indicators.ema(closes, 13);
+        double[] ma20 = indicators.ema(closes,20);
+        double[] ma30 = indicators.ema(closes,30);
         double[] ma34 = indicators.ema(closes, 34);
         double[] ma55 = indicators.ema(closes, 55);
         for (int i = 0; i < stockDataList.size(); i++) {
@@ -153,16 +159,29 @@ public class StrategyUtils {
             if (i > 0 && ma5[i] > ma5[i - 1]) {
                 double close = stockData.get(CLOSE);
                 double open = stockData.get(OPEN);
-                double H3 = Math.max(Math.max(ma5[i], ma13[i]), ma34[i]);
-                double L3 = Math.min(Math.min(ma5[i], ma13[i]), ma34[i]);
-                double H4 = Math.max(Math.max(Math.max(ma5[i], ma13[i]), ma34[i]), ma55[i]);
-                double L4 = Math.min(Math.min(Math.min(ma5[i], ma13[i]), ma34[i]), ma55[i]);
-                if (H3 < close && open < L3 && ma2[i] > ma2[i - 1]) {
+                double max1 = function.max(ma5[i], ma13[i], ma34[i]);
+                double min1 = function.min(ma5[i], ma13[i], ma34[i]);
+                double max2 = function.max(ma5[i], ma13[i], ma34[i], ma55[i]);
+                double min2 = function.min(ma5[i], ma13[i], ma34[i], ma55[i]);
+                if (max1 < close && open < min1 && ma2[i] > ma2[i - 1] && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2) {
                     stockData.put(GOLDEN_SPIDER, 3d);
-                } else if (H4 < close && open < L4 && ma2[i] > ma2[i - 1]) {
+                } else if (max2 < close && open < min2 && ma2[i] > ma2[i - 1] && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2) {
                     stockData.put(GOLDEN_SPIDER, 4d);
                 } else {
                     stockData.put(GOLDEN_SPIDER, 0d);
+                }
+                if(stockData.get(GOLDEN_SPIDER)==0){
+                    max1 = function.max(ma5[i], ma10[i], ma20[i]);
+                    min1 = function.min(ma5[i], ma10[i], ma20[i]);
+                    max2 = function.max(ma5[i], ma10[i], ma20[i], ma30[i]);
+                    min2 = function.min(ma5[i], ma10[i], ma20[i], ma30[i]);
+                    if (max1 < close && open < min1 && ma2[i] > ma2[i - 1] && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2) {
+                        stockData.put(GOLDEN_SPIDER, 3d);
+                    } else if (max2 < close && open < min2 && ma2[i] > ma2[i - 1] && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2) {
+                        stockData.put(GOLDEN_SPIDER, 4d);
+                    } else {
+                        stockData.put(GOLDEN_SPIDER, 0d);
+                    }
                 }
             } else {
                 stockData.put(GOLDEN_SPIDER, 0d);
