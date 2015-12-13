@@ -22,7 +22,7 @@
     </bean>
 
     <bean id="dayMACDRecommender" class="com.zhaijiong.stock.recommend.SimpleRecommender">
-        <property name="name" value="simple"/>
+        <property name="name" value="dayMACD"/>
         <property name="buyStrategy" ref="dayMACDBuyStrategy"/>
         <property name="sellStrategy" ref="maSellStrategy"/> <!-- 相同卖出策略问题 -->
     </bean>

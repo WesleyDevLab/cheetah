@@ -57,6 +57,9 @@ public class MACDBuyStrategy extends StrategyBase implements BuyStrategy {
 
     @Override
     public boolean isBuy(String symbol) {
+        if(blackList.contains(symbol)){
+            return false;
+        }
         List<StockData> stockDataList = getStockDataByType(type,symbol);
         return isBuy(stockDataList);
     }
