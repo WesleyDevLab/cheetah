@@ -1,7 +1,6 @@
 package com.zhaijiong.stock.tools;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -16,12 +15,19 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,25 +93,22 @@ public class StockCategory {
                     }
                 }
 
-                blockMap.put("概念",new LinkedList<StockBlock>());
-                blockMap.put("行业",new LinkedList<StockBlock>());
-                blockMap.put("地域",new LinkedList<StockBlock>());
+                blockMap.put("概念",new LinkedList<>());
+                blockMap.put("行业",new LinkedList<>());
+                blockMap.put("地域",new LinkedList<>());
 
                 final CountDownLatch countDownLatch = new CountDownLatch(taskList.size());
                 for(final Pair<String,Element> block:taskList){
-                    threadPool.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            StockBlock stockBlock = new StockBlock();
-                            stockBlock.name = new String(block.getVal().select("span[class=text]").text().getBytes(Charset.forName("utf8")));
-                            stockBlock.url = blockBaseURL+block.getVal().select("a").attr("href");
-                            String _id = CharMatcher.DIGIT.retainFrom(stockBlock.url);
-                            stockBlock.id = _id.substring(0,_id.length()-2);
-                            stockBlock.symbolList.addAll(getBlockStockList(stockBlock.id));
-                            stockBlock.type = block.getKey();
-                            blockMap.get(block.getKey()).add(stockBlock);
-                            countDownLatch.countDown();
-                        }
+                    threadPool.execute(() -> {
+                        StockBlock stockBlock = new StockBlock();
+                        stockBlock.name = new String(block.getVal().select("span[class=text]").text().getBytes(Charset.forName("utf8")));
+                        stockBlock.url = blockBaseURL+block.getVal().select("a").attr("href");
+                        String _id = CharMatcher.DIGIT.retainFrom(stockBlock.url);
+                        stockBlock.id = _id.substring(0,_id.length()-2);
+                        stockBlock.symbolList.addAll(getBlockStockList(stockBlock.id));
+                        stockBlock.type = block.getKey();
+                        blockMap.get(block.getKey()).add(stockBlock);
+                        countDownLatch.countDown();
                     });
                 }
                 countDownLatch.await();
