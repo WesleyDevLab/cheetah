@@ -42,7 +42,7 @@ public class StockDataDownload {
     @Qualifier("stockPool")
     protected StockPool stockPool;
 
-    @Scheduled(cron = "0 0 8 * * MON-FRI")
+    @Scheduled(cron = "0 0 8 * * MON-FRI") //0 0 8 * * MON-FRI
     public void downloadDailyData() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<String> stockList = stockPool.stockList();
@@ -72,6 +72,7 @@ public class StockDataDownload {
     @Scheduled(fixedRate = 180000)
     public void downloadRealTimeData() {
         if (!Utils.isTradingTime()) {
+            LOG.info("not working time.");
             return;
         }
         Stopwatch stopwatch = Stopwatch.createStarted();
