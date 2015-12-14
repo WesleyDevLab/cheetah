@@ -6,11 +6,13 @@ import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.recommend.Recommender;
 import com.zhaijiong.stock.strategy.buy.MACDBuyStrategy;
 import com.zhaijiong.stock.tools.StockPool;
+import com.zhaijiong.stock.tools.ThreadPool;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -22,10 +24,20 @@ public class RecommenderTest {
 
     @Autowired
     StockPool stockPool;
+    @Autowired
+    @Qualifier("dayMACDBuyStrategy")
+    MACDBuyStrategy dayMACDBuyStrategy;
+    @Autowired
+    @Qualifier("minute15BuyStrategy")
+    MACDBuyStrategy minute15BuyStrategy;
+
+    @Autowired
+    @Qualifier("goldenSpiderRecommender")
+    Recommender recommender;
 
     @Before
     public void setUp() throws Exception {
-
+        ThreadPool.init(32);
     }
 
     @After
@@ -35,8 +47,6 @@ public class RecommenderTest {
 
     @Test
     public void testProcess() throws Exception {
-        MACDBuyStrategy dayMacdStrategy = new MACDBuyStrategy(1, PeriodType.DAY);
-        MACDBuyStrategy minute15MacdStrategy = new MACDBuyStrategy(3, PeriodType.FIFTEEN_MIN);
 
         Conditions conditions = new Conditions();
         conditions.addCondition("close", Conditions.Operation.LT, 20d);
@@ -47,8 +57,8 @@ public class RecommenderTest {
         Recommender recommender = new Recommender("macd_day_15min") {
             @Override
             public boolean isBuy(String symbol) {
-                if (dayMacdStrategy.isBuy(symbol) ) {
-                    if(minute15MacdStrategy.isBuy(symbol))
+                if (dayMACDBuyStrategy.isBuy(symbol) ) {
+                    if(minute15BuyStrategy.isBuy(symbol))
                     return true;
                 }
                 return false;
@@ -56,7 +66,7 @@ public class RecommenderTest {
 
             @Override
             public boolean isBuy(List<StockData> stockDataList) {
-                if (dayMacdStrategy.isBuy(stockDataList) && minute15MacdStrategy.isBuy(stockDataList)) {
+                if (dayMACDBuyStrategy.isBuy(stockDataList) && minute15BuyStrategy.isBuy(stockDataList)) {
                     return true;
                 }
                 return false;
