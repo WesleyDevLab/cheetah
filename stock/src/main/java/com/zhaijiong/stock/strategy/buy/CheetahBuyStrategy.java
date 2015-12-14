@@ -102,8 +102,8 @@ public class CheetahBuyStrategy extends StrategyBase implements BuyStrategy{
             stockDataList.get(i).put("hm2",hm2);
             stockDataList.get(i).put("lm2",lm2);
             if(i>=3){
-                stockDataList.get(i).put("hm1/lm1",stockDataList.get(i-3).get("hm1")/stockDataList.get(i-3).get("lm1"));
-                stockDataList.get(i).put("hm2/lm2",stockDataList.get(i-3).get("hm2")/stockDataList.get(i-3).get("lm2"));
+                stockDataList.get(i).put("hm1/lm1",stockDataList.get(i).get("hm1")/stockDataList.get(i).get("lm1"));
+                stockDataList.get(i).put("hm2/lm2",stockDataList.get(i).get("hm2")/stockDataList.get(i).get("lm2"));
             }else{
                 stockDataList.get(i).put("hm1/lm1",0d);
                 stockDataList.get(i).put("hm2/lm2",0d);
@@ -111,7 +111,8 @@ public class CheetahBuyStrategy extends StrategyBase implements BuyStrategy{
         }
         stockDataList = Provider.computeMA(stockDataList,"hm1/lm1");
         stockDataList = Provider.computeMA(stockDataList,"hm2/lm2");
-        if((stockDataList.get(size-1).get("hm1/lm1_ma3") < 1.02 || stockDataList.get(size-1).get("hm2/lm2_ma3") < 1.02) &&
+        if(stockDataList.get(size-1).get(CLOSE) > Math.min(stockDataList.get(size-1).get("hm1"),stockDataList.get(size-1).get("hm2")) &&
+                (stockDataList.get(size-1).get("hm1/lm1_ma3") < 1.02 || stockDataList.get(size-1).get("hm2/lm2_ma3") < 1.02) &&
                 stockDataList.get(size-1).get(VOLUME) > stockDataList.get(size-2).get(VOLUME) * 1.2 &&
                 kdj[2][stockDataList.size()-1] > kdj[2][stockDataList.size()-2]){
             return true;
