@@ -51,12 +51,19 @@ public class StockDataDownload {
         for (String symbol : stockList) {
             ThreadPool.execute(() -> {
                 LOG.info(String.format("start download daily data with symbol [%s]", symbol));
-                //TODO retry when fail
-                List<StockData> stockDataList = Provider.dailyData(symbol, 240, true);
-                if (stockDataList != null && stockDataList.size() != 0) {
-                    save(stockDataList);
-                } else {
-                    LOG.error(String.format("fail to download daily data with symbol [%s]", symbol));
+                List<StockData> stockDataList = Lists.newLinkedList();
+                int retry = 0;
+                while(retry <3 && (stockDataList==null || stockDataList.size()==0)){
+                    try{
+                        stockDataList = Provider.dailyData(symbol, 240, true);
+                        if (stockDataList != null && stockDataList.size() != 0) {
+                            save(stockDataList);
+                        }
+                    }catch(Exception e){
+                        LOG.error(String.format("retry=%s,fail to download daily data with symbol [%s]",retry, symbol));
+                    }finally {
+                        retry++;
+                    }
                 }
                 countDownLatch.countDown();
             });
