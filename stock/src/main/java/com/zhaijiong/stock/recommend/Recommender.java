@@ -13,6 +13,7 @@ import com.zhaijiong.stock.tools.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -31,6 +32,7 @@ public abstract class Recommender {
     protected static final Logger LOG = LoggerFactory.getLogger(Recommender.class);
 
     @Autowired
+    @Qualifier("stockCategory")
     public StockCategory stockCategory;
 
     protected static Map<String, Set<String>> conceptCategory;
@@ -42,6 +44,7 @@ public abstract class Recommender {
     private boolean isAlert = false;
 
     @Autowired
+    @Qualifier("context")
     public Context context;
 
     public Set<String> account; //持仓股票集合
@@ -118,6 +121,7 @@ public abstract class Recommender {
             String record = Joiner.on("\t").join(
                     stockData.name, stockData.symbol,
                     stockData.get("close"),
+                    stockData.get("change"),
                     stockData.get("PE"));
             LOG.info(name + "\t" +
                     type + "\t" +
