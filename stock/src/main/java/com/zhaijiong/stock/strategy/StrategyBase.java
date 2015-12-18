@@ -96,11 +96,11 @@ public class StrategyBase {
         List<StockData> stockDataList = stockDB.getStockDataDaily(symbol,dateRange.start(),dateRange.stop());
         if(stockDataList.size()<60){
             stockDataList = Provider.dailyData(symbol, 500, true);
-            stockDB.saveStockData(Constants.TABLE_STOCK_DAILY,stockDataList);
-
             if(stockDataList.size()<60){
                 blackList.add(symbol);  //如果获取的股票数据依然小于60天，则不再抓取
+                return stockDataList;
             }
+            stockDB.saveStockData(Constants.TABLE_STOCK_DAILY,stockDataList);
         }
         return stockDataList;
     }
