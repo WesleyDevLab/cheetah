@@ -148,10 +148,7 @@ public class StrategyUtils {
         double[] closes = Utils.getArrayFrom(stockDataList, CLOSE);
         double[] ma2 = indicators.ema(closes, 2);
         double[] ma5 = indicators.ema(closes, 5);
-        double[] ma10 = indicators.ema(closes,10);
         double[] ma13 = indicators.ema(closes, 13);
-        double[] ma20 = indicators.ema(closes,20);
-        double[] ma30 = indicators.ema(closes,30);
         double[] ma34 = indicators.ema(closes, 34);
         double[] ma55 = indicators.ema(closes, 55);
         for (int i = 0; i < stockDataList.size(); i++) {
@@ -163,25 +160,16 @@ public class StrategyUtils {
                 double min1 = function.min(ma5[i], ma13[i], ma34[i]);
                 double max2 = function.max(ma5[i], ma13[i], ma34[i], ma55[i]);
                 double min2 = function.min(ma5[i], ma13[i], ma34[i], ma55[i]);
-                if (max1 < close && open < min1 && ma2[i] > ma2[i - 1] && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2) {
+                if (max1 < close && open < min1 && ma2[i] > ma2[i - 1]
+//                        && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2
+                        ) {
                     stockData.put(GOLDEN_SPIDER, 3d);
-                } else if (max2 < close && open < min2 && ma2[i] > ma2[i - 1] && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2) {
+                } else if (max2 < close && open < min2 && ma2[i] > ma2[i - 1]
+//                        && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2
+                        ) {
                     stockData.put(GOLDEN_SPIDER, 4d);
                 } else {
                     stockData.put(GOLDEN_SPIDER, 0d);
-                }
-                if(stockData.get(GOLDEN_SPIDER)==0){
-                    max1 = function.max(ma5[i], ma10[i], ma20[i]);
-                    min1 = function.min(ma5[i], ma10[i], ma20[i]);
-                    max2 = function.max(ma5[i], ma10[i], ma20[i], ma30[i]);
-                    min2 = function.min(ma5[i], ma10[i], ma20[i], ma30[i]);
-                    if (max1 < close && open < min1 && ma2[i] > ma2[i - 1] && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2) {
-                        stockData.put(GOLDEN_SPIDER, 3d);
-                    } else if (max2 < close && open < min2 && ma2[i] > ma2[i - 1] && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2) {
-                        stockData.put(GOLDEN_SPIDER, 4d);
-                    } else {
-                        stockData.put(GOLDEN_SPIDER, 0d);
-                    }
                 }
             } else {
                 stockData.put(GOLDEN_SPIDER, 0d);

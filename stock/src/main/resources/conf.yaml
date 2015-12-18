@@ -29,11 +29,11 @@ recommender:
     name: goldenSpiderRecommender  #需要与recommender.xml配置的bean的id一致
     stockPool: small  #参考stockPool
     interval: 180  #单位：秒
-  dayMACDRecommender:
-    name: macdRecommender
-    stockPool: small
-    interval: 180
   cheetahRecommender:
     name: cheetahRecommender
     stockPool: small
     interval: 180
+#  dayMACDRecommender:
+#    name: macdRecommender
+#    stockPool: small
+#    interval: 180
