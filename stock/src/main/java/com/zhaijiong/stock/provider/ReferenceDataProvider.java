@@ -1,5 +1,6 @@
 package com.zhaijiong.stock.provider;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -95,10 +96,61 @@ public class ReferenceDataProvider {
     public static List<StockData> getShareHolderCountData(String symbol) {
         String url = String.format(SHAREHOLDER_STOCK_URL, Symbol.getSymbol(symbol, SHAREHOLDER_STOCK_URL));
         String data = Downloader.download(url);
-        Elements elementsByTag = Jsoup.parse(data).getElementById("Table0").getElementsByTag("tbody");
-        //TODO
-        System.out.println(elementsByTag);
-        return Lists.newArrayList();
+        Elements trList = Jsoup.parse(data).getElementById("Table0").getElementsByTag("tbody").get(0).getElementsByTag("tr");
+        List<List<String>> rows = Lists.newArrayList();
+
+        Elements header = trList.get(0).getElementsByTag("th");
+        List<String> headerList = Lists.newArrayList();
+        for(int i=1;i<header.size();i++){
+            headerList.add(header.get(i).text());
+        }
+        rows.add(headerList);
+
+        for(int i=1;i<trList.size();i++){
+            Elements tdList = trList.get(i).getElementsByTag("td");
+            List<String> fields = Lists.newArrayList();
+            for(int j=0;j<tdList.size();j++){
+                fields.add(tdList.get(j).text());
+            }
+            rows.add(fields);
+        }
+
+        List<StockData> stockDataList = Lists.newArrayListWithCapacity(20);
+        if(rows.size()==0){
+            return Lists.newLinkedList();
+        }
+        int columnCount = rows.get(0).size();
+
+        for(int i=0;i<columnCount;i++){
+            StockData stockData = new StockData(symbol);
+            stockData.date = Utils.str2Date(rows.get(0).get(i),"yy-MM-dd");
+            if(rows.get(1).get(i).contains("万")){
+                stockData.put("股东人数(户)",Utils.str2Double(rows.get(1).get(i).replaceAll("万",""))*10000);
+            }else{
+                stockData.put("股东人数(户)",Utils.str2Double(rows.get(1).get(i)));
+            }
+            stockData.put("股东人数较上期变化(%)",Utils.str2Double(rows.get(2).get(i)));
+
+            if(rows.get(3).get(i).contains("万")){
+                stockData.put("人均流通股(股)",Utils.str2Double(rows.get(3).get(i).replaceAll("万",""))*10000);
+            }else{
+                stockData.put("人均流通股(股)",Utils.str2Double(rows.get(3).get(i)));
+            }
+            stockData.put("人均流通股较上期变化(%)",Utils.str2Double(rows.get(4).get(i)));
+            stockData.attr("筹码集中度",rows.get(5).get(i));
+            stockData.put("股价",Utils.str2Double(rows.get(6).get(i)));
+
+            if(rows.get(3).get(i).contains("万")){
+                stockData.put("人均持股金额(元)",Utils.str2Double(rows.get(7).get(i).replaceAll("万",""))*10000);
+            }else{
+                stockData.put("人均持股金额(元)",Utils.str2Double(rows.get(7).get(i)));
+            }
+            stockData.put("前十大股东持股合计(%)",Utils.str2Double(rows.get(8).get(i)));
+            stockData.put("前十大流通股东持股合计(%)",Utils.str2Double(rows.get(9).get(i)));
+            stockDataList.add(stockData);
+        }
+
+        return stockDataList;
     }
 
     /**

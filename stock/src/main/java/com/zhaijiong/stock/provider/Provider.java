@@ -373,6 +373,15 @@ public class Provider {
     }
 
     /**
+     * 获取个股股东人数变化数据
+     * @param symbol
+     * @return
+     */
+    public static List<StockData> getShareHolderCountData(String symbol) {
+        return ReferenceDataProvider.getShareHolderCountData(symbol);
+    }
+
+    /**
      * 获取分配预案数据
      *
      * @param year 年份
