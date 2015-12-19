@@ -3,6 +3,7 @@ package com.zhaijiong.stock.common;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
@@ -481,5 +482,19 @@ public class Utils {
             start = start.plusYears(1);
         }
         return years;
+    }
+
+    public static Map<String,String> toMap(StockData stockData){
+        Map<String,String> result = Maps.newHashMap();
+        result.putAll(stockData.attribute);
+        for(Map.Entry<String,Double> entry:stockData.entrySet()){
+            result.put(entry.getKey(),String.valueOf(entry.getValue()));
+        }
+        result.put("symbol",stockData.symbol);
+        if(!Strings.isNullOrEmpty(stockData.name)){
+            result.put("name",stockData.name);
+        }
+        result.put("date",Utils.formatDate(stockData.date,"yyyyMMdd"));
+        return result;
     }
 }
