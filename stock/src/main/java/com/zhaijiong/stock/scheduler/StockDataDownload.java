@@ -9,6 +9,7 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
+import com.zhaijiong.stock.tools.Sleeper;
 import com.zhaijiong.stock.tools.StockPool;
 import com.zhaijiong.stock.tools.ThreadPool;
 import org.slf4j.Logger;
@@ -60,7 +61,8 @@ public class StockDataDownload {
                             save(stockDataList);
                         }
                     }catch(Exception e){
-                        LOG.error(String.format("retry=%s,fail to download daily data with symbol [%s]",retry, symbol));
+                        Sleeper.sleep(500);
+//                        LOG.error(String.format("retry=%s,fail to download daily data with symbol [%s]",retry, symbol));
                     }finally {
                         retry++;
                     }
@@ -93,6 +95,18 @@ public class StockDataDownload {
                 public void run() {
                     try {
                         StockData stockData = Provider.realtimeData(symbol);
+                        int retry = 0;
+                        while(retry <3 && stockData==null){
+                            try{
+                                stockData = Provider.realtimeData(symbol);
+                            }catch(Exception e){
+                                Sleeper.sleep(500);
+//                                LOG.error(String.format("retry=%s,fail to download realtime data with symbol [%s]",retry, symbol));
+                            }finally {
+                                retry++;
+                            }
+
+                        }
                         if (stockData != null && !Strings.isNullOrEmpty(stockData.symbol)) {
                             stockData.date = Utils.str2Date(Utils.formatDate(stockData.date, "yyyyMMdd"), "yyyyMMdd");
                             stockDataList.add(stockData);
