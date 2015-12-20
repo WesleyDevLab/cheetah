@@ -26,7 +26,7 @@ public class Result {
     public static Result successResult(Object obj){
         Result r = new Result(obj);
         r.setCode(ResultCode.OK.getValue());
-        r.setMessage("success");
+        r.setMessage(ResultCode.OK.name());
         return r;
     }
 
