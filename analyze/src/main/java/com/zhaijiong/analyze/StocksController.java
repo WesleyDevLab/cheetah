@@ -22,18 +22,18 @@ import java.util.Map;
 public class StocksController {
 
     @RequestMapping("/suggest/{symbol}")
-    public List<Map<String, String>> suggest(@PathVariable String symbol) {
+    public Result suggest(@PathVariable String symbol) {
         List<Map<String, String>> suggest = Suggest.suggest(symbol);
-        return suggest;
+        return Result.successResult(suggest);
     }
 
     @RequestMapping("/shareholder/{symbol}")
-    public List<Map<String,String>> shareholder(@PathVariable String symbol){
+    public Result shareholder(@PathVariable String symbol){
         List<StockData> shareHolderCountData = Provider.getShareHolderCountData(symbol);
         List<Map<String,String>> result = Lists.newArrayList();
         for(StockData stockData :shareHolderCountData){
             result.add(Utils.toMap(stockData));
         }
-        return result;
+        return Result.successResult(result);
     }
 }
