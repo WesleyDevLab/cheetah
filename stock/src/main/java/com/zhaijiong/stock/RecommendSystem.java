@@ -102,7 +102,7 @@ public class RecommendSystem {
     }
 
     public static void main(String[] args) {
-        ThreadPool.init(32);
+        ThreadPool.init(16);
         applicationContext= SpringApplication.run(RecommendSystem.class);
         RecommendSystem recommendSystem = (RecommendSystem) applicationContext.getBean("recommendSystem");
         recommendSystem.process();

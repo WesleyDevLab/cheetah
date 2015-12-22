@@ -1,4 +1,4 @@
-package com.zhaijiong.stock.scheduler;
+package com.zhaijiong.datacenter;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.SpringApplication;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +33,8 @@ import java.util.concurrent.TimeUnit;
 public class StockDataDownload {
     protected static final Logger LOG = LoggerFactory.getLogger(StockDataDownload.class);
 
+    public volatile static boolean rebuild = false;
+
     @Autowired
     @Qualifier("context")
     protected Context context;
@@ -42,6 +43,8 @@ public class StockDataDownload {
     @Autowired
     @Qualifier("stockPool")
     protected StockPool stockPool;
+
+
 
     @Scheduled(cron = "0 0 8 * * MON-FRI") //0 0 8 * * MON-FRI
     public void downloadDailyData() {
@@ -80,9 +83,11 @@ public class StockDataDownload {
 
     @Scheduled(fixedRate = 180000)
     public void downloadRealTimeData() {
-        if (!Utils.isTradingTime()) {
-            LOG.info("not working time.");
-            return;
+        if(!rebuild){
+            if (!Utils.isTradingTime()) {
+                LOG.info("not working time.");
+                return;
+            }
         }
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<String> stockList = stockPool.tradingStock();

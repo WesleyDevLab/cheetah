@@ -18,7 +18,8 @@
     <modules>
         <module>stock</module>
         <module>crawler</module>
-        <module>web</module>
+        <module>analyze</module>
+        <module>datacenter</module>
     </modules>
 
     <properties>
