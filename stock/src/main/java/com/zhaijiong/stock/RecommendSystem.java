@@ -103,7 +103,9 @@ public class RecommendSystem {
 
     public static void main(String[] args) {
         ThreadPool.init(16);
-        applicationContext= SpringApplication.run(RecommendSystem.class);
+        SpringApplication springApplication = new SpringApplication(RecommendSystem.class);
+        springApplication.setWebEnvironment(false);
+        applicationContext= springApplication.run(args);
         RecommendSystem recommendSystem = (RecommendSystem) applicationContext.getBean("recommendSystem");
         recommendSystem.process();
     }
