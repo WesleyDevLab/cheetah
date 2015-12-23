@@ -160,14 +160,26 @@ public class StrategyUtils {
                 double min1 = function.min(ma5[i], ma13[i], ma34[i]);
                 double max2 = function.max(ma5[i], ma13[i], ma34[i], ma55[i]);
                 double min2 = function.min(ma5[i], ma13[i], ma34[i], ma55[i]);
-                if (max1 < close && open < min1 && ma2[i] > ma2[i - 1]
-//                        && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2
-                        ) {
-                    stockData.put(GOLDEN_SPIDER, 3d);
-                } else if (max2 < close && open < min2 && ma2[i] > ma2[i - 1]
-//                        && stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2
-                        ) {
-                    stockData.put(GOLDEN_SPIDER, 4d);
+                if (max1 < close && open < min1 && ma2[i] > ma2[i - 1]) {
+                    if(!Utils.isTradingTime()){//如果是盘后，则计算成交量是否大于前一天成交量
+                        if(stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2){
+                            stockData.put(GOLDEN_SPIDER, 3d);
+                        }else{
+                            stockData.put(GOLDEN_SPIDER, 0d);
+                        }
+                    }else{
+                        stockData.put(GOLDEN_SPIDER, 3d);
+                    }
+                } else if (max2 < close && open < min2 && ma2[i] > ma2[i - 1]) {
+                    if(!Utils.isTradingTime()){//如果是盘后，则计算成交量是否大于前一天成交量
+                        if(stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2){
+                            stockData.put(GOLDEN_SPIDER, 4d);
+                        }else{
+                            stockData.put(GOLDEN_SPIDER, 0d);
+                        }
+                    }else{
+                        stockData.put(GOLDEN_SPIDER, 4d);
+                    }
                 } else {
                     stockData.put(GOLDEN_SPIDER, 0d);
                 }
