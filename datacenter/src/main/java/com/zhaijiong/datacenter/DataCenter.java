@@ -22,8 +22,10 @@ public class DataCenter {
 
     public static void main(String[] args) {
         ThreadPool.init(16);
-        StockDataDownload.rebuild = false;
-        applicationContext = SpringApplication.run(DataCenter.class);
+        StockDataDownload.rebuild = true;
+        SpringApplication springApplication = new SpringApplication(DataCenter.class);
+        springApplication.setWebEnvironment(false);
+        applicationContext= springApplication.run(args);
         if(StockDataDownload.rebuild){
             StockDataDownload stockDataDownload = (StockDataDownload) applicationContext.getBean("stockDataDownload");
             stockDataDownload.downloadDailyData();
