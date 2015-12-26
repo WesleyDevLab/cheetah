@@ -79,6 +79,17 @@ public class Indicators {
         return result;
     }
 
+    /**
+     *
+     * @param prices
+     * @param optInFastPeriod
+     * @param optInSlowPeriod
+     * @param optInSignalPeriod
+     * @return
+     *      macd[0][]:dif
+     *      macd[1][]:dea
+     *      macd[2][]:macd
+     */
     public double[][] macd(double[] prices, int optInFastPeriod, int optInSlowPeriod, int optInSignalPeriod) {
         double[] tempoutput1 = new double[prices.length];
         double[] tempoutput2 = new double[prices.length];
@@ -115,7 +126,7 @@ public class Indicators {
         for (int i = 0; i < prices.length; i++) {
             output[0][i] = result1[i];
             output[1][i] = result2[i];
-            output[2][i] = result3[i];
+            output[2][i] = (output[0][i] - output[1][i]) * 2;
         }
         return output;
     }

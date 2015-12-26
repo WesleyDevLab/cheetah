@@ -89,7 +89,7 @@ public class IndicatorsTest {
     @Test
     public void testMacd() throws Exception {
 
-        List<StockData> stocks = Provider.dailyData("300217",40);
+        List<StockData> stocks = Provider.dailyData("600108",40);
         for(StockData stock:stocks){
             System.out.println(stock.date+":"+stock);
         }
@@ -105,7 +105,7 @@ public class IndicatorsTest {
         double[][] macd = indicators.macd(closes);
         double dif = macd[0][closes.length - 1];
         double dea = macd[1][closes.length - 1];
-        double macdRtn = (dif - dea) * 2;
+        double macdRtn = macd[2][closes.length - 1];
         System.out.println("DIF=" + dif);
         System.out.println("DEA=" + dea);
         System.out.println("MACD=" + macdRtn);
