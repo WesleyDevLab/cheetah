@@ -422,19 +422,22 @@ public class Utils {
 
     /**
      * 判断当前时间是否是交易时间段
+     * 周一到周五
      * 上午：09:30-11:30
      * 下午：13:00-15:00
      * @return
      */
     public static boolean isTradingTime(){
         DateTime dateTime = new DateTime();
-        LocalTime now = dateTime.toLocalTime();
-        LocalTime start = new LocalTime(9,30,0,0);
-        LocalTime mid1 = new LocalTime(11,30,0,0);
-        LocalTime mid2 = new LocalTime(13,0,0,0);
-        LocalTime end = new LocalTime(15,0,0,0);
-        if((now.isAfter(start) && now.isBefore(mid1))||(now.isAfter(mid2) && now.isBefore(end))){
-            return true;
+        if(dateTime.dayOfWeek().get()>=1 && dateTime.getDayOfWeek()<=5){
+            LocalTime now = dateTime.toLocalTime();
+            LocalTime start = new LocalTime(9,30,0,0);
+            LocalTime mid1 = new LocalTime(11,30,0,0);
+            LocalTime mid2 = new LocalTime(13,0,0,0);
+            LocalTime end = new LocalTime(15,0,0,0);
+            if((now.isAfter(start) && now.isBefore(mid1))||(now.isAfter(mid2) && now.isBefore(end))){
+                return true;
+            }
         }
         return false;
     }

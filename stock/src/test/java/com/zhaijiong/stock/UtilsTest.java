@@ -7,6 +7,7 @@ import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.model.ArticleType;
 import com.zhaijiong.stock.model.StockData;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,6 +15,16 @@ import java.util.Date;
 import java.util.List;
 
 public class UtilsTest {
+
+    @Test
+    public void testIsTradingTime(){
+        System.out.println(Utils.isTradingTime());
+
+        DateTime dateTime = new DateTime();
+        System.out.println(dateTime.dayOfWeek().get());
+        dateTime = dateTime.plusDays(1);
+        System.out.println(dateTime.dayOfWeek().get());
+    }
 
     @Test
     public void testGetTomorrow() throws Exception {
