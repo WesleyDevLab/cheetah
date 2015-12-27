@@ -30,6 +30,16 @@ public class StockDBTest {
     @Autowired
     StockPool stockPool;
 
+
+    @Test
+    public void testList(){
+        List<String> stockLists = stockPool.stockList();
+        for(String symbol :stockLists){
+            System.out.println(symbol);
+        }
+        System.out.println("total:"+stockLists.size());
+    }
+
     @Test
     public void testSetAll() throws Exception {
 
