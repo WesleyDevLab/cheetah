@@ -56,6 +56,7 @@ public class StockConstants {
     public static String AVERAGE_BOND = "average_bond";
 
     public static String GOLDEN_SPIDER = "golden_spider";
+    public static String GOLDEN_SPIDER_RANGE = "golden_spider_range";
 
     public static String DATE_OF_DECLARATION = "dateOfDeclaration";  //公告日期
     public static String ANNUAL = "annual"; //分红年度
