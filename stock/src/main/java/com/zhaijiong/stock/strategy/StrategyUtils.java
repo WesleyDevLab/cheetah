@@ -151,8 +151,12 @@ public class StrategyUtils {
         double[] ma13 = indicators.ema(closes, 13);
         double[] ma34 = indicators.ema(closes, 34);
         double[] ma55 = indicators.ema(closes, 55);
+        double[][] macd = indicators.macd(closes);
+
         for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
+            stockData.put(GOLDEN_SPIDER, 0d);
+            stockData.put(GOLDEN_SPIDER_RANGE,0d);
             if (i > 0 && ma5[i] > ma5[i - 1]) {
                 double close = stockData.get(CLOSE);
                 double open = stockData.get(OPEN);
@@ -164,8 +168,6 @@ public class StrategyUtils {
                     if(!Utils.isTradingTime()){//如果是盘后，则计算成交量是否大于前一天成交量
                         if(stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2){
                             stockData.put(GOLDEN_SPIDER, 3d);
-                        }else{
-                            stockData.put(GOLDEN_SPIDER, 0d);
                         }
                     }else{
                         stockData.put(GOLDEN_SPIDER, 3d);
@@ -180,11 +182,17 @@ public class StrategyUtils {
                     }else{
                         stockData.put(GOLDEN_SPIDER, 4d);
                     }
-                } else {
-                    stockData.put(GOLDEN_SPIDER, 0d);
+                } else if(macd[2][i]>0 && macd[2][i] < 1){    //macd金叉，并且三天内出现金蜘蛛
+                    double lastClose = stockData.get(CLOSE);
+                    for(int j=i-1;j >= 0 && j >i-3;j--){
+                        Double spider = result.get(j).get(GOLDEN_SPIDER);
+                        if(spider!=null){
+                            if(lastClose > result.get(j).get(CLOSE) && lastClose < result.get(j).get(CLOSE) * 1.1 && spider>0){
+                                stockData.put(GOLDEN_SPIDER_RANGE,1d);
+                            }
+                        }
+                    }
                 }
-            } else {
-                stockData.put(GOLDEN_SPIDER, 0d);
             }
             result.add(stockData);
         }

@@ -1,23 +1,14 @@
 package com.zhaijiong.stock.strategy.buy;
 
-import com.google.common.collect.Lists;
-import com.zhaijiong.stock.common.Constants;
-import com.zhaijiong.stock.common.DateRange;
-import com.zhaijiong.stock.common.StockConstants;
-import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
-import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.strategy.StrategyBase;
 import com.zhaijiong.stock.strategy.StrategyUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
 
 import static com.zhaijiong.stock.common.StockConstants.CLOSE;
+import static com.zhaijiong.stock.common.StockConstants.GOLDEN_SPIDER;
+import static com.zhaijiong.stock.common.StockConstants.GOLDEN_SPIDER_RANGE;
 
 /**
  * author: eryk
@@ -48,10 +39,10 @@ public class GoldenSpiderBuyStrategy extends StrategyBase implements BuyStrategy
     public double buy(List<StockData> stockDataList) {
         stockDataList = StrategyUtils.goldenSpider(stockDataList);
         if(stockDataList.size()>1){
-            double status = stockDataList.get(stockDataList.size() - 1).get(StockConstants.GOLDEN_SPIDER);
-            if(status>=crossCount){
+            double status = stockDataList.get(stockDataList.size() - 1).get(GOLDEN_SPIDER);
+            if(status>=crossCount  || stockDataList.get(stockDataList.size() - 1).get(GOLDEN_SPIDER_RANGE) > 0){
                 System.out.println("buy:"+stockDataList.get(stockDataList.size() - 1));
-                return stockDataList.get(stockDataList.size() - 1).get(StockConstants.CLOSE);
+                return stockDataList.get(stockDataList.size() - 1).get(CLOSE);
             }
         }
         return -1;
@@ -74,8 +65,8 @@ public class GoldenSpiderBuyStrategy extends StrategyBase implements BuyStrategy
         }
         stockDataList = StrategyUtils.goldenSpider(stockDataList);
         if(size>2){
-            double status = stockDataList.get(size - 1).get(StockConstants.GOLDEN_SPIDER);
-            if(status>=crossCount){
+            double status = stockDataList.get(size - 1).get(GOLDEN_SPIDER);
+            if(status>=crossCount || stockDataList.get(size - 1).get(GOLDEN_SPIDER_RANGE) > 0){
                 return true;
             }
         }
