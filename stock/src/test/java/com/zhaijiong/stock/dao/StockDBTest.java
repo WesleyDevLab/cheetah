@@ -1,12 +1,14 @@
 package com.zhaijiong.stock.dao;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.DailyDataProvider;
 import com.zhaijiong.stock.tools.StockList;
+import com.zhaijiong.stock.tools.StockPool;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +27,8 @@ public class StockDBTest {
 
     @Autowired
     StockDB stockDB;
+    @Autowired
+    StockPool stockPool;
 
     @Test
     public void testSetAll() throws Exception {
@@ -70,7 +74,7 @@ public class StockDBTest {
     @Test
     public void testGet() throws IOException {
         DateRange dateRange = DateRange.getRange(1000);
-        String symbol = "000537";
+        String symbol = "000421";
 
         List<StockData> stocks = stockDB.getStockDataDaily(symbol, dateRange.start(), dateRange.stop());
         for (StockData stock : stocks) {
@@ -113,5 +117,16 @@ public class StockDBTest {
         for(Map.Entry<String,Double> entry:stockData.entrySet()){
             System.out.println(entry.getKey()+":"+entry.getValue());
         }
+    }
+
+    @Test
+    public void testDeleteStockData(){
+        List<String> symbols = stockPool.stockList();
+        stockDB.deleteDailyData(symbols,"20151227");
+    }
+
+    @Test
+    public void testDeleteStockData1(){
+        stockDB.deleteDailyData(Lists.newArrayList("000421"),"20151227");
     }
 }

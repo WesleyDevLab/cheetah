@@ -77,6 +77,30 @@ public class HBase {
         return new Result[0];
     }
 
+    public void delete(String tableName,Delete delete){
+        HTableInterface table = context.getTable(tableName);
+        try {
+            table.delete(delete);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            context.closeTable(table);
+            LOG.error("failed to delete,table="+tableName+",delete="+delete.size());
+        }
+    }
+
+    public void delete(String tableName,List<Delete> deletes){
+        HTableInterface table = context.getTable(tableName);
+        try {
+            table.delete(deletes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            context.closeTable(table);
+            LOG.error("failed to delete,table="+tableName+",delete="+deletes.size());
+        }
+    }
+
     public List<Result> scan(String tableName,Scan scan){
         HTableInterface table = context.getTable(tableName);
         List<Result> results = Lists.newLinkedList();

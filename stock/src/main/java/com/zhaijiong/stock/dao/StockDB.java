@@ -265,4 +265,30 @@ public class StockDB {
         return puts;
     }
 
+    public void deleteDailyData(List<String> symbols,String date){
+        Date _date = Utils.str2Date(date,"yyyyMMdd");
+        List<StockData> stockDataList = Lists.newLinkedList();
+        for(String symbol:symbols){
+            StockData stockData = new StockData(symbol);
+            stockData.date = _date;
+            stockDataList.add(stockData);
+        }
+        deleteDailyData(stockDataList);
+    }
+
+    public void deleteDailyData(List<StockData> stockDataList){
+        List<Delete> deletes = getDeletes(stockDataList);
+        hbase.delete(TABLE_STOCK_DAILY,deletes);
+    }
+
+    public List<Delete> getDeletes(List<StockData> stockDataList){
+        List<Delete> deletes = Lists.newLinkedList();
+        for (StockData stock : stockDataList) {
+            byte[] rowkey = Utils.getRowkeyWithMd5PrefixAndDaySuffix(stock);
+            Delete delete = new Delete(rowkey);
+            deletes.add(delete);
+        }
+        return deletes;
+    }
+
 }
