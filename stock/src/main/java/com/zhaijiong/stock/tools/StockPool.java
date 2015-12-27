@@ -121,7 +121,7 @@ public class StockPool {
     private List<String> getList(String key,long timeout) {
         List<String> stockList = redisTemplate.opsForList().range(REDIS_KEY_PREFIX + key, 0, 4000);
         if(stockList==null || stockList.size()==0){
-            stockList = Provider.marginTradingStockList();
+            stockList = Provider.stockList();
             String[] array = Utils.toArray(stockList);
             redisTemplate.opsForList().rightPushAll(REDIS_KEY_PREFIX + key,array);
             redisTemplate.expire(getKeyWithPrefix(key), timeout, TimeUnit.SECONDS);
