@@ -1,5 +1,6 @@
 package com.zhaijiong.stock.strategy.buy;
 
+import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.strategy.StrategyBase;
 import com.zhaijiong.stock.strategy.StrategyUtils;
@@ -63,6 +64,14 @@ public class GoldenSpiderBuyStrategy extends StrategyBase implements BuyStrategy
         if(size==0 || size < 60){
             return false;
         }
+
+        //如果最近30天出现过跌幅大于9.5%，则排除
+        Conditions conditions = new Conditions();
+        conditions.addCondition("change", Conditions.Operation.LT,-9.5d);
+        if(StrategyUtils.change(stockDataList,30,conditions)){
+            return false;
+        }
+
         stockDataList = StrategyUtils.goldenSpider(stockDataList);
         if(size>2){
             double status = stockDataList.get(size - 1).get(GOLDEN_SPIDER);
