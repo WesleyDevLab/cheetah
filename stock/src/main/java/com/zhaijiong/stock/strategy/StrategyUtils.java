@@ -1,6 +1,7 @@
 package com.zhaijiong.stock.strategy;
 
 import com.google.common.collect.Lists;
+import com.zhaijiong.stock.common.Conditions;
 import com.zhaijiong.stock.common.StockConstants;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.indicators.Indicators;
@@ -197,5 +198,23 @@ public class StrategyUtils {
             result.add(stockData);
         }
         return result;
+    }
+
+    /**
+     * 计算最近count天内每天涨跌幅是否出现过conditions
+     * @param stockDataList
+     * @param count
+     * @param conditions
+     * @return
+     */
+    public static boolean change(List<StockData> stockDataList,int count,Conditions conditions){
+        int size = stockDataList.size();
+        for(int i=size-1;i>=size-count;i--){
+            StockData stockData = stockDataList.get(i);
+            if(conditions.check(stockData)){
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -2,12 +2,18 @@ package com.zhaijiong.stock.strategy;
 
 import com.google.common.collect.Lists;
 import com.zhaijiong.stock.common.Conditions;
+import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.common.StockConstants;
+import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.tools.StockPool;
 import com.zhaijiong.stock.tools.ThreadPool;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Calendar;
 import java.util.List;
@@ -16,8 +22,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.Assert.*;
-
+@RunWith(SpringJUnit4ClassRunner.class)  //使用junit4进行测试
+@ContextConfiguration({"classpath:applicationContext.xml"}) //加载配置文件
 public class StrategyUtilsTest {
+
+    @Autowired
+    StockDB stockDB;
 
     @Test
     public void testAverageBond() throws Exception {
@@ -90,5 +100,16 @@ public class StrategyUtilsTest {
             });
         }
         countDownLatch.await();
+    }
+
+    @Test
+    public void testChange(){
+        DateRange dateRange = DateRange.getRange(1000);
+        String symbol = "600751";
+
+        List<StockData> stocks = stockDB.getStockDataDaily(symbol, dateRange.start(), dateRange.stop());
+        Conditions conditions = new Conditions();
+        conditions.addCondition("change", Conditions.Operation.LT,-8d);
+        System.out.println(StrategyUtils.change(stocks,21,conditions));
     }
 }
