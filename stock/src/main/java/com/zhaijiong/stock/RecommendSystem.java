@@ -71,7 +71,7 @@ public class RecommendSystem {
     }
 
     /**
-     * 默认的股票池，股价小于30，PE小于200，流通市值小于200亿
+     * 默认的股票池，股价小于30，PE小于200，流通市值小于150亿
      * @param poolName
      * @return
      */
@@ -79,7 +79,7 @@ public class RecommendSystem {
         Conditions conditions = new Conditions();
         conditions.addCondition("close", Conditions.Operation.LT, 30d);
         conditions.addCondition("PE", Conditions.Operation.LT, 200d);
-        conditions.addCondition("marketValue", Conditions.Operation.LT, 200d);
+        conditions.addCondition("marketValue", Conditions.Operation.LT, 150d);
         List<String> stockList = Provider.tradingStockList(conditions);
         stockPool.add(poolName,stockList,43200);
         return stockList;
