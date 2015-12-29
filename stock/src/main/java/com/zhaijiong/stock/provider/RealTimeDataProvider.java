@@ -55,7 +55,7 @@ public class RealTimeDataProvider {
             return new StockData();
         }
         List<String> columns = map.get("Value");
-        if (columns.size() != 51) {
+        if (columns.size() != 53) {
             LOG.warn(String.format("stock [%s] data is not format",symbol));
             return new StockData();
         }

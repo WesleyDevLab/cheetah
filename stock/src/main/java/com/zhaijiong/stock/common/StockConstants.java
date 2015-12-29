@@ -138,7 +138,9 @@ public class StockConstants {
             "",                     //47    未知
             "",                     //48    未知
             "date",                 //49    时间
-            ""                      //50    未知
+            "",                     //50    未知
+            "",                     //51    未知
+            ""                      //52    未知
     );
 
     public static List<String> MONEYFLOW = Lists.newArrayList(
