@@ -147,12 +147,14 @@ public class StrategyUtils {
         Indicators indicators = new Indicators();
         List<StockData> result = Lists.newLinkedList();
         double[] closes = Utils.getArrayFrom(stockDataList, CLOSE);
+        double[] volume = Utils.getArrayFrom(stockDataList,VOLUME);
         double[] ma2 = indicators.ema(closes, 2);
         double[] ma5 = indicators.ema(closes, 5);
         double[] ma13 = indicators.ema(closes, 13);
         double[] ma34 = indicators.ema(closes, 34);
         double[] ma55 = indicators.ema(closes, 55);
         double[][] macd = indicators.macd(closes);
+        double[] volume5 = indicators.ema(volume,5);
 
         for (int i = 0; i < stockDataList.size(); i++) {
             StockData stockData = stockDataList.get(i);
@@ -166,16 +168,16 @@ public class StrategyUtils {
                 double max2 = function.max(ma5[i], ma13[i], ma34[i], ma55[i]);
                 double min2 = function.min(ma5[i], ma13[i], ma34[i], ma55[i]);
                 if (max1 < close && open < min1 && ma2[i] > ma2[i - 1]) {
-                    if(!Utils.isTradingTime()){//如果是盘后，则计算成交量是否大于前一天成交量
-                        if(stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2){
+                    if(!Utils.isTradingTime()){//如果是盘后，则计算成交量是否大于前一天成交量，并且今天成交量大于当天volume5
+                        if(stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2 && stockData.get(VOLUME) > volume5[i]){
                             stockData.put(GOLDEN_SPIDER, 3d);
                         }
                     }else{
                         stockData.put(GOLDEN_SPIDER, 3d);
                     }
                 } else if (max2 < close && open < min2 && ma2[i] > ma2[i - 1]) {
-                    if(!Utils.isTradingTime()){//如果是盘后，则计算成交量是否大于前一天成交量
-                        if(stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2){
+                    if(!Utils.isTradingTime()){//如果是盘后，则计算成交量是否大于前一天成交量，并且今天成交量大于当天volume5
+                        if(stockData.get(VOLUME) > stockDataList.get(i-1).get(VOLUME)*1.2 && stockData.get(VOLUME) > volume5[i]){
                             stockData.put(GOLDEN_SPIDER, 4d);
                         }else{
                             stockData.put(GOLDEN_SPIDER, 0d);
