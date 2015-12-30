@@ -118,19 +118,23 @@ public abstract class Recommender {
     public void recommend(String symbol,String type) {
         StockData stockData = Provider.realtimeData(symbol);
         if (stockData != null && !Strings.isNullOrEmpty(stockData.symbol)) {
-            String record = Joiner.on("\t").join(
-                    stockData.name, stockData.symbol,
-                    stockData.get("close"),
-                    stockData.get("change"),
-                    stockData.get("PE"));
-            LOG.info(name + "\t" +
-                    type + "\t" +
-                    Utils.formatDate(stockData.date,"MM月dd日HH:mm:ss ") +"\t"+
-                    record + "\t" +
-                    getIndustryCategory(stockData.symbol) + "\t" +
-                    getConceptCategory(stockData.symbol));
+            try{
+                String record = Joiner.on("\t").join(
+                        stockData.name, stockData.symbol,
+                        stockData.get("close"),
+                        stockData.get("change"),
+                        stockData.get("PE"));
+                LOG.info(name + "\t" +
+                        type + "\t" +
+                        Utils.formatDate(stockData.date,"MM月dd日HH:mm:ss ") +"\t"+
+                        record + "\t" +
+                        getIndustryCategory(stockData.symbol) + "\t" +
+                        getConceptCategory(stockData.symbol));
+            }catch(Exception e){
+                LOG.error(String.format("fail to recommend %s",symbol));
+            }
         } else {
-            LOG.warn(String.format("fait to get realtime data,symbol is [%s]", symbol));
+            LOG.warn(String.format("fail to get realtime data,symbol is [%s]", symbol));
         }
         if (isAlert) {
             alert(stockData);

@@ -19,9 +19,9 @@ public class ProviderTest {
 
     @Test
     public void testRealtimeData() throws Exception {
-        StockData values = Provider.realtimeData("600322");
-        System.out.println(Utils.formatDate(values.date, "yyyy-MM-dd HH:mm:ss"));
-        System.out.println(values);
+        StockData stockData = Provider.realtimeData("002389");
+        System.out.println(stockData);
+        System.out.println("avgprice:" + (stockData.get("amount") * 10000 /stockData.get("volume")/100));
     }
 
     @Test
@@ -156,13 +156,17 @@ public class ProviderTest {
 
     @Test
     public void testTickData() {
-        List<Tick> ticks = Provider.tickData("600376");
+        List<Tick> ticks = Provider.tickData("002389");
 
+        double totalAmount = 0;
+        double totalVolume = 0;
         double avgVolume = 0;
         for (Tick tick : ticks) {
-            avgVolume += tick.volume;
+            totalAmount += tick.amount;
+            totalVolume += tick.volume;
         }
-        avgVolume = avgVolume / ticks.size();
+        avgVolume = totalVolume / ticks.size();
+        System.out.println("avgprice:" + totalAmount / totalVolume /100);
 
         int count = 0;
         for (int i = 1; i < ticks.size(); i++) {

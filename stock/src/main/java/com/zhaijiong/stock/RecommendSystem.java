@@ -79,7 +79,7 @@ public class RecommendSystem {
         Conditions conditions = new Conditions();
         conditions.addCondition("close", Conditions.Operation.LT, 30d);
         conditions.addCondition("PE", Conditions.Operation.LT, 200d);
-        conditions.addCondition("marketValue", Conditions.Operation.LT, 150d);
+        conditions.addCondition("marketValue", Conditions.Operation.LT, 100d);
         List<String> stockList = Provider.tradingStockList(conditions);
         stockPool.add(poolName,stockList,43200);
         return stockList;
