@@ -67,6 +67,7 @@ public class StockConstants {
     public static String STOCK_TRANSFERRED = "stockTransferred"; //转增
     public static String STOCK_DIVIDEND = "stockDividend"; //派息
 
+    public static String TYPE = "type";
 
     public static List<String> DAILY = Lists.newArrayList(
             "close",            //最新价,收盘价

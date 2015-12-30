@@ -8,12 +8,12 @@ import com.google.common.collect.Range;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.model.Tick;
 import com.zhaijiong.stock.tools.Sleeper;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalTime;
-import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.yaml.snakeyaml.Yaml;
@@ -27,8 +27,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
-import static com.zhaijiong.stock.common.Constants.ROWKEY_DATA_FORMAT;
-import static com.zhaijiong.stock.common.Constants.UTF8;
+import static com.zhaijiong.stock.common.Constants.*;
 
 /**
  * Created by eryk on 2015/7/4.
@@ -58,7 +57,7 @@ public class Utils {
 
     public static String getNow(){
         DateTime dateTime = new DateTime();
-        return dateTime.toString(ROWKEY_DATA_FORMAT);
+        return dateTime.toString(MINUTE_ROWKEY_DATA_FORMAT);
     }
 
     public static String getNow(String pattern){
@@ -86,7 +85,7 @@ public class Utils {
     public static String getTomorrow(){
         DateTime dateTime = new DateTime();
         dateTime = dateTime.plusDays(1);
-        return dateTime.toString(ROWKEY_DATA_FORMAT);
+        return dateTime.toString(MINUTE_ROWKEY_DATA_FORMAT);
     }
 
     public static String getTomorrow(String pattern){
@@ -99,7 +98,7 @@ public class Utils {
     public static String getYesterday(){
         DateTime dateTime = new DateTime();
         dateTime = dateTime.plusDays(-1);
-        return dateTime.toString(ROWKEY_DATA_FORMAT);
+        return dateTime.toString(MINUTE_ROWKEY_DATA_FORMAT);
     }
 
     public static String getYesterday(String pattern){
@@ -133,7 +132,14 @@ public class Utils {
     public static byte[] getRowkeyWithMd5PrefixAndDaySuffix(StockData stock) {
         byte[] md5 = md5Prefix(stock.symbol,4);
         byte[] symbol = Bytes.toBytes(stock.symbol);
-        byte[] date = Bytes.toBytes(Utils.formatDate(stock.date, ROWKEY_DATA_FORMAT));
+        byte[] date = Bytes.toBytes(Utils.formatDate(stock.date, MINUTE_ROWKEY_DATA_FORMAT));
+        return Bytes.add(md5,symbol,date);
+    }
+
+    public static byte[] getTickRowkey(String symbolStr,Tick tick){
+        byte[] md5 = md5Prefix(symbolStr,4);
+        byte[] symbol = Bytes.toBytes(symbolStr);
+        byte[] date = Bytes.toBytes(Utils.formatDate(tick.date,SECOND_ROWKEY_DATA_FORMAT));
         return Bytes.add(md5,symbol,date);
     }
 
@@ -163,14 +169,20 @@ public class Utils {
      * @return
      */
     public static String getStockSymbol(byte[] rowkey){
-        if(rowkey.length == 22){ //key with 4 byte md5 prefix
+        if(rowkey.length == 22){ //4byte_md5_prefix + symbol + yyyyMMddHHmm
+            return Bytes.toString(rowkey).substring(4,10);
+        }else if(rowkey.length == 24){  //4byte_md5_prefix + symbol + yyyyMMddHHmmss
             return Bytes.toString(rowkey).substring(4,10);
         }
         return "";
     }
 
     public static Date getStockDate(byte[] rowkey){
-        return Utils.bytes2Date(Bytes.tail(rowkey,12),ROWKEY_DATA_FORMAT);
+        return Utils.bytes2Date(Bytes.tail(rowkey,12), MINUTE_ROWKEY_DATA_FORMAT);
+    }
+
+    public static Date getTickDate(byte[] rowkey){
+        return Utils.bytes2Date(Bytes.tail(rowkey,14), SECOND_ROWKEY_DATA_FORMAT);
     }
 
     public static List<URL> findResources(String name) throws IOException {

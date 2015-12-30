@@ -6,7 +6,9 @@ import com.zhaijiong.stock.common.Constants;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.DateRange;
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.model.Tick;
 import com.zhaijiong.stock.provider.DailyDataProvider;
+import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.tools.StockList;
 import com.zhaijiong.stock.tools.StockPool;
 import org.junit.After;
@@ -138,5 +140,26 @@ public class StockDBTest {
     @Test
     public void testDeleteStockData1(){
         stockDB.deleteDailyData(Lists.newArrayList("000421"),"20151227");
+    }
+
+    @Test
+    public void testSaveTickData(){
+        String symbol = "000421";
+        List<Tick> ticks = Provider.tickData(symbol);
+        for(Tick tick:ticks){
+            System.out.println(tick);
+        }
+        stockDB.saveTicksData(symbol,ticks);
+    }
+
+    @Test
+    public void testGetTickData(){
+        DateRange range = DateRange.getRange(1);
+        String symbol = "000421";
+        List<Tick> ticks = stockDB.getTicksData(symbol,range.start(),range.stop());
+        for(Tick tick:ticks){
+            System.out.println(tick);
+        }
+        System.out.println(symbol +"\t"+range.start()+"\t"+range.stop());
     }
 }

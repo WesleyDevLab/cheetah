@@ -26,7 +26,9 @@ public class Constants {
 
     public static String BISNESS_DATA_FORMAT = "yyyyMMdd";
 
-    public static final String ROWKEY_DATA_FORMAT = "yyyyMMddHHmm";
+    public static final String MINUTE_ROWKEY_DATA_FORMAT = "yyyyMMddHHmm";
+
+    public static final String SECOND_ROWKEY_DATA_FORMAT = "yyyyMMddHHmmss";
 
     public static final String MARKET_START_DATE = "19901219";
 
@@ -61,6 +63,8 @@ public class Constants {
     public static final String TABLE_STOCK_WEEK = "stocks_data_week";
 
     public static final String TABLE_STOCK_MONTH = "stocks_data_month";
+
+    public static final String TABLE_STOCK_TICK = "stocks_tick_data";
 
     public static final byte[] TABLE_CF_DATA = "d".getBytes();
 

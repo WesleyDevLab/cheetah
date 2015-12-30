@@ -16,9 +16,19 @@ public class Tick {
     public Type type;
 
     public enum Type{
-        BUY,    //买盘
-        SELL,   //卖盘
-        MID;     //中性盘
+        BUY(1),    //买盘
+        MID(0),   //卖盘
+        SELL(-1);     //中性盘
+
+        int type;
+
+        Type(int type){
+            this.type = type;
+        }
+
+        public int getType(){
+            return type;
+        }
 
         @Override
         public String toString(){

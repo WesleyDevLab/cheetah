@@ -3,14 +3,8 @@ package com.zhaijiong.stock.dao;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.zhaijiong.stock.common.Constants;
-import com.zhaijiong.stock.common.Context;
-import com.zhaijiong.stock.common.DateRange;
-import com.zhaijiong.stock.common.Utils;
-import com.zhaijiong.stock.model.BoardType;
-import com.zhaijiong.stock.model.StockData;
-import com.zhaijiong.stock.model.StockMarketType;
-import com.zhaijiong.stock.model.StockSlice;
+import com.zhaijiong.stock.common.*;
+import com.zhaijiong.stock.model.*;
 import com.zhaijiong.stock.tools.StockList;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.*;
@@ -291,4 +285,75 @@ public class StockDB {
         return deletes;
     }
 
+    public void saveTicksData(String symbol,List<Tick> ticks){
+        List<Put> puts = getPuts(symbol,ticks);
+        hbase.put(TABLE_STOCK_TICK, puts);
+    }
+
+    public List<Tick> getTicksData(String symbol,String startDate,String stopDate){
+        List<Tick> ticks = Lists.newLinkedList();
+        HTableInterface table = hbase.getTable(TABLE_STOCK_TICK);
+        Scan scan = new Scan();
+        scan.setStartRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, startDate));
+        scan.setStopRow(getRowkeyWithMd5PrefixAndDateSuffix(symbol, stopDate));
+        scan.setCaching(2000);
+//        LOG.info("startRow:" + Bytes.toString(getRowkeyWithMd5PrefixAndDateSuffix(symbol, startDate)));
+//        LOG.info("stopRow:" + Bytes.toString(getRowkeyWithMd5PrefixAndDateSuffix(symbol, stopDate)));
+        try {
+            ResultScanner scanner = table.getScanner(scan);
+            for(Result result :scanner){
+                ticks.add(toTick(result));
+            }
+            scanner.close();
+        } catch (IOException e) {
+            LOG.error(String.format("fail to get %s stock tick data from %s,start:%s - stop:%s",
+                    symbol,
+                    TABLE_STOCK_TICK,
+                    startDate,
+                    stopDate));
+        }
+        hbase.closeTable(table);
+        return ticks;
+    }
+
+    public Tick toTick(Result result){
+        Date date = Utils.getTickDate(result.getRow());
+        Tick tick = new Tick();
+        tick.date = date;
+        for(KeyValue kv:result.list()){
+            if(Bytes.toString(kv.getQualifier()).equals(StockConstants.AMOUNT)){
+                tick.amount = Bytes.toDouble(kv.getValue());
+            }
+            if(Bytes.toString(kv.getQualifier()).equals(StockConstants.CLOSE)){
+                tick.price = Bytes.toDouble(kv.getValue());
+            }
+            if(Bytes.toString(kv.getQualifier()).equals(StockConstants.VOLUME)){
+                tick.volume = Bytes.toInt(kv.getValue());
+            }
+            if(Bytes.toString(kv.getQualifier()).equals(StockConstants.TYPE)){
+                if(Bytes.toInt(kv.getValue())>0){
+                    tick.type = Tick.Type.BUY;
+                }else if(Bytes.toInt(kv.getValue())<0){
+                    tick.type = Tick.Type.SELL;
+                }else {
+                    tick.type = Tick.Type.MID;
+                }
+            }
+        }
+        return tick;
+    }
+
+    public List<Put> getPuts(String symbol,List<Tick> ticks){
+        List<Put> puts = Lists.newLinkedList();
+        for (Tick tick : ticks) {
+            byte[] rowkey = Utils.getTickRowkey(symbol, tick);
+            Put put = new Put(rowkey);
+            put.add(TABLE_CF_DATA, Bytes.toBytes(StockConstants.AMOUNT), toBytes(tick.amount));
+            put.add(TABLE_CF_DATA, Bytes.toBytes(StockConstants.CLOSE), toBytes(tick.price));
+            put.add(TABLE_CF_DATA, Bytes.toBytes(StockConstants.VOLUME), toBytes(tick.volume));
+            put.add(TABLE_CF_DATA, Bytes.toBytes(StockConstants.TYPE), toBytes(tick.type.getType()));
+            puts.add(put);
+        }
+        return puts;
+    }
 }
