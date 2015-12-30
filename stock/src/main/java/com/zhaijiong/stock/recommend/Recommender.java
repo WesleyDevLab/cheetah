@@ -6,6 +6,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Utils;
+import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.tools.StockCategory;
@@ -31,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class Recommender {
     protected static final Logger LOG = LoggerFactory.getLogger(Recommender.class);
 
+    @Autowired
+    public StockDB stockDB;
     @Autowired
     @Qualifier("stockCategory")
     public StockCategory stockCategory;
@@ -116,11 +119,10 @@ public abstract class Recommender {
     }
 
     public void recommend(String symbol,String type) {
-        StockData stockData = Provider.realtimeData(symbol);
+        StockData stockData = stockDB.getLatestStockData(symbol);
         if (stockData != null && !Strings.isNullOrEmpty(stockData.symbol)) {
             try{
-                String record = Joiner.on("\t").join(
-                        stockData.name, stockData.symbol,
+                String record = Joiner.on("\t").join(stockData.symbol,
                         stockData.get("close"),
                         stockData.get("change"),
                         stockData.get("PE"));
@@ -131,7 +133,7 @@ public abstract class Recommender {
                         getIndustryCategory(stockData.symbol) + "\t" +
                         getConceptCategory(stockData.symbol));
             }catch(Exception e){
-                LOG.error(String.format("fail to recommend %s",symbol));
+                LOG.error(String.format("fail to recommend %s",symbol),e);
             }
         } else {
             LOG.warn(String.format("fail to get realtime data,symbol is [%s]", symbol));
