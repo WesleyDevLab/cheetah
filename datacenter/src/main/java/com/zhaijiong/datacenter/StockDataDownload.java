@@ -8,6 +8,7 @@ import com.zhaijiong.stock.common.Context;
 import com.zhaijiong.stock.common.Utils;
 import com.zhaijiong.stock.dao.StockDB;
 import com.zhaijiong.stock.model.StockData;
+import com.zhaijiong.stock.model.Tick;
 import com.zhaijiong.stock.provider.Provider;
 import com.zhaijiong.stock.tools.Sleeper;
 import com.zhaijiong.stock.tools.StockPool;
@@ -23,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import static com.zhaijiong.stock.common.Constants.*;
 
 /**
 * author: eryk
@@ -44,8 +47,6 @@ public class StockDataDownload {
     @Qualifier("stockPool")
     protected StockPool stockPool;
 
-
-
     @Scheduled(cron = "0 0 8 * * MON-FRI") //0 0 8 * * MON-FRI
     public void downloadDailyData() {
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -61,7 +62,7 @@ public class StockDataDownload {
                     try{
                         stockDataList = Provider.dailyData(symbol, 240, true);
                         if (stockDataList != null && stockDataList.size() != 0) {
-                            save(stockDataList);
+                            save(TABLE_STOCK_DAILY,stockDataList);
                         }
                     }catch(Exception e){
                         Sleeper.sleep(500);
@@ -130,12 +131,59 @@ public class StockDataDownload {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        save(stockDataList);
+        save(TABLE_STOCK_DAILY,stockDataList);
         LOG.info(String.format("realtime data download elapsed time=%ss,save count=%s", stopwatch.elapsed(TimeUnit.SECONDS), stockDataList.size()));
     }
 
-    public void save(List<StockData> stockDataList) {
-        stockDB.saveStockData(Constants.TABLE_STOCK_DAILY, stockDataList);
+//    @Scheduled(fixedRate = 180000)
+    public void downloadTickData() {
+        if(!rebuild){
+            if (!Utils.isTradingTime()) {
+                LOG.info("not working time.");
+                return;
+            }
+        }
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        List<String> stockList = stockPool.tradingStock();
+        LOG.info("start to download tick data,stockList=" + stockList.size());
+        CountDownLatch countDownLatch = new CountDownLatch(stockList.size());
+        for (String symbol : stockList) {
+            ThreadPool.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    List<Tick> tickData = Provider.tickData(symbol);
+                    int retry = 0;
+                    while(retry <3 && tickData==null){
+                        try{
+                            tickData = Provider.tickData(symbol);
+                        }catch(Exception e){
+                            Sleeper.sleep(500);
+                        }finally {
+                            retry++;
+                        }
+                    }
+                    if (tickData != null ) {
+                        stockDB.saveTicksData(symbol,tickData);
+                    } else {
+                        LOG.error(String.format("fail to download realtime data with symbol [%s]", symbol));
+                    }
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        try {
+            countDownLatch.await(300, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        LOG.info(String.format("tick data download elapsed time=%ss,save count=%s", stopwatch.elapsed(TimeUnit.SECONDS), stockList.size()));
+
+    }
+
+    public void save(String tableName,List<StockData> stockDataList) {
+        stockDB.saveStockData(tableName, stockDataList);
     }
 
 }
