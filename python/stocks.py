@@ -25,14 +25,39 @@ def MACD(symbol):
               % (utils.f(closes[i]), utils.f(macd[i]), utils.f(macdsignal[i]), utils.f((macd[i] - macdsignal[i]) * 2))
 
 
-def list_stock(index):
-    stocks = ts.get_stock_basics()[index]
+def list_stock():
+    # stocks = ts.get_stock_basics()[index]
+    stocks = ts.get_stock_basics()
+    stocks = stocks[(stocks.pe < 100) & (stocks.pe > 0) & (stocks.totalAssets < 300000)]
     return stocks
 
+def get_basic(index, day=30):
+    start_date = utils.get_start_date(day).strftime("%Y-%m-%d")
+    stop_date = datetime.date.today().strftime("%Y-%m-%d")
+    stock_data = ts.get_hist_data(index, start=start_date, end=stop_date)
+
+    is_high = False
+    if stock_data.max().p_change > 9.5:
+        is_high = True
+    else:
+        return
+
+    print stock_data[0:1]
+
+    mean = stock_data.mean()
+    if 5 > mean.p_change > 1 and mean.turnover < 10:
+        print "%s,p_change=%f,turnover=%f,isHigh=%s" % (index, mean.p_change, mean.turnover, is_high)
+        # print stock_data.describe()
+
+def condition():
+    stocks = list_stock()
+    stock_list = stocks.index
+    for stock in stock_list:
+        get_basic(stock)
 
 if __name__ == "__main__":
     # stocks = list_stock((stocks.pe < 100) & (stocks.pe > 0) & (stocks.totalAssets < 300000))
-    print utils.is_working_day(datetime.datetime.now())
+    # print utils.is_working_day(datetime.datetime.now())
     # count = 0
     # for stock in stocks.index:
     # val = ts.get_realtime_quotes(stock)
@@ -41,3 +66,5 @@ if __name__ == "__main__":
     #         count += 1;
     # print len(stocks),count
 
+    get_basic('300415')
+    # condition()
