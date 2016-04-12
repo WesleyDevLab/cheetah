@@ -10,11 +10,11 @@ import datetime
 import numpy, array
 import scipy
 import utils
+import db
 
 # print ts.get_h_data('000521')
 
-df = pd.DataFrame
-
+stocks = db.load_file()
 
 def MACD(symbol):
     stocks = ts.get_hist_data(symbol, start='2015-01-01', end='2016-04-09')
@@ -29,7 +29,7 @@ def MACD(symbol):
 
 def list_stock():
     # stocks = ts.get_stock_basics()[index]
-    stocks = ts.get_stock_basics()
+
     stocks = stocks[(stocks.pe < 100) & (stocks.pe > 0) & (stocks.totalAssets < 300000)]
     return stocks
 
