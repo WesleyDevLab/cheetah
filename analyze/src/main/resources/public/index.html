@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html ng-app="contactApp">
+<head>
+  <title>Contact</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="images/contacts-icon.png" rel="shortcut icon" />
+  <link href="styles/bootstrap-3.1.1.min.css" rel="stylesheet" />
+  <link href="styles/app.css" rel="stylesheet" />
+</head>
+<body ng-controller="ContactController">
+  <div class="navbar navbar-default navbar-fixed-top">
+    <h4 class="col-xs-12">Contact List</h4>
+    <div class="col-xs-12 actions">
+       <button class="btn btn-default btn-sm edit-mode pull-right" ng-click="switchToMode('/edit')" ng-show="!editMode">Edit Mode</button>
+       <button class="btn btn-default btn-sm contact-add" ng-click="newContact()" ng-show="editMode">Add</button>
+       <button class="btn btn-danger btn-sm contacts-delete" ng-click="deleteContacts()" ng-show="editMode" ng-disabled="!selectedIds.length">Delete</button>
+       <button class="btn btn-default btn-sm view-mode pull-right" ng-click="switchToMode('/view')" ng-show="editMode">View Mode</button>
+    </div>
+    <form class="col-xs-12" ng-submit="searchContacts(0)">
+      <input id="filter" type="text" ng-model="keyword" placeholder="input your filter here (ENTER for search)" />
+    </form>
+  </div>
+  <div class="alert alert-danger navbar-fixed-top" ng-show="$root.errorMessage">
+    {{$root.errorMessage}}<button type="button" class="close" ng-click="errorMessage=''">&times;</button>
+  </div>
+  <div class="cards col-xs-12">
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 card-container" ng-repeat="contact in contacts track by $index" ng-show="([contact]|filter:keyword).length">
+      <form class="card" ng-submit="saveContact(contact)">
+        <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
+        <table class="table">
+          <tr>
+            <th colspan="2" class="contact-name" ng-class="{'has-error': contact.errors.name}">
+              <strong>
+                  <input required ng-model="contact.name" placeholder="Name" title="{{contact.errors.name}}" ng-readonly="!editMode" />
+              </strong>
+              <input type="checkbox" ng-model="contact.selected" ng-show="editMode" ng-checked="contact.selected" />
+            </th>
+          </tr>
+          <tr>
+            <td class="col-xs-1" rowspan="4">
+              <img id="img{{contact.id}}" alt="contact-photo" ng-src="rest/photos/{{contact.id}}" ng-click="selectPhoto(contact.id)" class="img-thumbnail" width="80" />
+            </td>
+          </tr>
+          <tr ng-class="{'has-error': contact.errors.fullName}">
+            <td>
+              <input required ng-model="contact.fullName" placeholder="Full Name" title="{{contact.errors.fullName}}" ng-readonly="!editMode" />
+            </td>
+          </tr>
+          <tr ng-class="{'has-error': contact.errors.jobTitle}">
+            <td>
+              <input ng-model="contact.jobTitle" placeholder="Job Title" title="{{contact.errors.jobTitle}}" ng-readonly="!editMode" />
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr ng-class="{'has-error': contact.errors.mobile}">
+            <td class="contact-label">Mobile:</td>
+            <td>
+              <input type="tel" ng-model="contact.mobile" title="{{contact.errors.mobile}}" ng-readonly="!editMode" />
+            </td>
+          </tr>
+          <tr ng-class="{'has-error': contact.errors.email}">
+            <td class="contact-label">Email:</td>
+            <td>
+              <input type="email" ng-model="contact.email" title="{{contact.errors.email}}" ng-readonly="!editMode" />
+            </td>
+          </tr>
+          <tr ng-class="{'has-error': contact.errors.skypeId}">
+            <td class="contact-label">Skype ID:</td>
+            <td>
+              <input ng-model="contact.skypeId" title="{{contact.errors.skypeId}}" ng-readonly="!editMode" />
+            </td>
+          </tr>
+        </table>
+      </form>
+      <input type="file" id="file{{contact.id}}" onchange="angular.element(this).scope().uploadPhoto(this.id)" accept="image/*" style="display: none;" />
+    </div>
+    <button class="col-xs-12 btn btn-default btn-sm load-more" ng-show="hasMoreContacts" ng-click="searchContacts(page + 1)">More...</button>
+  </div>
+  <div class="loading" ng-show="isLoading"><span>Loading data...</span></div>
+  
+  <script src="scripts/libs/angular-1.2.15.min.js"></script>
+  <script src="scripts/app.js"></script>
+  <script src="scripts/controllers/ContactController.js"></script>
+</body>
+</html>

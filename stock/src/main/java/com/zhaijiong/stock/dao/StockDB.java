@@ -168,7 +168,10 @@ public class StockDB {
     public StockData getLatestStockData(String symbol){
         DateRange dateRange = DateRange.getRange(1);
         List<StockData> stockDatas = getStockData(TABLE_STOCK_DAILY, symbol,dateRange.start(),dateRange.stop());
-        return stockDatas.get(stockDatas.size()-1);
+        if(stockDatas.size()>=1){
+            return stockDatas.get(stockDatas.size()-1);
+        }
+        return null;
     }
 
     public List<StockData> getStockDataWeek(String symbol, String startDate, String stopDate) {

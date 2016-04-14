@@ -5,31 +5,39 @@ import tushare as ts
 import pandas as pd
 import numpy as np
 import talib
-import matplotlib.pyplot as mp
+import matplotlib.pyplot as plt
 import datetime
 import numpy, array
 import scipy
 import utils
 import db
 
-# print ts.get_h_data('000521')
+stock_list = db.load_file()
 
-stocks = db.load_file()
 
-def MACD(symbol):
-    stocks = ts.get_hist_data(symbol, start='2015-01-01', end='2016-04-09')
-    closes = stocks.sort_index().close.values
-    # macd, macdsignal, macdhist = talib.MACD(closes, fastperiod=12, slowperiod=55, signalperiod=9)
+def MACD(stock_data):
+    closes = stock_data.sort_index().close.values
     macd = talib.MACD(closes, fastperiod=12, slowperiod=55, signalperiod=9)
-    # for i in range(len(macd)):
-    # print "close:%0.2f\tdif:%0.2f\tdea:%0.2f\tmacd:%0.2f" \
-    #           % (utils.f(closes[i]), utils.f(macd[i]), utils.f(macdsignal[i]), utils.f((macd[i] - macdsignal[i]) * 2))
+    for i in range(len(macd[0])):
+        macd[2][i] = (utils.f(macd[0][i]) - utils.f(macd[1][i])) * 2
+    stock['dif'] = macd[0][::-1]
+    stock['dea'] = macd[1][::-1]
+    stock['macd'] = macd[2][::-1]
     return macd
 
 
-def list_stock():
-    # stocks = ts.get_stock_basics()[index]
+def golden_cross(metricA, metricB):
+    arr = []
+    for i in range(len(metricA)):
+        if metricA[i] != None and metricB[i] != None:
+            if metricA[i] < metricB[i]:
+                arr[i] = 0
+            else:
+                arr[i] = 1
 
+
+def list_stock():
+    stocks = ts.get_stock_basics()
     stocks = stocks[(stocks.pe < 100) & (stocks.pe > 0) & (stocks.totalAssets < 300000)]
     return stocks
 
@@ -67,11 +75,15 @@ if __name__ == "__main__":
     # for stock in stocks.index:
     # val = ts.get_realtime_quotes(stock)
     # if float(val.price) < 15 and float(val.price) > 0:
-    #         print stock, float(val.price)
-    #         count += 1;
+    # print stock, float(val.price)
+    # count += 1;
     # print len(stocks),count
 
     # macd = MACD('300145')
     # print macd
     # get_basic('300415')
-    condition()
+    # condition()
+
+    stock = ts.get_hist_data('000521', start='2015-04-01', end='2016-04-13')
+    macd = MACD(stock)
+    print stock

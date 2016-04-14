@@ -1,4 +1,4 @@
-hbase.zookeeper.quorum: localhost:2181
+hbase.zookeeper.quorum: 112.124.60.26:2181
 zookeeper.znode.parent: /hbase
 database.pool.size: 20
 broker.pool.size: 10

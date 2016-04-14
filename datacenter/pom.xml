@@ -17,5 +17,10 @@
             <artifactId>stock</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>3.0.0-M3</version>
+        </dependency>
     </dependencies>
 </project>
