@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/analyze/analyze.iml" filepath="$PROJECT_DIR$/analyze/analyze.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cheetah.iml" filepath="$PROJECT_DIR$/cheetah.iml" />
+      <module fileurl="file://$PROJECT_DIR$/crawler/crawler.iml" filepath="$PROJECT_DIR$/crawler/crawler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/datacenter/datacenter.iml" filepath="$PROJECT_DIR$/datacenter/datacenter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/stock/stock.iml" filepath="$PROJECT_DIR$/stock/stock.iml" />
+    </modules>
+  </component>
+</project>
+

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Maven: joda-time:joda-time:2.8.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar!/" />
+    </CLASSES>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/joda-time/joda-time/2.8.1/joda-time-2.8.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

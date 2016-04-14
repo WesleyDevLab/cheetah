@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Maven: xerces:xercesImpl:2.11.0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.11.0/xercesImpl-2.11.0.jar!/" />
+    </CLASSES>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.11.0/xercesImpl-2.11.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
