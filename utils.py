@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # coding:utf-8
 import datetime
+import urllib2
+
+from bs4 import BeautifulSoup
 
 
 def f(num):
@@ -81,13 +84,15 @@ def is_working_hour(dt):
         return True
 
 
+def get_page(url):
+    request = urllib2.Request(url)
+    response = urllib2.urlopen(request)
+    return response.read()
+
+
+def parse_page(url):
+    return BeautifulSoup(get_page(url),"lxml")
+
+
 if __name__ == "__main__":
-    print is_working_hour(datetime.datetime.now())
-    print "2016-04-08 11:30", is_working_hour(datetime.datetime(2016, 4, 8, 11, 30))
-    print "2016-04-08 11:29", is_working_hour(datetime.datetime(2016, 4, 8, 11, 29))
-    print "2016-04-08 09:14", is_working_hour(datetime.datetime(2016, 4, 8, 9, 14))
-    print "2016-04-08 09:15", is_working_hour(datetime.datetime(2016, 4, 8, 9, 15))
-    print "2016-04-08 13:00", is_working_hour(datetime.datetime(2016, 4, 8, 13, 0))
-    print "2016-04-08 12:59", is_working_hour(datetime.datetime(2016, 4, 8, 12, 59))
-    print "2016-04-08 15:00", is_working_hour(datetime.datetime(2016, 4, 8, 15, 0))
-    print "2016-04-08 15:01", is_working_hour(datetime.datetime(2016, 4, 8, 15, 1))
+    pass

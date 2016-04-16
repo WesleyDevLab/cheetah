@@ -12,12 +12,13 @@ import scipy
 import utils
 import db
 
+
 stock_list = db.load_file()
 
 
-def MACD(stock_data):
+def MACD(stock_data, fast_period=12, slow_period=26, signal_period=9):
     closes = stock_data.sort_index().close.values
-    macd = talib.MACD(closes, fastperiod=12, slowperiod=55, signalperiod=9)
+    macd = talib.MACD(closes, fast_period, slow_period, signal_period)
     for i in range(len(macd[0])):
         macd[2][i] = (utils.f(macd[0][i]) - utils.f(macd[1][i])) * 2
     stock['dif'] = macd[0][::-1]
@@ -26,11 +27,11 @@ def MACD(stock_data):
     return macd
 
 
-def golden_cross(metricA, metricB):
+def golden_cross(metric_first, metric_second):
     arr = []
-    for i in range(len(metricA)):
-        if metricA[i] != None and metricB[i] != None:
-            if metricA[i] < metricB[i]:
+    for i in range(len(metric_first)):
+        if metric_first[i] is not None and metric_second[i] is not None:
+            if metric_first[i] < metric_second[i]:
                 arr[i] = 0
             else:
                 arr[i] = 1

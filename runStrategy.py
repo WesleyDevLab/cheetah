@@ -2,18 +2,18 @@
 # coding:utf-8
 
 from pyalgotrade.barfeed import yahoofeed
+from pyalgotrade.stratanalyzer import drawdown
 from pyalgotrade.stratanalyzer import returns
 from pyalgotrade.stratanalyzer import sharpe
-from pyalgotrade.stratanalyzer import drawdown
 from pyalgotrade.stratanalyzer import trades
-# Load the yahoo feed from the CSV file
-import SMACrossOver
 
+# Load the yahoo feed from the CSV file
+from strategy import SMACrossOver
 
 feed = yahoofeed.Feed()
 feed.addBarsFromCSV("orcl", "orcl-2015.csv")
 # Evaluate the strategy with the feed's bars.
-myStrategy = SMACrossOver.SMACrossOver(feed, "orcl", 20)
+myStrategy = SMACrossOver(feed, "orcl", 20)
 # Attach different analyzers to a strategy before executing it.
 retAnalyzer = returns.Returns()
 myStrategy.attachAnalyzer(retAnalyzer)

@@ -5,9 +5,10 @@ import tushare as ts
 import redis
 import datetime
 import os
+from common.Constants import *
 
 db_name = "stock"
-db_path = "/home/eryk/workspaces/cheetah/python/db/"
+db_path = "/home/eryk/workspaces/cheetah/db/"
 db_suffix = datetime.datetime.now().strftime("%Y-%m-%d")
 
 try:
@@ -17,12 +18,27 @@ except ImportError:
 
 
 def get_conn():
-    return redis.Redis(host='112.124.60.26', port=6399)
+    # return redis.Redis(host='112.124.60.26', port=6399)
+    return redis.Redis(host='127.0.0.1', port=6379)
 
 
 def save_db(stock_list):
     r = get_conn()
     r.set('stock_list', pickle.dumps(stock_list))
+
+
+def save(key, value, expire=DATA_EXPIRED_TIME):
+    r = get_conn()
+    r.set(key, value, expire)
+
+
+def exist(key):
+    r = get_conn()
+    return r.exists(key)
+
+
+def get(key):
+    return get_conn().get(key)
 
 
 def load_db():
@@ -53,6 +69,7 @@ def load_file():
     objects = pickle.load(f)
     f.close
     return objects
+
 
 if __name__ == "__main__":
     new_stock_list = load_file()
