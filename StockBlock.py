@@ -3,6 +3,19 @@
 import tushare as ts
 import db
 from common.Constants import *
+from common import downloader
+from bs4 import BeautifulSoup
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+concept_url = "http://quote.eastmoney.com/center/BKList.html#notion_0_0?sortRule=0"
 
 
 class StockBlock(object):
@@ -18,6 +31,16 @@ class StockBlock(object):
 
     def __init__(self):
         pass
+
+    def parse(self, url):
+        soup = BeautifulSoup(downloader.download(url), 'lxml').find_all(id='bklist')
+        table = soup[0]
+        tr = table.find_all('tr')
+        for line in tr:
+            td = line.find_all('td')
+            if td:
+                print "id=%s,板块名称=%s,涨跌幅=%s,总市值(亿)=%s，换手率=%s，上涨家数=%s,下跌家数=%s" % \
+                    (td[0].get_text(), td[1].get_text(), td[3].get_text(), td[4].get_text(), td[5].get_text(), td[6].get_text(), td[7].get_text())
 
     def list(self, stock_block_type):
         stock_block = None
@@ -95,4 +118,6 @@ class StockBlock(object):
 if __name__ == '__main__':
     # StockBlock.preload()
     sb = StockBlock()
-    print sb.list(sb.zz500s)
+    sblist = sb.list(sb.industry).split('\n')
+    for line in sblist:
+        print line
