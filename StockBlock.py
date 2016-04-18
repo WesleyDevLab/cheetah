@@ -5,6 +5,7 @@ import db
 from common.Constants import *
 from common import downloader
 from bs4 import BeautifulSoup
+from pandas import DataFrame
 
 try:
     import cPickle as pickle
@@ -12,11 +13,13 @@ except ImportError:
     import pickle
 
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 concept_url = "http://quote.eastmoney.com/center/BKList.html#notion_0_0?sortRule=0"
-
+industry_url = "http://quote.eastmoney.com/center/BKList.html#trade_0_0?sortRule=0"
+area_url = "http://quote.eastmoney.com/center/BKList.html#area_0_0?sortRule=0"
 
 class StockBlock(object):
     industry = "industry"  # 行业
@@ -36,11 +39,43 @@ class StockBlock(object):
         soup = BeautifulSoup(downloader.download(url), 'lxml').find_all(id='bklist')
         table = soup[0]
         tr = table.find_all('tr')
-        for line in tr:
+        bkmc = []
+        zdf = []
+        zsz = []
+        hsl = []
+        szjs = []
+        xdjs = []
+        for i in range(len(tr)):
+            line = tr[i]
             td = line.find_all('td')
             if td:
-                print "id=%s,板块名称=%s,涨跌幅=%s,总市值(亿)=%s，换手率=%s，上涨家数=%s,下跌家数=%s" % \
-                    (td[0].get_text(), td[1].get_text(), td[3].get_text(), td[4].get_text(), td[5].get_text(), td[6].get_text(), td[7].get_text())
+                # print "id=%s,板块名称=%s,涨跌幅=%s,总市值(亿)=%s，换手率=%s，上涨家数=%s,下跌家数=%s" % \
+                #       (td[0].get_text(), td[1].get_text(), td[3].get_text(), td[4].get_text(), td[5].get_text(),
+                #        td[6].get_text(), td[7].get_text())
+                bkmc.append(td[1].get_text())
+                zdf.append(float(td[3].get_text().replace('%', '')))
+                zsz.append(float(td[4].get_text()))
+                hsl.append(float(td[5].get_text().replace('%', '')))
+                szjs.append(int(td[6].get_text()))
+                xdjs.append(int(td[7].get_text()))
+
+        data = {"板块名称": bkmc, "涨跌幅": zdf, "总市值(亿)": zsz, "换手率": hsl, "上涨家数": szjs, "下跌家数": xdjs}
+        return DataFrame(data, columns=['板块名称', '涨跌幅', '总市值(亿)', '换手率', '上涨家数', '下跌家数'])
+
+    def list_detail(self, stock_block_type):
+        """
+        实时获取股票板块详细数据
+        :param stock_block_type:
+        :return:
+        """
+        if stock_block_type == self.industry:
+            return self.parse(industry_url)
+        elif stock_block_type == self.concept:
+            return self.parse(concept_url)
+        elif stock_block_type == self.area:
+            return self.parse(area_url)
+        else:
+            return None
 
     def list(self, stock_block_type):
         stock_block = None
@@ -121,3 +156,5 @@ if __name__ == '__main__':
     sblist = sb.list(sb.industry).split('\n')
     for line in sblist:
         print line
+    # df = sb.parse(industry_url)
+    # print df
