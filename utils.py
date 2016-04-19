@@ -56,7 +56,7 @@ def get_start_date(n):
     return day + datetime.timedelta(-n)
 
 
-def is_working_day(dt):
+def is_working_day(dt=datetime.datetime.now()):
     """
     检查某天是否是工作日，周一为0
     :param dt:
@@ -68,7 +68,7 @@ def is_working_day(dt):
         return False
 
 
-def is_working_hour(dt):
+def is_working_hour(dt=datetime.datetime.now()):
     """
     检查今天是否是交易时间段
     :param dt:
