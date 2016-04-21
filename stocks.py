@@ -12,7 +12,6 @@ import scipy
 import utils
 import db
 
-
 stock_list = db.load_file()
 
 
@@ -21,10 +20,17 @@ def MACD(stock_data, fast_period=12, slow_period=26, signal_period=9):
     macd = talib.MACD(closes, fast_period, slow_period, signal_period)
     for i in range(len(macd[0])):
         macd[2][i] = (utils.f(macd[0][i]) - utils.f(macd[1][i])) * 2
-    stock['dif'] = macd[0][::-1]
-    stock['dea'] = macd[1][::-1]
-    stock['macd'] = macd[2][::-1]
-    return macd
+    stock_data['dif'] = macd[0][::-1]
+    stock_data['dea'] = macd[1][::-1]
+    stock_data['macd'] = macd[2][::-1]
+    return stock_data
+
+
+def MA(stock_data, timeperiod=30):
+    closes = stock_data.sort_index().close.values
+    ma = talib.EMA(closes, timeperiod)
+    stock_data['ma' + str(timeperiod)] = ma[::-1]
+    return stock_data
 
 
 def golden_cross(metric_first, metric_second):
@@ -43,30 +49,42 @@ def list_stock():
     return stocks
 
 
-def get_basic(index, day=30):
+def filter(index, day=60):
     start_date = utils.get_start_date(day).strftime("%Y-%m-%d")
     stop_date = datetime.date.today().strftime("%Y-%m-%d")
     stock_data = ts.get_hist_data(index, start=start_date, end=stop_date)
 
     is_high = False
-    if stock_data.max().p_change > 9.5:
-        is_high = True
-    else:
-        return
+    # if stock_data.head(20).max().p_change > 9.5:
+    #     is_high = True
+    # else:
+    #     return
 
-    mean = stock_data.mean()
+    for stock in stock_data.head(3).itertuples():
+        if stock.open <= min(stock.ma5, stock.ma10, stock.ma20) \
+                and stock.close >= max(stock.ma5, stock.ma10, stock.ma20):
+            print index
+            print stock_data.head(1)
 
-    if 5 > mean.p_change > 1 and mean.turnover < 10 and mean.close * 1.2 >= stock_data.ix[0].close:
-        print "%s,p_change=%f,turnover=%f,close=%f,1.2close=%0.2f %0.2f,isHigh=%s" % \
-              (index, mean.p_change, mean.turnover, mean.close, mean.close * 1.2, stock_data.ix[0].close, is_high)
+    # mean = stock_data.mean()
+
+    # if 5 > mean.p_change > 1 and mean.turnover < 10 and mean.close * 1.2 >= stock_data.ix[0].close:
+    #     print "%s,p_change=%f,turnover=%f,close=%f,1.2close=%0.2f %0.2f,isHigh=%s" % \
+    #           (index, mean.p_change, mean.turnover, mean.close, mean.close * 1.2, stock_data.ix[0].close, is_high)
         # print stock_data.describe()
 
 
-def condition():
-    stocks = list_stock()
-    stock_list = stocks.index
-    for stock in stock_list:
-        get_basic(stock)
+def realtime(symbol):
+    return ts.get_realtime_quotes(symbol)
+
+
+def tick_today(symbol):
+    return ts.get_today_ticks(symbol)
+
+
+def tick_history(symbol, date):
+    df = ts.get_tick_data(symbol, date)
+    return df
 
 
 if __name__ == "__main__":
@@ -85,6 +103,7 @@ if __name__ == "__main__":
     # get_basic('300415')
     # condition()
 
-    stock = ts.get_hist_data('000521', start='2015-04-01', end='2016-04-13')
-    macd = MACD(stock)
-    print stock
+    # stock = ts.get_hist_data('000521', start='2010-04-01', end='2016-04-19')
+    # stock = MA(stock, 30)
+    # print stock.head(5)
+    pass

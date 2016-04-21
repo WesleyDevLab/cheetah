@@ -153,8 +153,8 @@ class StockBlock(object):
 if __name__ == '__main__':
     # StockBlock.preload()
     sb = StockBlock()
-    sblist = sb.list(sb.industry).split('\n')
-    for line in sblist:
-        print line
-    # df = sb.parse(industry_url)
-    # print df
+    sblist = sb.list_detail(sb.concept)
+    # for line in sblist:
+    #     print line
+    print sblist['板块名称']
+
